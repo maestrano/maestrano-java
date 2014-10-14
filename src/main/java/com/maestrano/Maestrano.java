@@ -4,7 +4,7 @@ package com.maestrano;
  * Hello world!
  *
  */
-public class App 
+public class Maestrano 
 {
     public static void main( String[] args )
     {
