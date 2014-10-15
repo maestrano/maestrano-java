@@ -1,23 +1,13 @@
 package com.maestrano.saml;
 
 import java.io.UnsupportedEncodingException;
-import java.security.cert.X509Certificate;
 import java.security.cert.CertificateException;
-
 import javax.xml.bind.DatatypeConverter;
-
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
 import com.maestrano.saml.Certificate;
-
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 public class CertificateTest {
   private static Certificate certificate;
