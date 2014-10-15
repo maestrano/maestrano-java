@@ -27,6 +27,7 @@ public class AppServiceTest {
 	public void getHost_itReturnsTheRightValue() {
 		String host = "https://mysuperapp.com";
 		props.setProperty("app.host", host);
+		Maestrano.configure(props);
 		
 		assertEquals(host, subject.getHost());
 	}
