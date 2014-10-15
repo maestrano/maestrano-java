@@ -14,6 +14,8 @@ public class Certificate {
 
   /**
    * Loads certificate from a base64 encoded string
+   * @param certificate an encoded base64 byte array.
+   * @throws CertificateException In case it cannot load the certificate.
    */
    public void loadCertificate(String certificate) throws CertificateException {
     CertificateFactory fty = CertificateFactory.getInstance("X.509");
@@ -26,8 +28,8 @@ public class Certificate {
   /**
    * Loads a certificate from a encoded base64 byte array.
    * @param certificate an encoded base64 byte array.
-   * @throws CertificateException In case it can't load the certificate.
- * @throws UnsupportedEncodingException 
+   * @throws CertificateException In case it cannot load the certificate.
+   * @throws UnsupportedEncodingException 
    */
   public void loadCertificate(byte[] certificate) throws CertificateException, UnsupportedEncodingException {
     String certAsString = new String(certificate, "UTF-8");

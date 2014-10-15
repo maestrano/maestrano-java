@@ -2,11 +2,16 @@ package com.maestrano.saml;
 
 import java.io.UnsupportedEncodingException;
 import java.security.cert.CertificateException;
+
 import javax.xml.bind.DatatypeConverter;
+
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+
+import com.maestrano.Maestrano;
 import com.maestrano.saml.Certificate;
+
 import static org.junit.Assert.assertEquals;
 
 public class CertificateTest {
@@ -19,13 +24,15 @@ public class CertificateTest {
   }
 
   @Before
-  public void beforeEach() {
+  public void beforeEach() 
+  {
     certificate = new Certificate();
   }
 
   @Test
   public void itLoadsACertificateFromString() throws CertificateException
   {
+	  System.out.println(Maestrano.appService());
 	  certificate.loadCertificate(certStr);
 	  assertEquals(certStr,DatatypeConverter.printBase64Binary(certificate.getX509Cert().getEncoded()));
   }
