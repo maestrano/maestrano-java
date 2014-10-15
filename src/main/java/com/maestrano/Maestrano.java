@@ -1,5 +1,7 @@
 package com.maestrano;
 
+import java.util.Properties;
+
 /**
  * Hello world!
  *
@@ -17,6 +19,15 @@ public final class Maestrano
      */
     public static String getVersion() {
     	return version;
+    }
+    
+    /**
+     * Configure Maestrano API using a Properties object
+     * @param Properties props
+     */
+    public static void configure(Properties props) {
+    	appService().configure(props);
+    	ssoService().configure(props);
     }
     
     /**

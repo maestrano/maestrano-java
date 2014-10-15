@@ -2,14 +2,39 @@ package com.maestrano;
 
 import java.util.Properties;
 
-class AppService extends ServiceSingleton {
+class AppService {
+	private static AppService instance;
+	
 	private String environment;
 	private String host;
 	
 	// Private Constructor
 	private AppService() {}
 	
-	@Override
+	/**
+	 * Return the service singleton
+	 * @return AppService singleton
+	 */
+	public static AppService getInstance() {
+		if (instance == null) {
+			instance = new AppService();
+			instance.configure();
+		}
+		return instance;
+	}
+	
+	/**
+	 * Configure the service using the maestrano.properties
+	 * file available in the class path
+	 */
+	public void configure() {
+		this.configure(ConfigFile.getProperties());
+	}
+	
+	/**
+	 * Configure the service using a list of properties
+	 * @param props Properties object
+	 */
 	public void configure(Properties props) {
 		this.environment = props.getProperty("app.environment");
 		this.host = props.getProperty("app.host");

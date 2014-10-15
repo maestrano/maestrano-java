@@ -2,7 +2,9 @@ package com.maestrano;
 
 import java.util.Properties;
 
-class SsoService extends ServiceSingleton {
+class SsoService {
+	private static SsoService instance;
+	
 	private Boolean enabled;
 	private Boolean sloEnabled;
 	private String creationMode;
@@ -14,29 +16,56 @@ class SsoService extends ServiceSingleton {
 	private String x509Fingerprint;
 	private String x509Certificate;
 	
-//	/**
-//	 * Generic constructor
-//	 */
-//	public Sso() {}
-//	
-//	/**
-//	 * Construct a new App configuration from Properties
-//	 * object
-//	 * @param Properties prop
-//	 */
-//	public Sso(Properties prop) {
-//		if (prop != null) {
-//			this.enabled = prop.getProperty("sso.enabled").equals("true");
-//			this.sloEnabled = prop.getProperty("sso.sloEnabled").equals("true");
-//			this.creationMode = prop.getProperty("sso.creationMode");
-//		}
-//	}
 	
 	/**
-	 * Is Single Sign-On enabled
+	 * Return the service singleton
+	 * @return SsoService singleton
+	 */
+	public static SsoService getInstance() {
+		if (instance == null) {
+			instance = new SsoService();
+			instance.configure();
+		}
+		return instance;
+	}
+	
+	/**
+	 * Configure the service using the maestrano.properties
+	 * file available in the class path
+	 */
+	public void configure() {
+		this.configure(ConfigFile.getProperties());
+	}
+	
+	/**
+	 * Configure the service using a list of properties
+	 * @param props Properties object
+	 */
+	public void configure(Properties props) {
+		if (props.getProperty("sso.sloEnabled") != null) {
+			this.enabled = props.getProperty("sso.enabled").equalsIgnoreCase("true");
+		}
+		
+		if (props.getProperty("sso.sloEnabled") != null) {
+			this.sloEnabled = props.getProperty("sso.sloEnabled").equalsIgnoreCase("true");
+		}
+		
+		this.creationMode = props.getProperty("sso.creationMode");
+		this.initPath = props.getProperty("sso.initPath");
+		this.consumePath = props.getProperty("sso.consumePath");
+		this.idm = props.getProperty("sso.idm");
+		this.idp = props.getProperty("sso.idp");
+		this.nameIdFormat = props.getProperty("sso.nameIdFormat");
+		this.x509Fingerprint = props.getProperty("sso.enabled");
+		this.x509Certificate = props.getProperty("sso.enabled");
+	}
+	
+	/**
+	 * Is Single Sign-On enabled - true by default
 	 * @return Boolean
 	 */
 	public Boolean getEnabled() {
+		if (enabled == null) return true;
 		return enabled;
 	}
 	
@@ -45,10 +74,11 @@ class SsoService extends ServiceSingleton {
 	}
 	
 	/**
-	 * Is Single Logout enabled
+	 * Is Single Logout enabled - true by default
 	 * @return Boolean
 	 */
 	public Boolean getSloEnabled() {
+		if (enabled == null) return true;
 		return sloEnabled;
 	}
 	
@@ -190,5 +220,67 @@ class SsoService extends ServiceSingleton {
 	public void setX509Certificate(String x509Certificate) {
 		this.x509Certificate = x509Certificate;
 	}
+	
+	/**
+	 * Return the full Idp SSO endpoint
+	 * @return 
+	 */
+	public String getIdpUrl() {
+		return this.getIdp() + "/api/v1/auth/saml";
+	}
+	
+	/**
+	 * Return the application SSO initialization endpoint
+	 * @return String initialization endpoint
+	 */
+	public String getInitUrl() {
+		return this.getIdm() + this.getInitPath();
+	}
+	
+	/**
+	 * Return the application SSO consume endpoint
+	 * @return String consume endpoint
+	 */
+	public String getConsumeUrl() {
+		return this.getIdm() + this.getConsumePath();
+	}
+	
+	/**
+	 * Return the Idp logout url where users should be redirected to
+	 * upon logging out
+	 * @return String Idp logout url
+	 */
+	public String getLogoutUrl() {
+		return this.getIdp() + "/app_logout";
+	}
+	
+	/**
+	 * Return the Idp access not granted url where unauthorized users should 
+	 * be redirected to
+	 * 
+	 * @return String Idp access 
+	 */
+	public String getUnauthorizedUrl() {
+		return this.getIdp() + "/app_access_unauthorized";
+	}
+	
+	/**
+	 * 
+	 * @return
+	 */
+	
+	/**
+	 * Return the endpoint used for remote session check (used for single logout)
+	 * @param userUid Maestrano User UID
+	 * @param sessionToken Maestrano User session token
+	 * @return String the endpoint to reach
+	 */
+	public String getSessionCheckUrl(String userUid, String sessionToken) {
+		String url = this.getIdpUrl();
+		url += "/" + userUid + "?session=" + sessionToken;
+		
+		return url;
+	}
+	
 	
 }

@@ -23,7 +23,7 @@ public final class ConfigFile {
 		InputStream input = ConfigFile.class.getClassLoader().getResourceAsStream(filename);
 		prop = new Properties();
 		
-		if(input==null){
+		if(input != null){
 			try {
 				prop.load(input);
 			} catch (IOException e) {}
