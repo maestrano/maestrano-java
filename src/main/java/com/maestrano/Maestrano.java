@@ -28,6 +28,7 @@ public final class Maestrano
     public static void configure(Properties props) {
     	appService().configure(props);
     	ssoService().configure(props);
+    	apiService().configure(props);
     }
     
     /**
@@ -35,7 +36,7 @@ public final class Maestrano
      * @return AppService singleton
      */
     public static AppService appService() {
-    	return (AppService) AppService.getInstance();
+    	return AppService.getInstance();
     }
     
     /**
@@ -43,6 +44,14 @@ public final class Maestrano
      * @return SsoService singleton
      */
     public static SsoService ssoService() {
-    	return (SsoService) SsoService.getInstance();
+    	return SsoService.getInstance();
+    }
+    
+    /**
+     * Return the Maestrano Api Service
+     * @return ApiService singleton
+     */
+    public static ApiService apiService() {
+    	return ApiService.getInstance();
     }
 }
