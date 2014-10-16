@@ -2,7 +2,7 @@ package com.maestrano;
 
 import java.util.Properties;
 
-class SsoService {
+public class SsoService {
 	private static SsoService instance;
 	
 	private Boolean enabled;
@@ -16,6 +16,8 @@ class SsoService {
 	private String x509Fingerprint;
 	private String x509Certificate;
 	
+	// Private Constructor
+	private SsoService() {}
 	
 	/**
 	 * Return the service singleton

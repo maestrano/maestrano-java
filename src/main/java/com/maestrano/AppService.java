@@ -2,7 +2,7 @@ package com.maestrano;
 
 import java.util.Properties;
 
-class AppService {
+public class AppService {
 	private static AppService instance;
 	
 	private String environment;
