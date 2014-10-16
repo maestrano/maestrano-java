@@ -87,6 +87,14 @@ class SsoService {
 	}
 	
 	/**
+	 * Return the API application id (used as issuer)
+	 * @return String application id
+	 */
+	public String getIssuer() {
+		return Maestrano.apiService().getId();
+	}
+	
+	/**
 	 * SSO user creation mode
 	 * @return String either 'real' or 'virtual'. Default: 'real'
 	 */
@@ -282,5 +290,13 @@ class SsoService {
 		return url;
 	}
 	
-	
+	public com.maestrano.saml.Settings getSamlSettings() {
+		return new com.maestrano.saml.Settings(
+				this.getConsumeUrl(), 
+				this.getIssuer(), 
+				this.getIdpUrl(), 
+				this.getX509Certificate(), 
+				this.getNameIdFormat()
+				);
+	}
 }

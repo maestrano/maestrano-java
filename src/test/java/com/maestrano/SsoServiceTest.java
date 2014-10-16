@@ -14,8 +14,15 @@ public class SsoServiceTest {
 	@Before
 	public void beforeEach() {
 		props.setProperty("app.environment", "production");
+		props.setProperty("api.id", "someid");
+		props.setProperty("api.key", "somekey");
 		Maestrano.configure(props);
 		subject = Maestrano.ssoService();
+	}
+	
+	@Test
+	public void getIssuer_itReturnsTheRightValue() {
+		assertEquals(props.getProperty("api.id"),subject.getIssuer());
 	}
 	
 	@Test
@@ -81,4 +88,14 @@ public class SsoServiceTest {
 		assertEquals(expected, subject.getX509Fingerprint());
 	}
 	
+	@Test
+	public void getSamlSettings_itReturnsTheRightObject() {
+		com.maestrano.saml.Settings settings = subject.getSamlSettings();
+		
+		assertEquals(subject.getConsumeUrl(), settings.getAssertionConsumerServiceUrl());
+		assertEquals(subject.getIdpUrl(), settings.getIdpSsoTargetUrl());
+		assertEquals(subject.getX509Certificate(), settings.getIdpCertificate());
+		assertEquals(Maestrano.apiService().getId(), settings.getIssuer());
+		assertEquals(subject.getNameIdFormat(), settings.getNameIdentifierFormat());
+	}
 }
