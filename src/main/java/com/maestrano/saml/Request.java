@@ -99,7 +99,6 @@ public class Request {
 		url += "?SAMLRequest=";
 		
 		url += URLEncoder.encode(this.getXmlBase64Request(),"UTF-8");
-		System.out.println(url);
 		
 		if (this.parameters != null) {
 			for (Map.Entry<String, String> param : this.parameters.entrySet())
