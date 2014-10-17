@@ -9,8 +9,8 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import com.maestrano.Maestrano;
 import com.maestrano.saml.Certificate;
+import com.maestrano.testhelpers.SamlCertHelper;
 
 import static org.junit.Assert.assertEquals;
 
@@ -32,7 +32,6 @@ public class CertificateTest {
   @Test
   public void itLoadsACertificateFromString() throws CertificateException
   {
-	  System.out.println(Maestrano.appService());
 	  certificate.loadCertificate(certStr);
 	  assertEquals(certStr,DatatypeConverter.printBase64Binary(certificate.getX509Cert().getEncoded()));
   }
@@ -43,8 +42,12 @@ public class CertificateTest {
 	  certificate.loadCertificate(certStr.getBytes());
 	  assertEquals(certStr,DatatypeConverter.printBase64Binary(certificate.getX509Cert().getEncoded()));
   }
-    
-    
+  
+  @Test
+  public void itLoadsACertificateWithHeaders() throws CertificateException {
+	  // no error raised
+	  certificate.loadCertificate(SamlCertHelper.certificate1());
+  }
 }
 
 
