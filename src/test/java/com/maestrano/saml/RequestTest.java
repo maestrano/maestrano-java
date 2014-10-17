@@ -3,6 +3,9 @@ package com.maestrano.saml;
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 
 import javax.xml.bind.DatatypeConverter;
@@ -55,5 +58,28 @@ public class RequestTest {
 		
 		actual = dom.getElementsByTagName("samlp:AuthnRequest").item(0).getAttributes().getNamedItem("AssertionConsumerServiceURL").getNodeValue();
 		assertEquals(props.getProperty("app.host") + "/maestrano/auth/saml/consume.jsp", actual);
+	}
+	
+	@Test
+	public void getRedirectUrl_itGeneratesTheRightBaseUrl() throws UnsupportedEncodingException, XMLStreamException {
+		String expected = "https://maestrano.com/api/v1/auth/saml?SAMLRequest=";
+		expected += URLEncoder.encode(subject.getXmlBase64Request(),"UTF-8");
+		
+		assertEquals(expected,subject.getRedirectUrl());
+	}
+	
+	@Test
+	public void getRedirectUrl_itAddsTheProvidedParameters() throws XMLStreamException, UnsupportedEncodingException {
+		Map<String,String> params = new HashMap<String,String>();
+		params.put("group_id", "cld-9");
+		params.put("other", "value with spaces");
+		subject = new Request(params);
+		
+		String expected = "https://maestrano.com/api/v1/auth/saml?SAMLRequest=";
+		expected += URLEncoder.encode(subject.getXmlBase64Request(),"UTF-8");
+		expected += "&other=value+with+spaces";
+		expected += "&group_id=cld-9";
+		
+		assertEquals(expected,subject.getRedirectUrl());
 	}
 }

@@ -97,13 +97,15 @@ public class Request {
 	public String getRedirectUrl() throws UnsupportedEncodingException, XMLStreamException {
 		String url = this.settings.getIdpSsoTargetUrl();
 		url += "?SAMLRequest=";
-		url += this.getRidOfCRLF(URLEncoder.encode(this.getXmlBase64Request(),"UTF-8"));
+		
+		url += URLEncoder.encode(this.getXmlBase64Request(),"UTF-8");
+		System.out.println(url);
 		
 		if (this.parameters != null) {
 			for (Map.Entry<String, String> param : this.parameters.entrySet())
 			{
-				String key = this.getRidOfCRLF(URLEncoder.encode(param.getKey(),"UTF-8"));
-				String val = this.getRidOfCRLF(URLEncoder.encode(param.getValue(), "UTF-8"));
+				String key = URLEncoder.encode(param.getKey(),"UTF-8");
+				String val = URLEncoder.encode(param.getValue(), "UTF-8");
 				url += "&" + key + "=" + val;
 			}
 		}
@@ -137,6 +139,7 @@ public class Request {
 			
 			index = origStr.indexOf(now);
 		}
+		
 		return r.toString();
 	}		
 
