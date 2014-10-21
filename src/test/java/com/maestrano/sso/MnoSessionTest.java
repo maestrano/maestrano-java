@@ -38,6 +38,7 @@ public class MnoSessionTest {
 		props.setProperty("app.host", "https://mysuperapp.com");
 		props.setProperty("api.id", "someid");
 		props.setProperty("api.key", "somekey");
+		props.setProperty("sso.sloEnabled", "true");
 		Maestrano.configure(props);
 		
 		testSessObj = new HashMap<String,String>();
@@ -116,7 +117,7 @@ public class MnoSessionTest {
 
 		// Tests
 		assertTrue(subject.performRemoteCheck(httpClient));
-		assertEquals(date, subject.getRecheck());
+		assertEquals(MnoDateHelper.toIso8601(date), MnoDateHelper.toIso8601(subject.getRecheck()));
 	}
 
 	@Test
@@ -174,7 +175,7 @@ public class MnoSessionTest {
 		subject = new MnoSession(httpSession);
 		subject.setRecheck(localRecheck);
 		
-		assertTrue(subject.isValid());
+		assertTrue(subject.isValid(false,httpClient));
 	}
 
 	@Test
@@ -229,7 +230,7 @@ public class MnoSessionTest {
 		subject = new MnoSession(httpSession);
 		
 		// test 2 - session persistence
-		assertEquals(date, subject.getRecheck());
+		assertEquals(MnoDateHelper.toIso8601(date), MnoDateHelper.toIso8601(subject.getRecheck()));
 	}
 
 	@Test
@@ -238,12 +239,13 @@ public class MnoSessionTest {
 		// Make sure any remote response is negative
 		Date date = new Date( (new Date()).getTime() + 100*60*1000);
 		Map<String,String> resp = new HashMap<String,String>();
-		resp.put("valid", "true");
+		resp.put("valid", "false");
 		resp.put("recheck", MnoDateHelper.toIso8601(date));
 		httpClient.setResponseStub(resp);
 
 		// Set local recheck in the past
 		Date localRecheck = new Date( (new Date()).getTime() - 1*60*1000);
+		subject = new MnoSession(httpSession);
 		subject.setRecheck(localRecheck);
 
 		// test 1 - validity
