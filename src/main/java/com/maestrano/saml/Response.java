@@ -32,7 +32,7 @@ public class Response {
 	private Document xmlDoc;
 	private Settings settings;
 	private Certificate certificate;
-	private Map<String,String> cachedAttributes = null;
+	protected Map<String,String> cachedAttributes = null;
 	
 	/**
 	 * Constructor
