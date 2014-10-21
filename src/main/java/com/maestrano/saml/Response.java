@@ -16,21 +16,23 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
-
 import org.w3c.dom.Node;
+
 import java.lang.reflect.Method;
+
 import org.w3c.dom.Element;
 
 import com.maestrano.Maestrano;
 
 import java.util.HashMap;
+import java.util.Map;
 
 public class Response {
 	
 	private Document xmlDoc;
 	private Settings settings;
 	private Certificate certificate;
-	private HashMap<String,String> cachedAttributes;
+	private Map<String,String> cachedAttributes = null;
 	
 	/**
 	 * Constructor
@@ -123,11 +125,13 @@ public class Response {
 	 * Return all the assertions describing the user and user context (group) 
 	 * @return HashMap<String,String> map of user/context attributes
 	 */
-	public HashMap<String,String> getAttributes() {
+	public Map<String,String> getAttributes() {
 		if (cachedAttributes != null)
         {
             return cachedAttributes;
         }
+		
+		cachedAttributes = new HashMap<String,String>();
 		
 		NodeList nodes = xmlDoc.getElementsByTagNameNS("urn:oasis:names:tc:SAML:2.0:assertion", "Attribute");
 		
