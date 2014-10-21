@@ -30,7 +30,8 @@ public class Response {
 	private Document xmlDoc;
 	private Settings settings;
 	private Certificate certificate;
-
+	private HashMap<String,String> cachedAttributes;
+	
 	/**
 	 * Constructor
 	 * @throws CertificateException
@@ -123,8 +124,11 @@ public class Response {
 	 * @return HashMap<String,String> map of user/context attributes
 	 */
 	public HashMap<String,String> getAttributes() {
-		HashMap<String,String> attributes = new HashMap<String,String>();
-    
+		if (cachedAttributes != null)
+        {
+            return cachedAttributes;
+        }
+		
 		NodeList nodes = xmlDoc.getElementsByTagNameNS("urn:oasis:names:tc:SAML:2.0:assertion", "Attribute");
 		
 		for (int i = 0; i < nodes.getLength(); i++) {
@@ -141,12 +145,12 @@ public class Response {
 						}
 					}
 					
-					attributes.put(nameAttr,valAttr);
+					cachedAttributes.put(nameAttr,valAttr);
 				}
 			}
 		}
     
-		return attributes;
+		return cachedAttributes;
 	}
      
 	/**
