@@ -82,10 +82,6 @@ public class Response {
 			throw new Exception("Can't find signature in document.");
 		}
 
-//		if (setIdAttributeExists()) {
-//			tagIdAttributes(xmlDoc);
-//		}
-
 		X509Certificate cert = certificate.getX509Cert();
 		DOMValidateContext ctx = new DOMValidateContext(cert.getPublicKey(), nodes.item(0));
 		XMLSignatureFactory sigF = XMLSignatureFactory.getInstance("DOM");
@@ -135,27 +131,4 @@ public class Response {
 	public Certificate getCertificate() {
 		return certificate;
 	}
-	
-//	private void tagIdAttributes(Document xmlDoc) {
-//		NodeList nodeList = xmlDoc.getElementsByTagName("*");
-//		
-//		for (int i = 0; i < nodeList.getLength(); i++) {
-//			Node node = nodeList.item(i);
-//			if (node.getNodeType() == Node.ELEMENT_NODE) {
-//				if (node.getAttributes().getNamedItem("ID") != null) {
-//					((Element) node).setIdAttribute("ID", true);
-//				}
-//			}
-//		}
-//	}
-//
-//	private boolean setIdAttributeExists() {
-//		for (Method method : Element.class.getDeclaredMethods()) {
-//			if (method.getName().equals("setIdAttribute")) {
-//				return true;
-//			}
-//		}
-//		
-//		return false;
-//	}
 }

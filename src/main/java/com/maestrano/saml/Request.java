@@ -112,34 +112,5 @@ public class Request {
 		
 		return url;
 	}
-	
-	/**
-	 * Clean a string from CRLF characters
-	 * @param String string to be cleaned
-	 * @return String clean string
-	 */
- 	private String getRidOfCRLF(String origStr) {
-		String lf = "%0D";
-		String cr = "%0A";
-		String now = lf;
-
-		int index = origStr.indexOf(now);
-		StringBuffer r = new StringBuffer();
-
-		while (index!=-1) {
-			r.append(origStr.substring(0,index));
-			origStr = origStr.substring(index+3,origStr.length());
-			
-			if (now.equals(lf)) {
-				now = cr;
-			} else {
-				now = lf;
-			}
-			
-			index = origStr.indexOf(now);
-		}
-		
-		return r.toString();
-	}
 
 }
