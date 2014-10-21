@@ -18,9 +18,11 @@ public class Certificate {
    * @throws CertificateException In case it cannot load the certificate.
    */
    public void loadCertificate(String certificate) throws CertificateException {
-    CertificateFactory fty = CertificateFactory.getInstance("X.509");
+    String cleanCert = certificate.replaceAll("-----BEGIN CERTIFICATE-----(\n)*", "");
+    cleanCert = cleanCert.replaceAll("(\n)*-----END CERTIFICATE-----(\n)*", "");
     
-    ByteArrayInputStream bais = new ByteArrayInputStream(DatatypeConverter.parseBase64Binary(certificate));
+	CertificateFactory fty = CertificateFactory.getInstance("X.509");
+    ByteArrayInputStream bais = new ByteArrayInputStream(DatatypeConverter.parseBase64Binary(cleanCert));
 
     x509Cert = (X509Certificate)fty.generateCertificate(bais);
   }
