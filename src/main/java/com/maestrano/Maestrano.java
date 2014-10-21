@@ -29,6 +29,7 @@ public final class Maestrano
     	appService().configure(props);
     	ssoService().configure(props);
     	apiService().configure(props);
+    	webhookService().configure(props);
     }
     
     /**
@@ -53,5 +54,13 @@ public final class Maestrano
      */
     public static ApiService apiService() {
     	return ApiService.getInstance();
+    }
+    
+    /**
+     * Return the Maestrano Webhook Service
+     * @return ApiService singleton
+     */
+    public static WebhookService webhookService() {
+    	return WebhookService.getInstance();
     }
 }
