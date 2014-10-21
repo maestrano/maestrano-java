@@ -101,7 +101,7 @@ public class SsoService {
 	 * @return String either 'real' or 'virtual'. Default: 'real'
 	 */
 	public String getCreationMode() {
-		if (creationMode == null || creationMode != "virtual" || creationMode != "real" ) return "real";
+		if (creationMode == null || !creationMode.equals("virtual")) return "real";
 		return creationMode;
 	}
 	
