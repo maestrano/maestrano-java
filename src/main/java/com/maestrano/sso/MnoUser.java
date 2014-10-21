@@ -24,7 +24,7 @@ public class MnoUser {
 	
 	/**
 	 * Constructor
-	 * @param samlResp a SAML Response from Maestrano IDP
+	 * @param samlResponse a SAML Response from Maestrano IDP
 	 * @throws ParseException 
 	 */
 	public MnoUser(com.maestrano.saml.Response samlResponse) throws ParseException {
