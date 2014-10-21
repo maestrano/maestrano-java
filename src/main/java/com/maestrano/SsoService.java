@@ -44,7 +44,7 @@ public class SsoService {
 	 * @param props Properties object
 	 */
 	public void configure(Properties props) {
-		if (props.getProperty("sso.sloEnabled") != null) {
+		if (props.getProperty("sso.enabled") != null) {
 			this.enabled = props.getProperty("sso.enabled").equalsIgnoreCase("true");
 		}
 		
@@ -80,7 +80,7 @@ public class SsoService {
 	 * @return Boolean
 	 */
 	public Boolean getSloEnabled() {
-		if (enabled == null) return true;
+		if (sloEnabled == null) return true;
 		return sloEnabled;
 	}
 	
