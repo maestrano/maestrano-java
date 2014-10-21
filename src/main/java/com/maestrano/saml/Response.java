@@ -18,6 +18,8 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import org.w3c.dom.Node;
+import java.lang.reflect.Method;
+import org.w3c.dom.Element;
 
 import com.maestrano.Maestrano;
 
@@ -78,13 +80,27 @@ public class Response {
 		if (nodes == null || nodes.getLength() == 0) {
 			throw new Exception("Can't find signature in document.");
 		}
+		
+		if (setIdAttributeExists()) {
+			tagIdAttributes(xmlDoc);
+		}
 
 		X509Certificate cert = certificate.getX509Cert();
 		DOMValidateContext ctx = new DOMValidateContext(cert.getPublicKey(), nodes.item(0));
 		XMLSignatureFactory sigF = XMLSignatureFactory.getInstance("DOM");
-		XMLSignature xmlSignature = sigF.unmarshalXMLSignature(ctx);
-
-		return xmlSignature.validate(ctx);
+		
+		XMLSignature xmlSignature;
+		try {
+			xmlSignature = sigF.unmarshalXMLSignature(ctx);
+		} catch (Exception e) {
+			xmlSignature = null;
+		}
+		
+		if (xmlSignature != null) {
+			return xmlSignature.validate(ctx);
+		} else {
+			return false;
+		}
 	}
 	
 	/**
@@ -113,8 +129,20 @@ public class Response {
 		
 		for (int i = 0; i < nodes.getLength(); i++) {
 			Node node = nodes.item(i);
-			if (node.getNodeType() == Node.ATTRIBUTE_NODE) {
-				attributes.put(node.getNodeName(),node.getNodeValue());
+			
+			if (node.getAttributes() != null && node.getAttributes().getNamedItem("Name") != null) {
+				String nameAttr = node.getAttributes().getNamedItem("Name").getNodeValue();
+				if (nameAttr != null && !nameAttr.isEmpty()) {
+					String valAttr = null;
+					
+					for (int j = 0; j < node.getChildNodes().getLength(); j++) {
+						if (node.getChildNodes().item(j).getNodeName().matches(".*AttributeValue")) {
+							valAttr = node.getChildNodes().item(j).getTextContent();
+						}
+					}
+					
+					attributes.put(nameAttr,valAttr);
+				}
 			}
 		}
     
@@ -127,5 +155,26 @@ public class Response {
 	 */
 	public Certificate getCertificate() {
 		return certificate;
+	}
+	
+	private void tagIdAttributes(Document xmlDoc) {
+		NodeList nodeList = xmlDoc.getElementsByTagName("*");
+		for (int i = 0; i < nodeList.getLength(); i++) {
+			Node node = nodeList.item(i);
+			if (node.getNodeType() == Node.ELEMENT_NODE) {
+				if (node.getAttributes().getNamedItem("ID") != null) {
+					((Element) node).setIdAttribute("ID", true);
+				}
+			}
+		}
+	}
+
+	private boolean setIdAttributeExists() {
+		for (Method method : Element.class.getDeclaredMethods()) {
+			if (method.getName().equals("setIdAttribute")) {
+				return true;
+			}
+		}
+		return false;
 	}
 }
