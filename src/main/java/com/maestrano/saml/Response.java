@@ -17,9 +17,6 @@ import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import java.lang.reflect.Method;
-
-import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 import com.maestrano.Maestrano;
