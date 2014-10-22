@@ -107,6 +107,14 @@ public class ApiService {
 	}
 	
 	/**
+	 * Return the base for the "Account" API
+	 * @return String base
+	 */
+	public String getAccountBase() {
+		return getBase() + "/account";
+	}
+	
+	/**
 	 * Check whether to verify the SSL certificate or not
 	 * during API calls. False by default.
 	 * @return Boolean whether to verify the certificate or not
