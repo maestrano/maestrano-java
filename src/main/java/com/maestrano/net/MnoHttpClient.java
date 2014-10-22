@@ -58,8 +58,8 @@ public class MnoHttpClient {
 	 * @return response body
 	 * @throws IOException
 	 */
-	public String delete(String url, Map<String,String> header, String payload) throws IOException {
-		return performRequest(url,"DELETE",header,payload);
+	public String put(String url, Map<String,String> header, String payload) throws IOException {
+		return performRequest(url,"PUT",header,payload);
 	}
 	
 	/**
@@ -70,8 +70,8 @@ public class MnoHttpClient {
 	 * @return response body
 	 * @throws IOException
 	 */
-	public String put(String url, Map<String,String> header, String payload) throws IOException {
-		return performRequest(url,"PUT",header,payload);
+	public String delete(String url, Map<String,String> header, String payload) throws IOException {
+		return performRequest(url,"DELETE",header,payload);
 	}
 	
 	/**
