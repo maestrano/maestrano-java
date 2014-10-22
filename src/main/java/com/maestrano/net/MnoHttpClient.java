@@ -25,7 +25,7 @@ public class MnoHttpClient {
 	 * @throws IOException
 	 */
 	public String get(String url) throws IOException {
-		return get(url,null);
+		return performRequest(url,"GET",null);
 	}
 	
 	/**
