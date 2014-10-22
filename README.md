@@ -134,7 +134,7 @@ sso.consumePath=/maestrano/auth/saml/consume.jsp
 # worry we take care of forwarding any email you would send to this address
 sso.creationMode="virtual"
       
-#===> Account Webhooks
+# ===> Account Webhooks
 # Single sign on has been setup into your app and Maestrano users are now able
 # to use your service. Great! Wait what happens when a business (group) decides to 
 # stop using your service? Also what happens when a user gets removed from a business?
