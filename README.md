@@ -41,7 +41,7 @@ To get started just go to: http://api-sandbox.maestrano.io
 ### Installation
 
 To install Maestrano, you can this dependency to your project's POM
-```console
+```
 <dependency>
   <groupId>com.maestrano</groupId>
   <artifactId>stripe-maestrano</artifactId>
