@@ -5,9 +5,12 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+import javax.servlet.ServletRequest;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
@@ -15,7 +18,7 @@ import javax.xml.bind.DatatypeConverter;
 
 import com.maestrano.Maestrano;
 
-public class Request {
+public class AuthRequest {
 	
 	private String id;
 	private String issueInstant;
@@ -25,7 +28,7 @@ public class Request {
 	/**
 	 * Constructor
 	 */
-	public Request() {
+	public AuthRequest() {
 		this.settings = Maestrano.ssoService().getSamlSettings();
 		id = "_" + UUID.randomUUID().toString();
 		SimpleDateFormat simpleDf = new SimpleDateFormat("yyyy-MM-dd'T'H:mm:ssZ");
@@ -36,11 +39,29 @@ public class Request {
 	 * Constructor
 	 * @param Map<String,String> request parameters
 	 */
-	public Request(Map<String, String> parameters)
+	public AuthRequest(Map<String, String> parameters)
 	{	
 		this();
 		this.parameters = parameters;
 	}
+	
+	/**
+	 * Constructor
+	 * @param request
+	 */
+	@SuppressWarnings("unchecked")
+	public AuthRequest(ServletRequest request) {
+		this();
+		this.parameters = new HashMap<String,String>();
+				
+		Enumeration<String> parameterNames = request.getParameterNames();
+
+        while (parameterNames.hasMoreElements()) {
+            String paramName = parameterNames.nextElement();
+            this.parameters.put(paramName, request.getParameter(paramName));
+        }
+	}
+	
 	
 	/**
 	 * 

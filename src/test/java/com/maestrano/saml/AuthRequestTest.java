@@ -24,9 +24,9 @@ import com.maestrano.Maestrano;
 
 import static org.junit.Assert.assertEquals;
 
-public class RequestTest {
+public class AuthRequestTest {
 	private Properties props = new Properties();
-	private Request subject;
+	private AuthRequest subject;
 	
 	@Before
 	public void beforeEach() {
@@ -35,7 +35,7 @@ public class RequestTest {
 		props.setProperty("api.id", "someid");
 		props.setProperty("api.key", "somekey");
 		Maestrano.configure(props);
-		subject = new Request();
+		subject = new AuthRequest();
 	}
 	
 	@Test
@@ -73,7 +73,7 @@ public class RequestTest {
 		Map<String,String> params = new HashMap<String,String>();
 		params.put("group_id", "cld-9");
 		params.put("other", "value with spaces");
-		subject = new Request(params);
+		subject = new AuthRequest(params);
 		
 		String expected = "https://maestrano.com/api/v1/auth/saml?SAMLRequest=";
 		expected += URLEncoder.encode(subject.getXmlBase64Request(),"UTF-8");
