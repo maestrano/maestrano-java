@@ -1,5 +1,6 @@
 package com.maestrano;
 
+import java.util.Map;
 import java.util.Properties;
 
 import org.junit.Before;
@@ -14,6 +15,7 @@ public class AppServiceTest {
 	@Before
 	public void beforeEach() {
 		props.setProperty("app.environment", "production");
+		props.setProperty("app.host", "https://mysuperapp.com");
 		Maestrano.configure(props);
 		subject = Maestrano.appService();
 	}
@@ -25,11 +27,13 @@ public class AppServiceTest {
 	
 	@Test
 	public void getHost_itReturnsTheRightValue() {
-		String host = "https://mysuperapp.com";
-		props.setProperty("app.host", host);
-		Maestrano.configure(props);
-		
-		assertEquals(host, subject.getHost());
+		assertEquals("https://mysuperapp.com", subject.getHost());
+	}
+	
+	@Test
+	public void toMetadataHash_itReturnsTheRightValue() {
+		Map<String,String> hash = subject.toMetadataHash();
+		assertEquals(props.getProperty("app.host"), hash.get("host"));
 	}
 
 }

@@ -1,5 +1,7 @@
 package com.maestrano;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 
 public class AppService {
@@ -63,4 +65,10 @@ public class AppService {
 		this.host = host;
 	}
 	
+	public Map<String,String> toMetadataHash() {
+		Map<String,String> hash = new HashMap<String,String>();
+		hash.put("host",getHost());
+		
+		return hash;
+	}
 }
