@@ -2,6 +2,7 @@ package com.maestrano;
 
 import static org.junit.Assert.assertEquals;
 
+import java.util.Map;
 import java.util.Properties;
 
 import org.junit.Before;
@@ -35,5 +36,14 @@ public class WebhookServiceTest {
 		props.setProperty("webhook.account.groupUsersPath", "/bla/:id");
 		Maestrano.configure(props);
 		assertEquals("/bla/:id", subject.getAccountGroupUsersPath());
+	}
+	
+	@Test
+	public void toMetadataHash_itReturnsTheRightValue() {
+		Map<String,Map<String,String>> hash = subject.toMetadataHash();
+		Map<String,String> accountHash = hash.get("account");
+		
+		assertEquals(subject.getAccountGroupsPath(), accountHash.get("groups_path"));
+		assertEquals(subject.getAccountGroupUsersPath(), accountHash.get("group_users_path"));
 	}
 }

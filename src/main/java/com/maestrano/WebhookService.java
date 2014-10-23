@@ -1,5 +1,9 @@
 package com.maestrano;
 
+import static org.junit.Assert.assertEquals;
+
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 
 public class WebhookService {
@@ -64,5 +68,16 @@ public class WebhookService {
 
 	public void setAccountGroupUsersPath(String accountGroupUsersPath) {
 		this.accountGroupUsersPath = accountGroupUsersPath;
+	}
+	
+	public Map<String,Map<String,String>> toMetadataHash() {
+		Map<String,Map<String,String>> hash = new HashMap<String,Map<String,String>>();
+		Map<String,String> accountHash = new HashMap<String,String>();
+		accountHash.put("groups_path",getAccountGroupsPath());
+		accountHash.put("group_users_path",getAccountGroupUsersPath());
+		
+		hash.put("account", accountHash);
+		
+		return hash;
 	}
 }
