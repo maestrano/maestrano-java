@@ -1,10 +1,14 @@
 package com.maestrano;
 
 import java.io.UnsupportedEncodingException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.bind.DatatypeConverter;
+
+import com.google.gson.Gson;
 
 /**
  * Hello world!
@@ -23,6 +27,14 @@ public final class Maestrano
      */
     public static String getVersion() {
     	return version;
+    }
+    
+    /**
+     * Return the current application environment
+     * @return either 'test' or 'production'
+     */
+    public static String getEnvironment() {
+    	return appService().getEnvironment();
     }
     
     /**
@@ -103,5 +115,30 @@ public final class Maestrano
      */
     public static WebhookService webhookService() {
     	return WebhookService.getInstance();
+    }
+    
+    /**
+     * Return the Maestrano API configuration as a hash
+     * @return metadata hash
+     */
+    public static Map<String,Object> toMetadataHash() {
+    	Map<String,Object> hash = new HashMap<String,Object>();
+		hash.put("environment",Maestrano.getEnvironment());
+		hash.put("app",Maestrano.appService().toMetadataHash());
+		hash.put("api",Maestrano.apiService().toMetadataHash());
+		hash.put("sso",Maestrano.ssoService().toMetadataHash());
+		hash.put("webhook",Maestrano.webhookService().toMetadataHash());
+		
+		return hash;
+    }
+    
+    /**
+     * Return the Maestrano API configuration as a json hash
+     * @return metadata hash
+     */
+    public static String toMetadata() {
+    	Gson gson = new Gson();
+		
+		return gson.toJson(toMetadataHash());
     }
 }

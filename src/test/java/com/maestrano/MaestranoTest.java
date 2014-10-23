@@ -3,6 +3,8 @@ package com.maestrano;
 import static org.junit.Assert.*;
 
 import java.io.UnsupportedEncodingException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 
 import javax.xml.bind.DatatypeConverter;
@@ -10,6 +12,7 @@ import javax.xml.bind.DatatypeConverter;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.google.gson.Gson;
 import com.maestrano.testhelpers.HttpRequestStub;
 
 public class MaestranoTest {
@@ -53,5 +56,18 @@ public class MaestranoTest {
 		request.setHeader("Authorization", authStr);
 		
 		assertFalse(Maestrano.authenticate(request));
+	}
+	
+	@Test
+	public void toMetadata_itReturnTheRightValue() {
+		Map<String,Object> hash = new HashMap<String,Object>();
+		hash.put("environment",Maestrano.getEnvironment());
+		hash.put("app",Maestrano.appService().toMetadataHash());
+		hash.put("api",Maestrano.apiService().toMetadataHash());
+		hash.put("sso",Maestrano.ssoService().toMetadataHash());
+		hash.put("webhook",Maestrano.webhookService().toMetadataHash());
+		
+		Gson gson = new Gson();
+		assertEquals(gson.toJson(hash),Maestrano.toMetadata());
 	}
 }
