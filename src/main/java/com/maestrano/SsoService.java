@@ -1,5 +1,9 @@
 package com.maestrano;
 
+import static org.junit.Assert.assertEquals;
+
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 
 public class SsoService {
@@ -300,5 +304,20 @@ public class SsoService {
 				this.getX509Certificate(), 
 				this.getNameIdFormat()
 				);
+	}
+	
+	public Map<String,String> toMetadataHash() {
+		Map<String,String> hash = new HashMap<String,String>();
+		hash.put("enabled",getEnabled().toString());
+		hash.put("creation_mode",getCreationMode());
+		hash.put("init_path",getInitPath());
+		hash.put("consume_path",getConsumePath());
+		hash.put("idm",getIdm());
+		hash.put("idp",getIdp());
+		hash.put("name_id_format",getNameIdFormat());
+		hash.put("x509_fingerprint",getX509Fingerprint());
+		hash.put("x509_certificate",getX509Certificate());
+		
+		return hash;
 	}
 }

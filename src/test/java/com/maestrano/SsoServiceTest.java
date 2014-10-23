@@ -1,5 +1,6 @@
 package com.maestrano;
 
+import java.util.Map;
 import java.util.Properties;
 
 import org.junit.Before;
@@ -97,5 +98,19 @@ public class SsoServiceTest {
 		assertEquals(subject.getX509Certificate(), settings.getIdpCertificate());
 		assertEquals(Maestrano.apiService().getId(), settings.getIssuer());
 		assertEquals(subject.getNameIdFormat(), settings.getNameIdentifierFormat());
+	}
+	
+	@Test
+	public void toMetadataHash_itReturnsTheRightValue() {
+		Map<String,String> hash = subject.toMetadataHash();
+		assertEquals(subject.getEnabled().toString(), hash.get("enabled"));
+		assertEquals(subject.getCreationMode(), hash.get("creation_mode"));
+		assertEquals(subject.getInitPath(), hash.get("init_path"));
+		assertEquals(subject.getConsumePath(), hash.get("consume_path"));
+		assertEquals(subject.getIdm(), hash.get("idm"));
+		assertEquals(subject.getIdp(), hash.get("idp"));
+		assertEquals(subject.getNameIdFormat(), hash.get("name_id_format"));
+		assertEquals(subject.getX509Fingerprint(), hash.get("x509_fingerprint"));
+		assertEquals(subject.getX509Certificate(), hash.get("x509_certificate"));
 	}
 }
