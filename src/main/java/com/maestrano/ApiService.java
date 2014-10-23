@@ -1,7 +1,5 @@
 package com.maestrano;
 
-import static org.junit.Assert.assertEquals;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;

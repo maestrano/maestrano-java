@@ -1,15 +1,10 @@
 package com.maestrano.saml;
 
-import java.io.IOException;
 import java.security.cert.CertificateException;
 import java.util.Properties;
 
-import javax.xml.parsers.ParserConfigurationException;
-
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
-import org.xml.sax.SAXException;
 
 import com.maestrano.Maestrano;
 import com.maestrano.testhelpers.SamlCertHelper;

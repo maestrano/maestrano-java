@@ -64,7 +64,6 @@ public class HttpSessionStub implements HttpSession {
 		return null;
 	}
 
-	@SuppressWarnings("deprecation")
 	public HttpSessionContext getSessionContext() {
 		// TODO Auto-generated method stub
 		return null;

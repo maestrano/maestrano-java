@@ -1,14 +1,10 @@
 package com.maestrano.sso;
 
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
-import java.util.TimeZone;
-
-import javax.xml.bind.DatatypeConverter;
 
 import org.junit.Before;
 
@@ -18,7 +14,6 @@ import com.maestrano.testhelpers.HttpSessionStub;
 import com.maestrano.testhelpers.MnoHttpClientStub;
 import com.maestrano.testhelpers.SamlMnoRespStub;
 
-import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;

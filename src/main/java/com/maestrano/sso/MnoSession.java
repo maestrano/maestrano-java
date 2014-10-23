@@ -2,11 +2,9 @@ package com.maestrano.sso;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.TimeZone;
 
 import javax.servlet.http.HttpSession;
 import javax.xml.bind.DatatypeConverter;
