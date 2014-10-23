@@ -1,5 +1,9 @@
 package com.maestrano;
 
+import static org.junit.Assert.assertEquals;
+
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 
 public class ApiService {
@@ -126,5 +130,27 @@ public class ApiService {
 
 	public void setVerifySslCerts(Boolean verifySslCerts) {
 		this.verifySslCerts = verifySslCerts;
+	}
+	
+	public String getLang() {
+		return "Java";
+	}
+	
+	public String getLangVersion() {
+		return System.getProperty("java.version");
+	}
+	
+	public String getVersion() {
+		return Maestrano.getVersion();
+	}
+	
+	public Map<String,String> toMetadataHash() {
+		Map<String,String> hash = new HashMap<String,String>();
+		hash.put("id", getId());
+		hash.put("lang", getLang());
+		hash.put("version", getVersion());
+		hash.put("lang_version", getLangVersion());
+		
+		return hash;
 	}
 }

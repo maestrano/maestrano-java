@@ -2,6 +2,7 @@ package com.maestrano;
 
 import static org.junit.Assert.assertEquals;
 
+import java.util.Map;
 import java.util.Properties;
 
 import org.junit.Before;
@@ -14,9 +15,28 @@ public class ApiServiceTest {
 	@Before
 	public void beforeEach() {
 		props.setProperty("app.environment", "production");
+		props.setProperty("api.id", "someid");
+		props.setProperty("api.key", "somekey");
 		Maestrano.configure(props);
 		subject = Maestrano.apiService();
 	}
+	
+	@Test
+	public void getLang_itReturnsTheRightValue() {
+		assertEquals("Java",subject.getLang());
+	}
+	
+	@Test
+	public void getLangVersion_itReturnsTheRightValue() {
+		assertEquals(System.getProperty("java.version"),subject.getLangVersion());
+	}
+	
+	@Test
+	public void getVersion() {
+		assertEquals(Maestrano.getVersion(),subject.getVersion());
+	}
+	
+	
 	
 	@Test
 	public void apiAuth_itReturnsTheRightCredentials() {
@@ -47,5 +67,14 @@ public class ApiServiceTest {
 		Maestrano.configure(props);
 		
 		assertEquals(host, subject.getHost());
+	}
+	
+	@Test
+	public void toMetadataHash_itReturnsTheRightValue() {
+		Map<String,String> hash = subject.toMetadataHash();
+		assertEquals(props.getProperty("api.id"), hash.get("id"));
+		assertEquals(subject.getLang(), hash.get("lang"));
+		assertEquals(subject.getVersion(), hash.get("version"));
+		assertEquals(subject.getLangVersion(), hash.get("lang_version"));
 	}
 }
