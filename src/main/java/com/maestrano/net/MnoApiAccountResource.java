@@ -9,6 +9,7 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.maestrano.Maestrano;
 import com.maestrano.account.MnoBill;
+import com.maestrano.testhelpers.MnoHttpClientStub;
 
 public class MnoApiAccountResource {
 	
@@ -55,6 +56,20 @@ public class MnoApiAccountResource {
 		
 		Type parsingType = new TypeToken<MnoApiAccountResponse<List<MnoBill>>>(){}.getType();
 		MnoApiAccountResponse<List<T>> resp = gson.fromJson(jsonBody, parsingType);
+		
+		return resp.getData();
+	}
+	
+	public static <T> T retrieve(Class<T> clazz, String entityId) throws IOException {
+		return retrieve(clazz,entityId,MnoHttpClient.getAuthenticatedClient());
+	}
+	
+	public static <T> T retrieve(Class<T> clazz, String entityId, MnoHttpClient httpClient) throws IOException {
+		Gson gson = new Gson();
+		String jsonBody = httpClient.get(getInstanceUrl(clazz,entityId));
+		
+		Type parsingType = new TypeToken<MnoApiAccountResponse<MnoBill>>(){}.getType();
+		MnoApiAccountResponse<T> resp = gson.fromJson(jsonBody, parsingType);
 		
 		return resp.getData();
 	}

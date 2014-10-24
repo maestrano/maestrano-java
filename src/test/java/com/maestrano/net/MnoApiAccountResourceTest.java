@@ -97,11 +97,11 @@ public class MnoApiAccountResourceTest {
 		obj.put("id","bill-1234");
 		list.add(obj);
 		hash.put("data", list);
-		
+
 		// Params
 		Map<String,String> params = new HashMap<String,String>();
 		params.put("group_id", "cld-4567");
-		
+
 		// Prepare response
 		Gson gson = new Gson();
 		httpClient = new MnoHttpClientStub();
@@ -110,5 +110,24 @@ public class MnoApiAccountResourceTest {
 		// Test
 		List<MnoBill> respList = MnoApiAccountResource.all(MnoBill.class, params, httpClient);
 		assertEquals("bill-1234",respList.get(0).getId());
+	}
+
+	@Test
+	public void retrieve_itReturnsTheRightEntity() throws IOException {
+		// Prepare data
+		Map<String,Object> hash = new HashMap<String,Object>();
+		Map<String,Object> obj = new HashMap<String,Object>();
+		obj.put("id","bill-1234");
+		hash.put("data", obj);
+
+		// Prepare response
+		Gson gson = new Gson();
+		httpClient = new MnoHttpClientStub();
+		httpClient.setResponseStub(gson.toJson(hash), MnoApiAccountResource.getInstanceUrl(MnoBill.class,"bill-1234"));
+
+		// Test
+		MnoBill resp = MnoApiAccountResource.retrieve(MnoBill.class, "bill-1234", httpClient);
+		assertEquals("bill-1234",resp.getId());
+
 	}
 }
