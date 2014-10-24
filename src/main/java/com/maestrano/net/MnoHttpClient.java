@@ -7,14 +7,31 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.ProtocolException;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.xml.bind.DatatypeConverter;
+
+import com.maestrano.Maestrano;
+
 public class MnoHttpClient {
 	private String defaultUserAgent;
+	private String basicAuthHash;
 	
 	public MnoHttpClient() {
 		this.defaultUserAgent = "maestrano-java/" + System.getProperty("java.version");
+	}
+	
+	/**
+	 * Return a client with basic auth setup
+	 */
+	public static MnoHttpClient getAuthenticatedClient() {
+		MnoHttpClient client = new MnoHttpClient();
+		String authStr = Maestrano.apiService().getId() + ":" + Maestrano.apiService().getKey();
+		client.basicAuthHash = "Basic " + DatatypeConverter.printBase64Binary(authStr.getBytes());
+		
+		return client;
 	}
 	
 	/**
@@ -24,7 +41,7 @@ public class MnoHttpClient {
 	 * @throws IOException
 	 */
 	public String get(String url) throws IOException {
-		return performRequest(url,"GET",null);
+		return performRequest(url,"GET",null,null,null);
 	}
 	
 	/**
@@ -33,8 +50,18 @@ public class MnoHttpClient {
 	 * @return response body
 	 * @throws IOException
 	 */
-	public String get(String url, Map<String,String> header) throws IOException {
-		return performRequest(url,"GET",header);
+	public String get(String url, Map<String,String> params) throws IOException {
+		return performRequest(url,"GET",params, null,null);
+	}
+	
+	/**
+	 * Perform a GET request on the specified endpoint
+	 * @param url
+	 * @return response body
+	 * @throws IOException
+	 */
+	public String get(String url, Map<String,String> params, Map<String,String> header) throws IOException {
+		return performRequest(url,"GET",params, header,null);
 	}
 	
 	/**
@@ -46,7 +73,7 @@ public class MnoHttpClient {
 	 * @throws IOException
 	 */
 	public String post(String url, Map<String,String> header, String payload) throws IOException {
-		return performRequest(url,"POST",header,payload);
+		return performRequest(url,"POST",null,header,payload);
 	}
 	
 	/**
@@ -58,7 +85,7 @@ public class MnoHttpClient {
 	 * @throws IOException
 	 */
 	public String put(String url, Map<String,String> header, String payload) throws IOException {
-		return performRequest(url,"PUT",header,payload);
+		return performRequest(url,"PUT",null,header,payload);
 	}
 	
 	/**
@@ -70,30 +97,7 @@ public class MnoHttpClient {
 	 * @throws IOException
 	 */
 	public String delete(String url, Map<String,String> header, String payload) throws IOException {
-		return performRequest(url,"DELETE",header,payload);
-	}
-	
-	/**
-	 * Perform a request to the remote endpoint
-	 * @param url the remote endpoint to contact
-	 * @param method such as 'GET', 'PUT', 'POST' or 'DELETE'
-	 * @return response body
-	 * @throws IOException
-	 */
-	protected String performRequest(String url, String method) throws IOException {
-		return performRequest(url,method,null);
-	}
-	
-	/**
-	 * Perform a request to the remote endpoint
-	 * @param url the remote endpoint to contact
-	 * @param method such as 'GET', 'PUT', 'POST' or 'DELETE'
-	 * @param header values
-	 * @return response body
-	 * @throws IOException
-	 */
-	protected String performRequest(String url, String method, Map<String,String> header) throws IOException {
-		return performRequest(url,method,header,null);
+		return performRequest(url,"DELETE",null,header,payload);
 	}
 	
 	/**
@@ -105,7 +109,7 @@ public class MnoHttpClient {
 	 * @return response body
 	 * @throws IOException
 	 */
-	protected String performRequest(String url, String method, Map<String,String> header, String payload) throws IOException {
+	protected String performRequest(String url, String method, Map<String,String> params, Map<String,String> header, String payload) throws IOException {
 		// Prepare header
 		if (header == null) {
 			header = new HashMap<String,String>();
@@ -119,9 +123,30 @@ public class MnoHttpClient {
 			header.put("User-Agent",defaultUserAgent);
 		}
 		
+		// Set authorization
+		if (this.basicAuthHash != null && ! this.basicAuthHash.isEmpty()) {
+			if(header.get("Authorization") == null || header.get("Authorization").isEmpty()) {
+				header.put("Authorization",basicAuthHash);
+			}
+		}
+		
+		// Prepare url
+		String realUrl = url;
+		if (params != null && !params.isEmpty()) {
+			realUrl += "?";
+			
+			for (Map.Entry<String, String> param : params.entrySet())
+			{
+				String key = URLEncoder.encode(param.getKey(),"UTF-8");
+				String val = URLEncoder.encode(param.getValue(), "UTF-8");
+				realUrl += "&" + key + "=" + val;
+			}
+		}
+		
+		
 		
 		// Get connection
-		HttpURLConnection conn = openConnection(url,header);
+		HttpURLConnection conn = openConnection(realUrl,header);
 		
 		// Send Data if PUT/POST
 		if (payload != null) {
