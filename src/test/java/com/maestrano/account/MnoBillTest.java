@@ -37,9 +37,6 @@ public class MnoBillTest {
 	
 	@Test
 	public void cancel_itCancelsABill() {
-		MnoBill bill = new MnoBill();
-		bill.setDescription("bla");
-		MnoBill newBill = new MnoBill();
-		newBill.merge(bill);
+		
 	}
 }
