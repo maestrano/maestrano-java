@@ -1,5 +1,7 @@
 package com.maestrano.account;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 
 import org.junit.Before;
@@ -37,6 +39,8 @@ public class MnoBillTest {
 	
 	@Test
 	public void cancel_itCancelsABill() {
-		
+		List<String> l = new ArrayList<String>();
+		l.add("bla");
+		System.out.println(l);
 	}
 }
