@@ -40,7 +40,15 @@ public class MnoApiAccountResource {
 	public static String getInstanceUrl(Class<?> clazz, String id) {
 		return Maestrano.apiService().getHost() + getInstanceEndpoint(clazz,id);
 	}
-
+	
+	public static <T> List<T> all(Class<T> clazz) throws IOException {
+		return all(clazz,null,MnoHttpClient.getAuthenticatedClient());
+	}
+	
+	public static <T> List<T> all(Class<T> clazz, Map<String,String> params) throws IOException {
+		return all(clazz,params,MnoHttpClient.getAuthenticatedClient());
+	}
+	
 	public static <T> List<T> all(Class<T> clazz, Map<String,String> params, MnoHttpClient httpClient) throws IOException {
 		Gson gson = new Gson();
 		String jsonBody = httpClient.get(getCollectionUrl(clazz), params);
