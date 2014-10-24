@@ -18,15 +18,39 @@ public class MnoHttpClientStub extends MnoHttpClient {
 	}
 	
 	public String get(String url) {
-		return get(url,null);
+		return getResponseStub(url,null,null);
 	}
 	
 	public String get(String url, Map<String,String> params) {
+		return getResponseStub(url,params,null);
+	}
+	
+	public String put(String url,String payload) {
+		return getResponseStub(url,null,payload);
+	}
+	
+	public String post(String url,String payload) {
+		return getResponseStub(url,null,payload);
+	}
+	
+	public String delete(String url) {
+		return getResponseStub(url,null,null);
+	}
+	
+	public String getResponseStub() {
+		return defaultResponseStub;
+	}
+	
+	public String getResponseStub(String url, Map<String,String> params, String payload) {
 		String keyStr = url;
 		String paramsStr = stringifyHash(params);
 		
 		if (paramsStr != null) {
 			keyStr += "?" + paramsStr;
+		}
+		
+		if (payload !=null) {
+			keyStr += "@@payload@@" + payload;
 		}
 		
 		if (this.responseStubs.get(keyStr) != null) {
@@ -36,24 +60,30 @@ public class MnoHttpClientStub extends MnoHttpClient {
 		return this.defaultResponseStub;
 	}
 
-	public String getResponseStub() {
-		return defaultResponseStub;
-	}
+	
 
 	public void setResponseStub(String responseStub) {
 		this.defaultResponseStub = responseStub;
 	}
 	
 	public void setResponseStub(String responseStub, String url) {
-		setResponseStub(responseStub,url,null);
+		setResponseStub(responseStub,url,null,null);
 	}
 	
 	public void setResponseStub(String responseStub, String url, Map<String,String> params) {
+		setResponseStub(responseStub,url,params,null);
+	}
+	
+	public void setResponseStub(String responseStub, String url, Map<String,String> params, String payload) {
 		String keyStr = url;
 		String paramsStr = stringifyHash(params);
 		
 		if (paramsStr != null) {
 			keyStr += "?" + paramsStr;
+		}
+		
+		if (payload !=null) {
+			keyStr += "@@payload@@" + payload;
 		}
 		
 		this.responseStubs.put(keyStr, responseStub);

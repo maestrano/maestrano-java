@@ -130,4 +130,69 @@ public class MnoApiAccountResourceTest {
 		assertEquals("bill-1234",resp.getId());
 
 	}
+	
+	@Test
+	public void create_itCreatesTheRightEntity() throws IOException {
+		// Prepare Response data
+		Map<String,Object> hash = new HashMap<String,Object>();
+		Map<String,Object> obj = new HashMap<String,Object>();
+		obj.put("id","bill-1234");
+		hash.put("data", obj);
+		
+		// Prepare Creation data
+		Map<String,Object> updHash = new HashMap<String,Object>();
+		updHash.put("description", "somedescription");
+		
+		// Prepare response
+		Gson gson = new Gson();
+		httpClient = new MnoHttpClientStub();
+		httpClient.setResponseStub(gson.toJson(hash), 
+				MnoApiAccountResource.getCollectionUrl(MnoBill.class),null,gson.toJson(updHash));
+		
+		// Test
+		MnoBill resp = MnoApiAccountResource.create(MnoBill.class, updHash, httpClient);
+		assertEquals("bill-1234",resp.getId());
+	}
+	
+	@Test
+	public void update_itUpdatesTheRightEntity() throws IOException {
+		// Prepare Response data
+		Map<String,Object> hash = new HashMap<String,Object>();
+		Map<String,Object> obj = new HashMap<String,Object>();
+		obj.put("id","bill-1234");
+		hash.put("data", obj);
+		
+		// Prepare update data
+		Map<String,Object> updHash = new HashMap<String,Object>();
+		updHash.put("description", "somedescription");
+		
+		// Prepare response
+		Gson gson = new Gson();
+		httpClient = new MnoHttpClientStub();
+		httpClient.setResponseStub(gson.toJson(hash), 
+				MnoApiAccountResource.getInstanceUrl(MnoBill.class,"bill-1234"),null,gson.toJson(updHash));
+		
+		// Test
+		MnoBill resp = MnoApiAccountResource.update(MnoBill.class, "bill-1234", updHash, httpClient);
+		assertEquals("bill-1234",resp.getId());
+	}
+	
+	@Test
+	public void delete_itDeletesTheRightEntity() throws IOException {
+		// Prepare Response data
+		Map<String,Object> hash = new HashMap<String,Object>();
+		Map<String,Object> obj = new HashMap<String,Object>();
+		obj.put("id","bill-1234");
+		hash.put("data", obj);
+		
+		// Prepare response
+		Gson gson = new Gson();
+		httpClient = new MnoHttpClientStub();
+		httpClient.setResponseStub(gson.toJson(hash), 
+				MnoApiAccountResource.getInstanceUrl(MnoBill.class,"bill-1234"));
+		
+		// Test
+		MnoBill resp = MnoApiAccountResource.delete(MnoBill.class, "bill-1234", httpClient);
+		assertEquals("bill-1234",resp.getId());
+	}
 }

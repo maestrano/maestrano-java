@@ -60,6 +60,20 @@ public class MnoApiAccountResource {
 		return resp.getData();
 	}
 	
+	public static <T> T create(Class<T> clazz, Map<String,Object> hash) throws IOException {
+		return create(clazz,hash,MnoHttpClient.getAuthenticatedClient());
+	}
+	
+	public static <T> T create(Class<T> clazz, Map<String,Object> hash, MnoHttpClient httpClient) throws IOException {
+		Gson gson = new Gson();
+		String jsonBody = httpClient.post(getCollectionUrl(clazz), gson.toJson(hash));
+		
+		Type parsingType = new TypeToken<MnoApiAccountResponse<MnoBill>>(){}.getType();
+		MnoApiAccountResponse<T> resp = gson.fromJson(jsonBody, parsingType);
+		
+		return resp.getData();
+	}
+	
 	public static <T> T retrieve(Class<T> clazz, String entityId) throws IOException {
 		return retrieve(clazz,entityId,MnoHttpClient.getAuthenticatedClient());
 	}
@@ -67,6 +81,34 @@ public class MnoApiAccountResource {
 	public static <T> T retrieve(Class<T> clazz, String entityId, MnoHttpClient httpClient) throws IOException {
 		Gson gson = new Gson();
 		String jsonBody = httpClient.get(getInstanceUrl(clazz,entityId));
+		
+		Type parsingType = new TypeToken<MnoApiAccountResponse<MnoBill>>(){}.getType();
+		MnoApiAccountResponse<T> resp = gson.fromJson(jsonBody, parsingType);
+		
+		return resp.getData();
+	}
+	
+	public static <T> T update(Class<T> clazz, String entityId, Map<String,Object> hash) throws IOException {
+		return update(clazz,entityId,hash,MnoHttpClient.getAuthenticatedClient());
+	}
+	
+	public static <T> T update(Class<T> clazz, String entityId, Map<String,Object> hash, MnoHttpClient httpClient) throws IOException {
+		Gson gson = new Gson();
+		String jsonBody = httpClient.put(getInstanceUrl(clazz,entityId),gson.toJson(hash));
+		
+		Type parsingType = new TypeToken<MnoApiAccountResponse<MnoBill>>(){}.getType();
+		MnoApiAccountResponse<T> resp = gson.fromJson(jsonBody, parsingType);
+		
+		return resp.getData();
+	}
+	
+	public static <T> T delete(Class<T> clazz, String entityId) throws IOException {
+		return delete(clazz,entityId,MnoHttpClient.getAuthenticatedClient());
+	}
+	
+	public static <T> T delete(Class<T> clazz, String entityId, MnoHttpClient httpClient) throws IOException {
+		Gson gson = new Gson();
+		String jsonBody = httpClient.delete(getInstanceUrl(clazz,entityId));
 		
 		Type parsingType = new TypeToken<MnoApiAccountResponse<MnoBill>>(){}.getType();
 		MnoApiAccountResponse<T> resp = gson.fromJson(jsonBody, parsingType);
