@@ -69,7 +69,7 @@ public class MnoApiAccountResourceTest {
 	}
 
 	@Test
-	public void all_itReturnsAllTheSpecifiedEntities() throws IOException {
+	public void all_itReturnsAllTheSpecifiedEntities() throws Exception {
 		// Prepare data
 		Map<String,Object> hash = new HashMap<String,Object>();
 		List<Map<String,Object>> list = new ArrayList<Map<String,Object>>();
@@ -89,7 +89,7 @@ public class MnoApiAccountResourceTest {
 	}
 
 	@Test
-	public void all_withQueryParameters_itReturnsTheSpecifiedEntities() throws IOException {
+	public void all_withQueryParameters_itReturnsTheSpecifiedEntities() throws Exception {
 		// Prepare data
 		Map<String,Object> hash = new HashMap<String,Object>();
 		List<Map<String,Object>> list = new ArrayList<Map<String,Object>>();
@@ -113,7 +113,7 @@ public class MnoApiAccountResourceTest {
 	}
 
 	@Test
-	public void retrieve_itReturnsTheRightEntity() throws IOException {
+	public void retrieve_itReturnsTheRightEntity() throws Exception {
 		// Prepare data
 		Map<String,Object> hash = new HashMap<String,Object>();
 		Map<String,Object> obj = new HashMap<String,Object>();
@@ -132,7 +132,7 @@ public class MnoApiAccountResourceTest {
 	}
 	
 	@Test
-	public void create_itCreatesTheRightEntity() throws IOException {
+	public void create_itCreatesTheRightEntity() throws Exception {
 		// Prepare Response data
 		Map<String,Object> hash = new HashMap<String,Object>();
 		Map<String,Object> obj = new HashMap<String,Object>();
@@ -155,7 +155,7 @@ public class MnoApiAccountResourceTest {
 	}
 	
 	@Test
-	public void update_itUpdatesTheRightEntity() throws IOException {
+	public void update_itUpdatesTheRightEntity() throws Exception {
 		// Prepare Response data
 		Map<String,Object> hash = new HashMap<String,Object>();
 		Map<String,Object> obj = new HashMap<String,Object>();
@@ -178,7 +178,7 @@ public class MnoApiAccountResourceTest {
 	}
 	
 	@Test
-	public void delete_itDeletesTheRightEntity() throws IOException {
+	public void delete_itDeletesTheRightEntity() throws Exception {
 		// Prepare Response data
 		Map<String,Object> hash = new HashMap<String,Object>();
 		Map<String,Object> obj = new HashMap<String,Object>();

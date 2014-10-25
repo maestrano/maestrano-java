@@ -7,6 +7,9 @@ import java.util.Map;
 
 import com.maestrano.net.MnoApiAccountClient;
 
+import exception.ApiException;
+import exception.AuthenticationException;
+
 public class MnoBill extends MnoObject {
 	
 	public String id;
@@ -26,9 +29,10 @@ public class MnoBill extends MnoObject {
 	/**
 	 * Return all application bills
 	 * @return list of bills
-	 * @throws IOException
+	 * @throws ApiException 
+	 * @throws AuthenticationException 
 	 */
-	public static List<MnoBill> all() throws IOException {
+	public static List<MnoBill> all() throws AuthenticationException, ApiException {
 		return MnoApiAccountClient.all(MnoBill.class);
 	}
 	
@@ -36,9 +40,10 @@ public class MnoBill extends MnoObject {
 	 * Return all bills matching the criteria passed in argument
 	 * @param params
 	 * @return list of bills
-	 * @throws IOException
+	 * @throws ApiException 
+	 * @throws AuthenticationException 
 	 */
-	public static List<MnoBill> all(Map<String,String> params) throws IOException {
+	public static List<MnoBill> all(Map<String,String> params) throws AuthenticationException, ApiException {
 		return MnoApiAccountClient.all(MnoBill.class, params);
 	}
 	
@@ -46,9 +51,10 @@ public class MnoBill extends MnoObject {
 	 * Retrieve a single bill by id
 	 * @param billId
 	 * @return a bill if found, null otherwise
-	 * @throws IOException
+	 * @throws ApiException 
+	 * @throws AuthenticationException 
 	 */
-	public static MnoBill retrieve(String billId) throws IOException {
+	public static MnoBill retrieve(String billId) throws AuthenticationException, ApiException {
 		return MnoApiAccountClient.retrieve(MnoBill.class, billId);
 	}
 	
@@ -56,18 +62,20 @@ public class MnoBill extends MnoObject {
 	 * Create a new Bill
 	 * @param params
 	 * @return created bill
-	 * @throws IOException
+	 * @throws ApiException 
+	 * @throws AuthenticationException 
 	 */
-	public static MnoBill create(Map<String,Object> params) throws IOException {
+	public static MnoBill create(Map<String,Object> params) throws AuthenticationException, ApiException {
 		return MnoApiAccountClient.create(MnoBill.class, params);
 	}
 	
 	/**
 	 * Cancel the bill
 	 * @return whether the bill was cancelled or not
-	 * @throws IOException 
+	 * @throws ApiException 
+	 * @throws AuthenticationException 
 	 */
-	public Boolean cancel() throws IOException {
+	public Boolean cancel() throws AuthenticationException, ApiException {
 		if (this.id != null && !this.id.isEmpty()) {
 			MnoBill newBill = MnoApiAccountClient.delete(MnoBill.class, this.id);
 			this.merge(newBill);

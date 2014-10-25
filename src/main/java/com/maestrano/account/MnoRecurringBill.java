@@ -7,6 +7,9 @@ import java.util.Map;
 
 import com.maestrano.net.MnoApiAccountClient;
 
+import exception.ApiException;
+import exception.AuthenticationException;
+
 public class MnoRecurringBill extends MnoObject {
 	public String id;
 	public Date createdAt;
@@ -29,9 +32,10 @@ public class MnoRecurringBill extends MnoObject {
 	/**
 	 * Return all application bills
 	 * @return list of bills
-	 * @throws IOException
+	 * @throws ApiException 
+	 * @throws AuthenticationException
 	 */
-	public static List<MnoRecurringBill> all() throws IOException {
+	public static List<MnoRecurringBill> all() throws AuthenticationException, ApiException {
 		return MnoApiAccountClient.all(MnoRecurringBill.class);
 	}
 	
@@ -39,9 +43,10 @@ public class MnoRecurringBill extends MnoObject {
 	 * Return all bills matching the criteria passed in argument
 	 * @param params
 	 * @return list of bills
-	 * @throws IOException
+	 * @throws ApiException 
+	 * @throws AuthenticationException 
 	 */
-	public static List<MnoRecurringBill> all(Map<String,String> params) throws IOException {
+	public static List<MnoRecurringBill> all(Map<String,String> params) throws AuthenticationException, ApiException {
 		return MnoApiAccountClient.all(MnoRecurringBill.class, params);
 	}
 	
@@ -49,9 +54,10 @@ public class MnoRecurringBill extends MnoObject {
 	 * Retrieve a single bill by id
 	 * @param billId
 	 * @return a bill if found, null otherwise
-	 * @throws IOException
+	 * @throws ApiException 
+	 * @throws AuthenticationException 
 	 */
-	public static MnoRecurringBill retrieve(String billId) throws IOException {
+	public static MnoRecurringBill retrieve(String billId) throws AuthenticationException, ApiException {
 		return MnoApiAccountClient.retrieve(MnoRecurringBill.class, billId);
 	}
 	
@@ -59,18 +65,20 @@ public class MnoRecurringBill extends MnoObject {
 	 * Create a new Bill
 	 * @param params
 	 * @return created bill
-	 * @throws IOException
+	 * @throws ApiException 
+	 * @throws AuthenticationException 
 	 */
-	public static MnoRecurringBill create(Map<String,Object> params) throws IOException {
+	public static MnoRecurringBill create(Map<String,Object> params) throws AuthenticationException, ApiException {
 		return MnoApiAccountClient.create(MnoRecurringBill.class, params);
 	}
 	
 	/**
 	 * Cancel the bill
 	 * @return whether the bill was cancelled or not
-	 * @throws IOException 
+	 * @throws AuthenticationException
+	 * @throws ApiException
 	 */
-	public Boolean cancel() throws IOException {
+	public Boolean cancel() throws AuthenticationException, ApiException {
 		if (this.id != null && !this.id.isEmpty()) {
 			MnoRecurringBill newBill = MnoApiAccountClient.delete(MnoRecurringBill.class, this.id);
 			this.merge(newBill);

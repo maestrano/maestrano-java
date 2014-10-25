@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.ProtocolException;
 import java.net.URL;
@@ -15,6 +16,9 @@ import javax.xml.bind.DatatypeConverter;
 
 import com.maestrano.Maestrano;
 
+import exception.ApiException;
+import exception.AuthenticationException;
+
 public class MnoHttpClient {
 	private String defaultUserAgent;
 	private String basicAuthHash;
@@ -24,7 +28,7 @@ public class MnoHttpClient {
 	}
 	
 	/**
-	 * Return a client with basic auth setup
+	 * Return a client with HTTP Basic Authentication setup
 	 */
 	public static MnoHttpClient getAuthenticatedClient() {
 		MnoHttpClient client = new MnoHttpClient();
@@ -38,9 +42,10 @@ public class MnoHttpClient {
 	 * Perform a GET request on the specified endpoint
 	 * @param url
 	 * @return response body
-	 * @throws IOException
+	 * @throws ApiException 
+	 * @throws AuthenticationException 
 	 */
-	public String get(String url) throws IOException {
+	public String get(String url) throws AuthenticationException, ApiException {
 		return performRequest(url,"GET",null,null,null);
 	}
 	
@@ -48,9 +53,10 @@ public class MnoHttpClient {
 	 * Perform a GET request on the specified endpoint
 	 * @param url
 	 * @return response body
-	 * @throws IOException
+	 * @throws ApiException 
+	 * @throws AuthenticationException 
 	 */
-	public String get(String url, Map<String,String> params) throws IOException {
+	public String get(String url, Map<String,String> params) throws AuthenticationException, ApiException {
 		return performRequest(url,"GET",params, null,null);
 	}
 	
@@ -59,8 +65,10 @@ public class MnoHttpClient {
 	 * @param url
 	 * @return response body
 	 * @throws IOException
+	 * @throws ApiException 
+	 * @throws AuthenticationException 
 	 */
-	public String get(String url, Map<String,String> params, Map<String,String> header) throws IOException {
+	public String get(String url, Map<String,String> params, Map<String,String> header) throws AuthenticationException, ApiException {
 		return performRequest(url,"GET",params, header,null);
 	}
 	
@@ -70,9 +78,10 @@ public class MnoHttpClient {
 	 * @param header
 	 * @param payload
 	 * @return response body
-	 * @throws IOException
+	 * @throws ApiException 
+	 * @throws AuthenticationException 
 	 */
-	public String post(String url, String payload) throws IOException {
+	public String post(String url, String payload) throws AuthenticationException, ApiException {
 		return performRequest(url,"POST",null,null,payload);
 	}
 	
@@ -82,9 +91,10 @@ public class MnoHttpClient {
 	 * @param header
 	 * @param payload
 	 * @return response body
-	 * @throws IOException
+	 * @throws ApiException 
+	 * @throws AuthenticationException
 	 */
-	public String put(String url, String payload) throws IOException {
+	public String put(String url, String payload) throws AuthenticationException, ApiException {
 		return performRequest(url,"PUT",null,null,payload);
 	}
 	
@@ -94,9 +104,10 @@ public class MnoHttpClient {
 	 * @param header
 	 * @param payload
 	 * @return response body
-	 * @throws IOException
+	 * @throws ApiException 
+	 * @throws AuthenticationException 
 	 */
-	public String delete(String url) throws IOException {
+	public String delete(String url) throws AuthenticationException, ApiException {
 		return performRequest(url,"DELETE",null,null,null);
 	}
 	
@@ -107,9 +118,10 @@ public class MnoHttpClient {
 	 * @param header values
 	 * @param payload data to send
 	 * @return response body
-	 * @throws IOException
+	 * @throws AuthenticationException 
+	 * @throws ApiException 
 	 */
-	protected String performRequest(String url, String method, Map<String,String> params, Map<String,String> header, String payload) throws IOException {
+	protected String performRequest(String url, String method, Map<String,String> params, Map<String,String> header, String payload) throws AuthenticationException, ApiException {
 		// Prepare header
 		if (header == null) {
 			header = new HashMap<String,String>();
@@ -137,16 +149,30 @@ public class MnoHttpClient {
 			
 			for (Map.Entry<String, String> param : params.entrySet())
 			{
-				String key = URLEncoder.encode(param.getKey(),"UTF-8");
-				String val = URLEncoder.encode(param.getValue(), "UTF-8");
-				realUrl += "&" + key + "=" + val;
+				String key;
+				try {
+					key = URLEncoder.encode(param.getKey(),"UTF-8");
+					String val = URLEncoder.encode(param.getValue(), "UTF-8");
+					realUrl += "&" + key + "=" + val;
+				} catch (UnsupportedEncodingException e) {
+					throw new ApiException("Wrong query parameter encoding for pair: " + param.getKey() + " = " + param.getValue(),e);
+				}
+				
 			}
 		}
 		
-		
-		
 		// Get connection
-		HttpURLConnection conn = openConnection(realUrl,header);
+		HttpURLConnection conn;
+		try {
+			conn = openConnection(realUrl,header);
+			
+			if (conn.getResponseCode() == HttpURLConnection.HTTP_UNAUTHORIZED) {
+				throw new AuthenticationException("Invalid API credentials");
+			}
+			
+		} catch (IOException e) {
+			throw new ApiException("Something wrong happened while trying establish the connection",e);
+		}
 		
 		// Send Data if PUT/POST
 		if (payload != null) {
@@ -155,9 +181,11 @@ public class MnoHttpClient {
 				try {
 					output = conn.getOutputStream();
 					output.write(payload.getBytes());
+				} catch (IOException e) {
+					throw new ApiException("Unable to send data to server",e);
 				} finally {
 					if (output != null) {
-						output.close();
+						try { output.close(); } catch (IOException e) {}
 					}
 				}
 			}
@@ -165,16 +193,23 @@ public class MnoHttpClient {
 		
 		
 		// Parse response
-		BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-		String inputLine;
-		StringBuffer html = new StringBuffer();
+		BufferedReader in;
+		try {
+			in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+			
+			String inputLine;
+			StringBuffer html = new StringBuffer();
 
-		while ((inputLine = in.readLine()) != null) {
-			html.append(inputLine);
+			while ((inputLine = in.readLine()) != null) {
+				html.append(inputLine);
+			}
+			in.close();
+			
+			return html.toString();
+			
+		} catch (IOException e) {
+			throw new ApiException("Unable to read response from server",e);
 		}
-		in.close();
-
-		return html.toString();
 	}
 	
 	/**

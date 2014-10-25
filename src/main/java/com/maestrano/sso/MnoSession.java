@@ -15,6 +15,9 @@ import com.maestrano.Maestrano;
 import com.maestrano.helpers.MnoDateHelper;
 import com.maestrano.net.MnoHttpClient;
 
+import exception.ApiException;
+import exception.AuthenticationException;
+
 
 public class MnoSession {
 	
@@ -116,12 +119,14 @@ public class MnoSession {
         {
             // Prepare request
         	String url = Maestrano.ssoService().getSessionCheckUrl(this.uid, this.sessionToken);
-        	String respStr;
+        	String respStr = null;
         	try {
-        		respStr = httpClient.get(url);
-        	} catch (IOException e) {
-        		return false;
-        	}
+				respStr = httpClient.get(url);
+			} catch (AuthenticationException e1) {
+				e1.printStackTrace();
+			} catch (ApiException e1) {
+				e1.printStackTrace();
+			}
         	
         	// Parse response
         	Gson gson = new Gson();
