@@ -2,8 +2,6 @@ package com.maestrano.net;
 
 import static org.junit.Assert.assertEquals;
 
-import java.io.IOException;
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -14,10 +12,8 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import com.maestrano.Maestrano;
 import com.maestrano.account.MnoBill;
-import com.maestrano.testhelpers.HttpSessionStub;
 import com.maestrano.testhelpers.MnoHttpClientStub;
 
 public class MnoApiAccountResourceTest {

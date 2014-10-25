@@ -8,11 +8,9 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.maestrano.Maestrano;
-import com.maestrano.testhelpers.MnoHttpClientStub;
 
 public class MnoBillTest {
 	private Properties props = new Properties();
-	private MnoHttpClientStub httpClient = new MnoHttpClientStub();
 	
 	@Before
 	public void beforeEach() {
