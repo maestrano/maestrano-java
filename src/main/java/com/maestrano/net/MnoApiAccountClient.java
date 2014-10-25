@@ -13,7 +13,10 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import com.maestrano.Maestrano;
-import com.maestrano.account.MnoBill;
+import com.maestrano.helpers.MnoMapHelper;
+import com.maestrano.helpers.MnoStringHelper;
+import com.maestrano.reflect.ListParameterizedType;
+import com.maestrano.reflect.MnoResponseParameterizedType;
 
 import exception.ApiException;
 import exception.AuthenticationException;
@@ -34,10 +37,7 @@ public class MnoApiAccountClient {
 	 * @return entity name
 	 */
 	public static String getEntityName(Class<?> clazz) {
-		return clazz.getSimpleName()
-				.replaceAll("([a-z])([A-Z])","$1_$2")
-				.toLowerCase()
-				.replaceFirst("^mno_", "");
+		return MnoStringHelper.toSnakeCase(clazz.getSimpleName()).replaceFirst("^mno_", "");
 	}
 	
 	/**
@@ -125,7 +125,7 @@ public class MnoApiAccountClient {
 	public static <T> List<T> all(Class<T> clazz, Map<String,String> params, MnoHttpClient httpClient) throws AuthenticationException, ApiException, InvalidRequestException {
 		String jsonBody = httpClient.get(getCollectionUrl(clazz), params);
 		
-		Type parsingType = new TypeToken<MnoApiAccountResponse<List<MnoBill>>>(){}.getType();
+		Type parsingType = new MnoResponseParameterizedType(new ListParameterizedType(clazz));
 		MnoApiAccountResponse<List<T>> resp = GSON.fromJson(jsonBody, parsingType);
 		resp.validate();
 		
@@ -156,9 +156,9 @@ public class MnoApiAccountClient {
 	 * @throws InvalidRequestException
 	 */
 	public static <T> T create(Class<T> clazz, Map<String,Object> hash, MnoHttpClient httpClient) throws AuthenticationException, ApiException, InvalidRequestException {
-		String jsonBody = httpClient.post(getCollectionUrl(clazz), GSON.toJson(hash));
+		String jsonBody = httpClient.post(getCollectionUrl(clazz), GSON.toJson(MnoMapHelper.toUnderscoreHash(hash)));
 		
-		Type parsingType = new TypeToken<MnoApiAccountResponse<MnoBill>>(){}.getType();
+		Type parsingType = new MnoResponseParameterizedType(clazz);
 		MnoApiAccountResponse<T> resp = GSON.fromJson(jsonBody, parsingType);
 		resp.validate();
 		
@@ -191,7 +191,7 @@ public class MnoApiAccountClient {
 	public static <T> T retrieve(Class<T> clazz, String entityId, MnoHttpClient httpClient) throws AuthenticationException, ApiException, InvalidRequestException {
 		String jsonBody = httpClient.get(getInstanceUrl(clazz,entityId));
 		
-		Type parsingType = new TypeToken<MnoApiAccountResponse<MnoBill>>(){}.getType();
+		Type parsingType = new MnoResponseParameterizedType(clazz);
 		MnoApiAccountResponse<T> resp = GSON.fromJson(jsonBody, parsingType);
 		resp.validate();
 		
@@ -224,9 +224,9 @@ public class MnoApiAccountClient {
 	 * @throws InvalidRequestException
 	 */
 	public static <T> T update(Class<T> clazz, String entityId, Map<String,Object> hash, MnoHttpClient httpClient) throws AuthenticationException, ApiException, InvalidRequestException {
-		String jsonBody = httpClient.put(getInstanceUrl(clazz,entityId),GSON.toJson(hash));
+		String jsonBody = httpClient.put(getInstanceUrl(clazz,entityId),GSON.toJson(MnoMapHelper.toUnderscoreHash(hash)));
 		
-		Type parsingType = new TypeToken<MnoApiAccountResponse<MnoBill>>(){}.getType();
+		Type parsingType = new MnoResponseParameterizedType(clazz);
 		MnoApiAccountResponse<T> resp = GSON.fromJson(jsonBody, parsingType);
 		resp.validate();
 		
@@ -257,7 +257,7 @@ public class MnoApiAccountClient {
 	public static <T> T delete(Class<T> clazz, String entityId, MnoHttpClient httpClient) throws AuthenticationException, ApiException {
 		String jsonBody = httpClient.delete(getInstanceUrl(clazz,entityId));
 		
-		Type parsingType = new TypeToken<MnoApiAccountResponse<MnoBill>>(){}.getType();
+		Type parsingType = new MnoResponseParameterizedType(clazz);
 		MnoApiAccountResponse<T> resp = GSON.fromJson(jsonBody, parsingType);
 		
 		return resp.getData();

@@ -14,10 +14,9 @@ import org.junit.Test;
 
 import com.maestrano.Maestrano;
 import com.maestrano.helpers.MnoDateHelper;
-import com.maestrano.net.MnoApiAccountClient;
 
-public class MnoBillIntegrationTest {
-	private Properties props = new Properties();
+public class MnoRecurringBillIntegrationTest {
+private Properties props = new Properties();
 	
 	@Before
 	public void beforeEach() {
@@ -29,23 +28,27 @@ public class MnoBillIntegrationTest {
 	
 	@Test
 	public void all_itRetrievesAllBills() throws Exception {
-		List<MnoBill> billList = MnoBill.all();
-		MnoBill bill = billList.get(0);
+		List<MnoRecurringBill> billList = MnoRecurringBill.all();
+		MnoRecurringBill bill = billList.get(0);
 		
-		assertEquals("bill-1",bill.getId());
+		assertEquals("rbill-1",bill.getId());
 		assertEquals("cld-3",bill.getGroupId());
-		assertEquals("2300",bill.getPriceCents().toString());
-		assertEquals("2014-05-29T05:57:10Z",MnoDateHelper.toIso8601(bill.getCreatedAt()));
+		assertEquals("year",bill.getPeriod());
+		assertEquals("1",bill.getFrequency().toString());
+		assertEquals("1190",bill.getPriceCents().toString());
+		assertEquals("2014-06-19T12:29:25Z",MnoDateHelper.toIso8601(bill.getCreatedAt()));
 	}
 	
 	@Test 
 	public void retrieve_itRetrievesASingleBill() throws Exception {
-		MnoBill bill = MnoBill.retrieve("bill-1");
+		MnoRecurringBill bill = MnoRecurringBill.retrieve("rbill-1");
 		
-		assertEquals("bill-1",bill.getId());
+		assertEquals("rbill-1",bill.getId());
 		assertEquals("cld-3",bill.getGroupId());
-		assertEquals("2300",bill.getPriceCents().toString());
-		assertEquals("2014-05-29T05:57:10Z",MnoDateHelper.toIso8601(bill.getCreatedAt()));
+		assertEquals("year",bill.getPeriod());
+		assertEquals("1",bill.getFrequency().toString());
+		assertEquals("1190",bill.getPriceCents().toString());
+		assertEquals("2014-06-19T12:29:25Z",MnoDateHelper.toIso8601(bill.getCreatedAt()));
 	}
 	
 	@Test
@@ -55,7 +58,7 @@ public class MnoBillIntegrationTest {
 		attrsMap.put("priceCents", 2000);
 		attrsMap.put("description", "Product purchase");
 		
-		MnoBill bill = MnoBill.create(attrsMap);
+		MnoRecurringBill bill = MnoRecurringBill.create(attrsMap);
 		
 		assertFalse(bill.getId() == null);
 		assertEquals("cld-3",bill.getGroupId());
@@ -69,7 +72,7 @@ public class MnoBillIntegrationTest {
 		attrsMap.put("groupId", "cld-3");
 		attrsMap.put("priceCents", 2000);
 		attrsMap.put("description", "Product purchase");
-		MnoBill bill = MnoBill.create(attrsMap);
+		MnoRecurringBill bill = MnoRecurringBill.create(attrsMap);
 		
 		assertTrue(bill.cancel());
 		assertEquals("cancelled",bill.getStatus());
