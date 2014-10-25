@@ -19,10 +19,18 @@
 		</license>
 	</licenses>
 	<scm>
-        <connection>scm:git:git@github.com:maestrano/maestrano-java.git</connection>
-        <developerConnection>scm:git:git@github.com:maestrano/maestrano-java.git</developerConnection>
-        <url>git@github.com:maestrano/maestrano-java.git</url>
-    </scm>
+		<connection>scm:git:git@github.com:maestrano/maestrano-java.git</connection>
+		<developerConnection>scm:git:git@github.com:maestrano/maestrano-java.git</developerConnection>
+		<url>git@github.com:maestrano/maestrano-java.git</url>
+	</scm>
+	<developers>
+		<developer>
+			<name>Arnaud Lachaume</name>
+			<email>arnaud.lachaume@maestrano.com.com</email>
+			<organization>Maestrano</organization>
+			<organizationUrl>https://maestrano.com</organizationUrl>
+		</developer>
+	</developers>
 	<dependencies>
 		<dependency>
 			<groupId>com.google.code.gson</groupId>
@@ -50,5 +58,5 @@
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
-	
+
 </project>
