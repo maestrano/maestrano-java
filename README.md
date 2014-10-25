@@ -449,7 +449,7 @@ com.maestrano.account.MnoBill
 
 List all bills you have created and iterate through the list
 ```java
-MnoBillCollection bills = MnoBill.all();
+List<MnoBill> bills = MnoBill.all();
 ```
 
 Access a single bill by id
@@ -615,7 +615,7 @@ com.maestrano.account.MnoRecurringBill
 
 List all recurring bills you have created and iterate through the list
 ```java
-MnoRecurringBillCollection bills = MnoRecurringBill.all();
+List<MnoRecurringBill> bills = MnoRecurringBill.all();
 ```
 
 Access a single recurring bill by id
