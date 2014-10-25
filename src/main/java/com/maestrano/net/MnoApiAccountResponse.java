@@ -1,7 +1,5 @@
 package com.maestrano.net;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 import exception.InvalidRequestException;
@@ -9,14 +7,14 @@ import exception.InvalidRequestException;
 public class MnoApiAccountResponse<T> {
 	private Boolean success;
 	private T data;
-	private Map<String,String> errors;
+	private Map<String,Object> errors;
 	
 	/**
 	 * Raise an error if the response is unsuccessful
 	 * @throws InvalidRequestException 
 	 */
 	public void validate() throws InvalidRequestException {
-		if (!this.success) {
+		if (this.success != null && !this.success) {
 			throw new InvalidRequestException(this.getErrorsAsString());
 		}
 	}
@@ -33,19 +31,14 @@ public class MnoApiAccountResponse<T> {
 	public void setData(T data) {
 		this.data = data;
 	}
-	public Map<String,String> getErrors() {
+	public Map<String,Object> getErrors() {
 		return errors;
 	}
-	public void setErrors(Map<String,String> errors) {
+	public void setErrors(Map<String,Object> errors) {
 		this.errors = errors;
 	}
 	
 	public String getErrorsAsString() {
-		List<String> errorMsgs = new ArrayList<String>();
-		for ( String paramName : this.errors.keySet()) {
-			errorMsgs.add(paramName + ": " + this.errors.get(paramName));
-		}
-		
-		return errorMsgs.toString();
+		return MnoApiAccountClient.GSON.toJson(this.errors);
 	}
 }

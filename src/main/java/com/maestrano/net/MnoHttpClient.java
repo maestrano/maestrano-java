@@ -179,11 +179,6 @@ public class MnoHttpClient {
 		HttpURLConnection conn;
 		try {
 			conn = openConnection(realUrl,header);
-			if (conn.getResponseCode() == HttpURLConnection.HTTP_UNAUTHORIZED) {
-				System.out.println(conn.getHeaderField(this.basicAuthHash));
-				throw new AuthenticationException("Invalid API credentials");
-			}
-			
 		} catch (IOException e) {
 			throw new ApiException("Something wrong happened while trying establish the connection",e);
 		}
@@ -205,15 +200,23 @@ public class MnoHttpClient {
 			}
 		}
 		
+		// Check Response code
+		try {
+			if (conn.getResponseCode() == HttpURLConnection.HTTP_UNAUTHORIZED) {
+				throw new AuthenticationException("Invalid API credentials");
+			}
+		} catch (IOException e) {
+			throw new ApiException("Unable to read response code",e);
+		}
+		
 		
 		// Parse response
 		BufferedReader in;
+		String inputLine;
+		StringBuffer html = new StringBuffer();
 		try {
 			in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
 			
-			String inputLine;
-			StringBuffer html = new StringBuffer();
-
 			while ((inputLine = in.readLine()) != null) {
 				html.append(inputLine);
 			}
@@ -222,7 +225,22 @@ public class MnoHttpClient {
 			return html.toString();
 			
 		} catch (IOException e) {
-			throw new ApiException("Unable to read response from server",e);
+			try {
+				if( conn.getResponseCode() == HttpURLConnection.HTTP_BAD_REQUEST) {
+					in = new BufferedReader(new InputStreamReader(conn.getErrorStream()));
+					
+					while ((inputLine = in.readLine()) != null) {
+						html.append(inputLine);
+					}
+					in.close();
+					return html.toString();
+				} else {
+					throw new ApiException("Unable to read response from server",e);
+					
+				}
+			} catch (IOException e1) {
+				throw new ApiException("Unable to read response from server",e);
+			}
 		}
 	}
 	
@@ -257,6 +275,11 @@ public class MnoHttpClient {
 			conn.setRequestMethod(header.get("method"));
 			conn.setInstanceFollowRedirects(true);
 			
+			// Set output if PUT or POST
+			if (conn.getRequestMethod() == "POST" || conn.getRequestMethod() == "PUT") {
+				conn.setDoOutput(true);
+			}
+			
 			// Set request header
 			for (Map.Entry<String, String> headerAttr : header.entrySet())
 			{
@@ -265,13 +288,15 @@ public class MnoHttpClient {
 			
 			// Check if redirect
 			redirect = false;
-			int status = conn.getResponseCode();
-			if (status != HttpURLConnection.HTTP_OK) {
-				if (status == HttpURLConnection.HTTP_MOVED_TEMP
-						|| status == HttpURLConnection.HTTP_MOVED_PERM
-						|| status == HttpURLConnection.HTTP_SEE_OTHER)
-					redirect = true;
-				redirectCount ++;
+			if (conn.getRequestMethod() == "GET") {
+				int status = conn.getResponseCode();
+				if (status != HttpURLConnection.HTTP_OK) {
+					if (status == HttpURLConnection.HTTP_MOVED_TEMP
+							|| status == HttpURLConnection.HTTP_MOVED_PERM
+							|| status == HttpURLConnection.HTTP_SEE_OTHER)
+						redirect = true;
+					redirectCount ++;
+				}
 			}
 		}
 

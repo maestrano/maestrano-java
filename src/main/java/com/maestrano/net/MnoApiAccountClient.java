@@ -1,10 +1,16 @@
 package com.maestrano.net;
 
 import java.lang.reflect.Type;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import json.DateDeserializer;
+import json.DateSerializer;
+
+import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import com.maestrano.Maestrano;
 import com.maestrano.account.MnoBill;
@@ -14,6 +20,11 @@ import exception.AuthenticationException;
 import exception.InvalidRequestException;
 
 public class MnoApiAccountClient {
+	public static final Gson GSON = new GsonBuilder()
+		.setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
+		.registerTypeAdapter(Date.class, new DateSerializer())
+		.registerTypeAdapter(Date.class, new DateDeserializer())
+		.create();
 	
 	public MnoApiAccountClient() {}
 	
@@ -53,11 +64,10 @@ public class MnoApiAccountClient {
 	}
 	
 	public static <T> List<T> all(Class<T> clazz, Map<String,String> params, MnoHttpClient httpClient) throws AuthenticationException, ApiException, InvalidRequestException {
-		Gson gson = new Gson();
 		String jsonBody = httpClient.get(getCollectionUrl(clazz), params);
 		
 		Type parsingType = new TypeToken<MnoApiAccountResponse<List<MnoBill>>>(){}.getType();
-		MnoApiAccountResponse<List<T>> resp = gson.fromJson(jsonBody, parsingType);
+		MnoApiAccountResponse<List<T>> resp = GSON.fromJson(jsonBody, parsingType);
 		resp.validate();
 		
 		return resp.getData();
@@ -68,11 +78,10 @@ public class MnoApiAccountClient {
 	}
 	
 	public static <T> T create(Class<T> clazz, Map<String,Object> hash, MnoHttpClient httpClient) throws AuthenticationException, ApiException, InvalidRequestException {
-		Gson gson = new Gson();
-		String jsonBody = httpClient.post(getCollectionUrl(clazz), gson.toJson(hash));
+		String jsonBody = httpClient.post(getCollectionUrl(clazz), GSON.toJson(hash));
 		
 		Type parsingType = new TypeToken<MnoApiAccountResponse<MnoBill>>(){}.getType();
-		MnoApiAccountResponse<T> resp = gson.fromJson(jsonBody, parsingType);
+		MnoApiAccountResponse<T> resp = GSON.fromJson(jsonBody, parsingType);
 		resp.validate();
 		
 		return resp.getData();
@@ -83,11 +92,10 @@ public class MnoApiAccountClient {
 	}
 	
 	public static <T> T retrieve(Class<T> clazz, String entityId, MnoHttpClient httpClient) throws AuthenticationException, ApiException, InvalidRequestException {
-		Gson gson = new Gson();
 		String jsonBody = httpClient.get(getInstanceUrl(clazz,entityId));
 		
 		Type parsingType = new TypeToken<MnoApiAccountResponse<MnoBill>>(){}.getType();
-		MnoApiAccountResponse<T> resp = gson.fromJson(jsonBody, parsingType);
+		MnoApiAccountResponse<T> resp = GSON.fromJson(jsonBody, parsingType);
 		resp.validate();
 		
 		return resp.getData();
@@ -98,11 +106,10 @@ public class MnoApiAccountClient {
 	}
 	
 	public static <T> T update(Class<T> clazz, String entityId, Map<String,Object> hash, MnoHttpClient httpClient) throws AuthenticationException, ApiException, InvalidRequestException {
-		Gson gson = new Gson();
-		String jsonBody = httpClient.put(getInstanceUrl(clazz,entityId),gson.toJson(hash));
+		String jsonBody = httpClient.put(getInstanceUrl(clazz,entityId),GSON.toJson(hash));
 		
 		Type parsingType = new TypeToken<MnoApiAccountResponse<MnoBill>>(){}.getType();
-		MnoApiAccountResponse<T> resp = gson.fromJson(jsonBody, parsingType);
+		MnoApiAccountResponse<T> resp = GSON.fromJson(jsonBody, parsingType);
 		resp.validate();
 		
 		return resp.getData();
@@ -113,11 +120,10 @@ public class MnoApiAccountClient {
 	}
 	
 	public static <T> T delete(Class<T> clazz, String entityId, MnoHttpClient httpClient) throws AuthenticationException, ApiException {
-		Gson gson = new Gson();
 		String jsonBody = httpClient.delete(getInstanceUrl(clazz,entityId));
 		
 		Type parsingType = new TypeToken<MnoApiAccountResponse<MnoBill>>(){}.getType();
-		MnoApiAccountResponse<T> resp = gson.fromJson(jsonBody, parsingType);
+		MnoApiAccountResponse<T> resp = GSON.fromJson(jsonBody, parsingType);
 		
 		return resp.getData();
 	}
