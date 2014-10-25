@@ -4,7 +4,6 @@ import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.google.gson.Gson;
 import com.maestrano.net.MnoApiAccountClient;
 
 class MnoObject {

@@ -14,7 +14,6 @@ import org.junit.Test;
 
 import com.maestrano.Maestrano;
 import com.maestrano.helpers.MnoDateHelper;
-import com.maestrano.net.MnoApiAccountClient;
 
 public class MnoBillIntegrationTest {
 	private Properties props = new Properties();

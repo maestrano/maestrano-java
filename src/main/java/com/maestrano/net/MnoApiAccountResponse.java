@@ -1,6 +1,5 @@
 package com.maestrano.net;
 
-import java.lang.reflect.Type;
 import java.util.Map;
 
 import com.maestrano.exception.InvalidRequestException;

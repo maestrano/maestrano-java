@@ -8,7 +8,6 @@ import java.util.Map;
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.reflect.TypeToken;
 import com.maestrano.Maestrano;
 import com.maestrano.exception.ApiException;
 import com.maestrano.exception.AuthenticationException;
