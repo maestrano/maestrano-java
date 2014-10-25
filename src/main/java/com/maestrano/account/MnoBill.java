@@ -5,7 +5,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import com.maestrano.net.MnoApiAccountResource;
+import com.maestrano.net.MnoApiAccountClient;
 
 public class MnoBill extends MnoObject {
 	
@@ -29,7 +29,7 @@ public class MnoBill extends MnoObject {
 	 * @throws IOException
 	 */
 	public static List<MnoBill> all() throws IOException {
-		return MnoApiAccountResource.all(MnoBill.class);
+		return MnoApiAccountClient.all(MnoBill.class);
 	}
 	
 	/**
@@ -39,7 +39,7 @@ public class MnoBill extends MnoObject {
 	 * @throws IOException
 	 */
 	public static List<MnoBill> all(Map<String,String> params) throws IOException {
-		return MnoApiAccountResource.all(MnoBill.class, params);
+		return MnoApiAccountClient.all(MnoBill.class, params);
 	}
 	
 	/**
@@ -49,7 +49,7 @@ public class MnoBill extends MnoObject {
 	 * @throws IOException
 	 */
 	public static MnoBill retrieve(String billId) throws IOException {
-		return MnoApiAccountResource.retrieve(MnoBill.class, billId);
+		return MnoApiAccountClient.retrieve(MnoBill.class, billId);
 	}
 	
 	/**
@@ -59,7 +59,7 @@ public class MnoBill extends MnoObject {
 	 * @throws IOException
 	 */
 	public static MnoBill create(Map<String,Object> params) throws IOException {
-		return MnoApiAccountResource.create(MnoBill.class, params);
+		return MnoApiAccountClient.create(MnoBill.class, params);
 	}
 	
 	/**
@@ -69,7 +69,7 @@ public class MnoBill extends MnoObject {
 	 */
 	public Boolean cancel() throws IOException {
 		if (this.id != null && !this.id.isEmpty()) {
-			MnoBill newBill = MnoApiAccountResource.delete(MnoBill.class, this.id);
+			MnoBill newBill = MnoApiAccountClient.delete(MnoBill.class, this.id);
 			this.merge(newBill);
 			return this.status.equals("cancelled");
 		}

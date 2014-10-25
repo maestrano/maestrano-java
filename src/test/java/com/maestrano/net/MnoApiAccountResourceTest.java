@@ -40,32 +40,32 @@ public class MnoApiAccountResourceTest {
 
 	@Test
 	public void class_getEntityName_itReturnsTheRightEntityName() {
-		assertEquals("some_model",MnoApiAccountResource.getEntityName(MnoSomeModel.class));
+		assertEquals("some_model",MnoApiAccountClient.getEntityName(MnoSomeModel.class));
 	}
 
 	@Test
 	public void class_getEntityName_itReturnsTheRightEntitiesName() {
-		assertEquals("some_models",MnoApiAccountResource.getEntitiesName(MnoSomeModel.class));
+		assertEquals("some_models",MnoApiAccountClient.getEntitiesName(MnoSomeModel.class));
 	}
 
 	@Test
 	public void class_getCollectionEndpoint_itReturnsTheRightEntityApiEndpoint() {
-		assertEquals("/api/v1/account/some_models",MnoApiAccountResource.getCollectionEndpoint(MnoSomeModel.class));
+		assertEquals("/api/v1/account/some_models",MnoApiAccountClient.getCollectionEndpoint(MnoSomeModel.class));
 	}
 
 	@Test
 	public void getInstanceEndpoint_itReturnsTheRightEntityInstanceApiEndpoint() {
-		assertEquals("/api/v1/account/some_models/1",MnoApiAccountResource.getInstanceEndpoint(MnoSomeModel.class,"1"));
+		assertEquals("/api/v1/account/some_models/1",MnoApiAccountClient.getInstanceEndpoint(MnoSomeModel.class,"1"));
 	}
 
 	@Test
 	public void class_getCollectionUrl_itReturnsTheRightEntityApiUrl() {
-		assertEquals("https://maestrano.com/api/v1/account/some_models",MnoApiAccountResource.getCollectionUrl(MnoSomeModel.class));
+		assertEquals("https://maestrano.com/api/v1/account/some_models",MnoApiAccountClient.getCollectionUrl(MnoSomeModel.class));
 	}
 
 	@Test
 	public void getInstanceUrl_itReturnsTheRightEntityInstanceApiUrl() {
-		assertEquals("https://maestrano.com/api/v1/account/some_models/1",MnoApiAccountResource.getInstanceUrl(MnoSomeModel.class,"1"));
+		assertEquals("https://maestrano.com/api/v1/account/some_models/1",MnoApiAccountClient.getInstanceUrl(MnoSomeModel.class,"1"));
 	}
 
 	@Test
@@ -81,10 +81,10 @@ public class MnoApiAccountResourceTest {
 		// Prepare response
 		Gson gson = new Gson();
 		httpClient = new MnoHttpClientStub();
-		httpClient.setResponseStub(gson.toJson(hash), MnoApiAccountResource.getCollectionUrl(MnoBill.class));
+		httpClient.setResponseStub(gson.toJson(hash), MnoApiAccountClient.getCollectionUrl(MnoBill.class));
 
 		// Test
-		List<MnoBill> respList = MnoApiAccountResource.all(MnoBill.class, null, httpClient);
+		List<MnoBill> respList = MnoApiAccountClient.all(MnoBill.class, null, httpClient);
 		assertEquals("bill-1234",respList.get(0).getId());
 	}
 
@@ -105,10 +105,10 @@ public class MnoApiAccountResourceTest {
 		// Prepare response
 		Gson gson = new Gson();
 		httpClient = new MnoHttpClientStub();
-		httpClient.setResponseStub(gson.toJson(hash), MnoApiAccountResource.getCollectionUrl(MnoBill.class),params);
+		httpClient.setResponseStub(gson.toJson(hash), MnoApiAccountClient.getCollectionUrl(MnoBill.class),params);
 
 		// Test
-		List<MnoBill> respList = MnoApiAccountResource.all(MnoBill.class, params, httpClient);
+		List<MnoBill> respList = MnoApiAccountClient.all(MnoBill.class, params, httpClient);
 		assertEquals("bill-1234",respList.get(0).getId());
 	}
 
@@ -123,10 +123,10 @@ public class MnoApiAccountResourceTest {
 		// Prepare response
 		Gson gson = new Gson();
 		httpClient = new MnoHttpClientStub();
-		httpClient.setResponseStub(gson.toJson(hash), MnoApiAccountResource.getInstanceUrl(MnoBill.class,"bill-1234"));
+		httpClient.setResponseStub(gson.toJson(hash), MnoApiAccountClient.getInstanceUrl(MnoBill.class,"bill-1234"));
 
 		// Test
-		MnoBill resp = MnoApiAccountResource.retrieve(MnoBill.class, "bill-1234", httpClient);
+		MnoBill resp = MnoApiAccountClient.retrieve(MnoBill.class, "bill-1234", httpClient);
 		assertEquals("bill-1234",resp.getId());
 
 	}
@@ -147,10 +147,10 @@ public class MnoApiAccountResourceTest {
 		Gson gson = new Gson();
 		httpClient = new MnoHttpClientStub();
 		httpClient.setResponseStub(gson.toJson(hash), 
-				MnoApiAccountResource.getCollectionUrl(MnoBill.class),null,gson.toJson(updHash));
+				MnoApiAccountClient.getCollectionUrl(MnoBill.class),null,gson.toJson(updHash));
 		
 		// Test
-		MnoBill resp = MnoApiAccountResource.create(MnoBill.class, updHash, httpClient);
+		MnoBill resp = MnoApiAccountClient.create(MnoBill.class, updHash, httpClient);
 		assertEquals("bill-1234",resp.getId());
 	}
 	
@@ -170,10 +170,10 @@ public class MnoApiAccountResourceTest {
 		Gson gson = new Gson();
 		httpClient = new MnoHttpClientStub();
 		httpClient.setResponseStub(gson.toJson(hash), 
-				MnoApiAccountResource.getInstanceUrl(MnoBill.class,"bill-1234"),null,gson.toJson(updHash));
+				MnoApiAccountClient.getInstanceUrl(MnoBill.class,"bill-1234"),null,gson.toJson(updHash));
 		
 		// Test
-		MnoBill resp = MnoApiAccountResource.update(MnoBill.class, "bill-1234", updHash, httpClient);
+		MnoBill resp = MnoApiAccountClient.update(MnoBill.class, "bill-1234", updHash, httpClient);
 		assertEquals("bill-1234",resp.getId());
 	}
 	
@@ -189,10 +189,10 @@ public class MnoApiAccountResourceTest {
 		Gson gson = new Gson();
 		httpClient = new MnoHttpClientStub();
 		httpClient.setResponseStub(gson.toJson(hash), 
-				MnoApiAccountResource.getInstanceUrl(MnoBill.class,"bill-1234"));
+				MnoApiAccountClient.getInstanceUrl(MnoBill.class,"bill-1234"));
 		
 		// Test
-		MnoBill resp = MnoApiAccountResource.delete(MnoBill.class, "bill-1234", httpClient);
+		MnoBill resp = MnoApiAccountClient.delete(MnoBill.class, "bill-1234", httpClient);
 		assertEquals("bill-1234",resp.getId());
 	}
 }

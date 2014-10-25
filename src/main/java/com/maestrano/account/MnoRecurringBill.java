@@ -5,7 +5,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import com.maestrano.net.MnoApiAccountResource;
+import com.maestrano.net.MnoApiAccountClient;
 
 public class MnoRecurringBill extends MnoObject {
 	public String id;
@@ -32,7 +32,7 @@ public class MnoRecurringBill extends MnoObject {
 	 * @throws IOException
 	 */
 	public static List<MnoRecurringBill> all() throws IOException {
-		return MnoApiAccountResource.all(MnoRecurringBill.class);
+		return MnoApiAccountClient.all(MnoRecurringBill.class);
 	}
 	
 	/**
@@ -42,7 +42,7 @@ public class MnoRecurringBill extends MnoObject {
 	 * @throws IOException
 	 */
 	public static List<MnoRecurringBill> all(Map<String,String> params) throws IOException {
-		return MnoApiAccountResource.all(MnoRecurringBill.class, params);
+		return MnoApiAccountClient.all(MnoRecurringBill.class, params);
 	}
 	
 	/**
@@ -52,7 +52,7 @@ public class MnoRecurringBill extends MnoObject {
 	 * @throws IOException
 	 */
 	public static MnoRecurringBill retrieve(String billId) throws IOException {
-		return MnoApiAccountResource.retrieve(MnoRecurringBill.class, billId);
+		return MnoApiAccountClient.retrieve(MnoRecurringBill.class, billId);
 	}
 	
 	/**
@@ -62,7 +62,7 @@ public class MnoRecurringBill extends MnoObject {
 	 * @throws IOException
 	 */
 	public static MnoRecurringBill create(Map<String,Object> params) throws IOException {
-		return MnoApiAccountResource.create(MnoRecurringBill.class, params);
+		return MnoApiAccountClient.create(MnoRecurringBill.class, params);
 	}
 	
 	/**
@@ -72,7 +72,7 @@ public class MnoRecurringBill extends MnoObject {
 	 */
 	public Boolean cancel() throws IOException {
 		if (this.id != null && !this.id.isEmpty()) {
-			MnoRecurringBill newBill = MnoApiAccountResource.delete(MnoRecurringBill.class, this.id);
+			MnoRecurringBill newBill = MnoApiAccountClient.delete(MnoRecurringBill.class, this.id);
 			this.merge(newBill);
 			return this.status.equals("cancelled");
 		}

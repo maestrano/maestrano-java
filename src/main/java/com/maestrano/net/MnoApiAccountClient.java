@@ -11,9 +11,9 @@ import com.maestrano.Maestrano;
 import com.maestrano.account.MnoBill;
 import com.maestrano.testhelpers.MnoHttpClientStub;
 
-public class MnoApiAccountResource {
+public class MnoApiAccountClient {
 	
-	public MnoApiAccountResource() {}
+	public MnoApiAccountClient() {}
 	
 	public static String getEntityName(Class<?> clazz) {
 		return clazz.getSimpleName()
