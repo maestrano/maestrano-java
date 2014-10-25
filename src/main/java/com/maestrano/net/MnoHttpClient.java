@@ -22,9 +22,13 @@ import exception.AuthenticationException;
 public class MnoHttpClient {
 	private String defaultUserAgent;
 	private String basicAuthHash;
+	private String defaultContentType;
+	private String defaultAccept;
 	
 	public MnoHttpClient() {
 		this.defaultUserAgent = "maestrano-java/" + System.getProperty("java.version");
+		this.defaultContentType = "application/json";
+		this.defaultAccept = "application/json";
 	}
 	
 	/**
@@ -130,16 +134,26 @@ public class MnoHttpClient {
 		// Set method
 		header.put("method",method.toUpperCase());
 		
-		// Set user agent
+		// Set 'User-Agent'
 		if (header.get("User-Agent") == null || header.get("User-Agent").isEmpty()) {
 			header.put("User-Agent",defaultUserAgent);
 		}
 		
-		// Set authorization
-		if (this.basicAuthHash != null && ! this.basicAuthHash.isEmpty()) {
+		// Set 'Authorization'
+		if (this.basicAuthHash != null && !this.basicAuthHash.isEmpty()) {
 			if(header.get("Authorization") == null || header.get("Authorization").isEmpty()) {
 				header.put("Authorization",basicAuthHash);
 			}
+		}
+		
+		// Set 'Content-Type'
+		if (header.get("Content-Type") == null || header.get("Content-Type").isEmpty()) {
+			header.put("Content-Type",defaultContentType);
+		}
+		
+		// Set 'Accept'
+		if (header.get("Accept") == null || header.get("Accept").isEmpty()) {
+			header.put("Accept",defaultAccept);
 		}
 		
 		// Prepare url
@@ -165,8 +179,8 @@ public class MnoHttpClient {
 		HttpURLConnection conn;
 		try {
 			conn = openConnection(realUrl,header);
-			
 			if (conn.getResponseCode() == HttpURLConnection.HTTP_UNAUTHORIZED) {
+				System.out.println(conn.getHeaderField(this.basicAuthHash));
 				throw new AuthenticationException("Invalid API credentials");
 			}
 			
@@ -241,8 +255,13 @@ public class MnoHttpClient {
 			// open the new connection again
 			conn = (HttpURLConnection) urlObj.openConnection();
 			conn.setRequestMethod(header.get("method"));
-			conn.addRequestProperty("User-Agent", header.get("User-Agent"));
 			conn.setInstanceFollowRedirects(true);
+			
+			// Set request header
+			for (Map.Entry<String, String> headerAttr : header.entrySet())
+			{
+				conn.addRequestProperty(headerAttr.getKey(), headerAttr.getValue());
+			}
 			
 			// Check if redirect
 			redirect = false;
