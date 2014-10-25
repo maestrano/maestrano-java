@@ -4,10 +4,22 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import exception.InvalidRequestException;
+
 public class MnoApiAccountResponse<T> {
 	private Boolean success;
 	private T data;
 	private Map<String,String> errors;
+	
+	/**
+	 * Raise an error if the response is unsuccessful
+	 * @throws InvalidRequestException 
+	 */
+	public void validate() throws InvalidRequestException {
+		if (!this.success) {
+			throw new InvalidRequestException(this.getErrorsAsString());
+		}
+	}
 	
 	public Boolean getSuccess() {
 		return success;

@@ -9,6 +9,7 @@ import com.maestrano.net.MnoApiAccountClient;
 
 import exception.ApiException;
 import exception.AuthenticationException;
+import exception.InvalidRequestException;
 
 public class MnoRecurringBill extends MnoObject {
 	public String id;
@@ -34,8 +35,9 @@ public class MnoRecurringBill extends MnoObject {
 	 * @return list of bills
 	 * @throws ApiException 
 	 * @throws AuthenticationException
+	 * @throws InvalidRequestException 
 	 */
-	public static List<MnoRecurringBill> all() throws AuthenticationException, ApiException {
+	public static List<MnoRecurringBill> all() throws AuthenticationException, ApiException, InvalidRequestException {
 		return MnoApiAccountClient.all(MnoRecurringBill.class);
 	}
 	
@@ -45,8 +47,9 @@ public class MnoRecurringBill extends MnoObject {
 	 * @return list of bills
 	 * @throws ApiException 
 	 * @throws AuthenticationException 
+	 * @throws InvalidRequestException 
 	 */
-	public static List<MnoRecurringBill> all(Map<String,String> params) throws AuthenticationException, ApiException {
+	public static List<MnoRecurringBill> all(Map<String,String> params) throws AuthenticationException, ApiException, InvalidRequestException {
 		return MnoApiAccountClient.all(MnoRecurringBill.class, params);
 	}
 	
@@ -56,8 +59,9 @@ public class MnoRecurringBill extends MnoObject {
 	 * @return a bill if found, null otherwise
 	 * @throws ApiException 
 	 * @throws AuthenticationException 
+	 * @throws InvalidRequestException 
 	 */
-	public static MnoRecurringBill retrieve(String billId) throws AuthenticationException, ApiException {
+	public static MnoRecurringBill retrieve(String billId) throws AuthenticationException, ApiException, InvalidRequestException {
 		return MnoApiAccountClient.retrieve(MnoRecurringBill.class, billId);
 	}
 	
@@ -67,8 +71,9 @@ public class MnoRecurringBill extends MnoObject {
 	 * @return created bill
 	 * @throws ApiException 
 	 * @throws AuthenticationException 
+	 * @throws InvalidRequestException 
 	 */
-	public static MnoRecurringBill create(Map<String,Object> params) throws AuthenticationException, ApiException {
+	public static MnoRecurringBill create(Map<String,Object> params) throws AuthenticationException, ApiException, InvalidRequestException {
 		return MnoApiAccountClient.create(MnoRecurringBill.class, params);
 	}
 	

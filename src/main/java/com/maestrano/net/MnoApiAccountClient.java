@@ -11,6 +11,7 @@ import com.maestrano.account.MnoBill;
 
 import exception.ApiException;
 import exception.AuthenticationException;
+import exception.InvalidRequestException;
 
 public class MnoApiAccountClient {
 	
@@ -43,62 +44,66 @@ public class MnoApiAccountClient {
 		return Maestrano.apiService().getHost() + getInstanceEndpoint(clazz,id);
 	}
 	
-	public static <T> List<T> all(Class<T> clazz) throws AuthenticationException, ApiException {
+	public static <T> List<T> all(Class<T> clazz) throws AuthenticationException, ApiException, InvalidRequestException {
 		return all(clazz,null,MnoHttpClient.getAuthenticatedClient());
 	}
 	
-	public static <T> List<T> all(Class<T> clazz, Map<String,String> params) throws AuthenticationException, ApiException {
+	public static <T> List<T> all(Class<T> clazz, Map<String,String> params) throws AuthenticationException, ApiException, InvalidRequestException {
 		return all(clazz,params,MnoHttpClient.getAuthenticatedClient());
 	}
 	
-	public static <T> List<T> all(Class<T> clazz, Map<String,String> params, MnoHttpClient httpClient) throws AuthenticationException, ApiException {
+	public static <T> List<T> all(Class<T> clazz, Map<String,String> params, MnoHttpClient httpClient) throws AuthenticationException, ApiException, InvalidRequestException {
 		Gson gson = new Gson();
 		String jsonBody = httpClient.get(getCollectionUrl(clazz), params);
 		
 		Type parsingType = new TypeToken<MnoApiAccountResponse<List<MnoBill>>>(){}.getType();
 		MnoApiAccountResponse<List<T>> resp = gson.fromJson(jsonBody, parsingType);
+		resp.validate();
 		
 		return resp.getData();
 	}
 	
-	public static <T> T create(Class<T> clazz, Map<String,Object> hash) throws AuthenticationException, ApiException {
+	public static <T> T create(Class<T> clazz, Map<String,Object> hash) throws AuthenticationException, ApiException, InvalidRequestException {
 		return create(clazz,hash,MnoHttpClient.getAuthenticatedClient());
 	}
 	
-	public static <T> T create(Class<T> clazz, Map<String,Object> hash, MnoHttpClient httpClient) throws AuthenticationException, ApiException {
+	public static <T> T create(Class<T> clazz, Map<String,Object> hash, MnoHttpClient httpClient) throws AuthenticationException, ApiException, InvalidRequestException {
 		Gson gson = new Gson();
 		String jsonBody = httpClient.post(getCollectionUrl(clazz), gson.toJson(hash));
 		
 		Type parsingType = new TypeToken<MnoApiAccountResponse<MnoBill>>(){}.getType();
 		MnoApiAccountResponse<T> resp = gson.fromJson(jsonBody, parsingType);
+		resp.validate();
 		
 		return resp.getData();
 	}
 	
-	public static <T> T retrieve(Class<T> clazz, String entityId) throws AuthenticationException, ApiException {
+	public static <T> T retrieve(Class<T> clazz, String entityId) throws AuthenticationException, ApiException, InvalidRequestException {
 		return retrieve(clazz,entityId,MnoHttpClient.getAuthenticatedClient());
 	}
 	
-	public static <T> T retrieve(Class<T> clazz, String entityId, MnoHttpClient httpClient) throws AuthenticationException, ApiException {
+	public static <T> T retrieve(Class<T> clazz, String entityId, MnoHttpClient httpClient) throws AuthenticationException, ApiException, InvalidRequestException {
 		Gson gson = new Gson();
 		String jsonBody = httpClient.get(getInstanceUrl(clazz,entityId));
 		
 		Type parsingType = new TypeToken<MnoApiAccountResponse<MnoBill>>(){}.getType();
 		MnoApiAccountResponse<T> resp = gson.fromJson(jsonBody, parsingType);
+		resp.validate();
 		
 		return resp.getData();
 	}
 	
-	public static <T> T update(Class<T> clazz, String entityId, Map<String,Object> hash) throws AuthenticationException, ApiException {
+	public static <T> T update(Class<T> clazz, String entityId, Map<String,Object> hash) throws AuthenticationException, ApiException, InvalidRequestException {
 		return update(clazz,entityId,hash,MnoHttpClient.getAuthenticatedClient());
 	}
 	
-	public static <T> T update(Class<T> clazz, String entityId, Map<String,Object> hash, MnoHttpClient httpClient) throws AuthenticationException, ApiException {
+	public static <T> T update(Class<T> clazz, String entityId, Map<String,Object> hash, MnoHttpClient httpClient) throws AuthenticationException, ApiException, InvalidRequestException {
 		Gson gson = new Gson();
 		String jsonBody = httpClient.put(getInstanceUrl(clazz,entityId),gson.toJson(hash));
 		
 		Type parsingType = new TypeToken<MnoApiAccountResponse<MnoBill>>(){}.getType();
 		MnoApiAccountResponse<T> resp = gson.fromJson(jsonBody, parsingType);
+		resp.validate();
 		
 		return resp.getData();
 	}

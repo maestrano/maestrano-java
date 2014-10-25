@@ -9,6 +9,7 @@ import com.maestrano.net.MnoApiAccountClient;
 
 import exception.ApiException;
 import exception.AuthenticationException;
+import exception.InvalidRequestException;
 
 public class MnoBill extends MnoObject {
 	
@@ -31,8 +32,9 @@ public class MnoBill extends MnoObject {
 	 * @return list of bills
 	 * @throws ApiException 
 	 * @throws AuthenticationException 
+	 * @throws InvalidRequestException 
 	 */
-	public static List<MnoBill> all() throws AuthenticationException, ApiException {
+	public static List<MnoBill> all() throws AuthenticationException, ApiException, InvalidRequestException {
 		return MnoApiAccountClient.all(MnoBill.class);
 	}
 	
@@ -42,8 +44,9 @@ public class MnoBill extends MnoObject {
 	 * @return list of bills
 	 * @throws ApiException 
 	 * @throws AuthenticationException 
+	 * @throws InvalidRequestException 
 	 */
-	public static List<MnoBill> all(Map<String,String> params) throws AuthenticationException, ApiException {
+	public static List<MnoBill> all(Map<String,String> params) throws AuthenticationException, ApiException, InvalidRequestException {
 		return MnoApiAccountClient.all(MnoBill.class, params);
 	}
 	
@@ -53,8 +56,9 @@ public class MnoBill extends MnoObject {
 	 * @return a bill if found, null otherwise
 	 * @throws ApiException 
 	 * @throws AuthenticationException 
+	 * @throws InvalidRequestException 
 	 */
-	public static MnoBill retrieve(String billId) throws AuthenticationException, ApiException {
+	public static MnoBill retrieve(String billId) throws AuthenticationException, ApiException, InvalidRequestException {
 		return MnoApiAccountClient.retrieve(MnoBill.class, billId);
 	}
 	
@@ -64,8 +68,9 @@ public class MnoBill extends MnoObject {
 	 * @return created bill
 	 * @throws ApiException 
 	 * @throws AuthenticationException 
+	 * @throws InvalidRequestException 
 	 */
-	public static MnoBill create(Map<String,Object> params) throws AuthenticationException, ApiException {
+	public static MnoBill create(Map<String,Object> params) throws AuthenticationException, ApiException, InvalidRequestException {
 		return MnoApiAccountClient.create(MnoBill.class, params);
 	}
 	
