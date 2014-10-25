@@ -1,4 +1,4 @@
-package json;
+package com.maestrano.json;
 
 import java.lang.reflect.Type;
 import java.text.ParseException;

@@ -15,9 +15,8 @@ import java.util.Map;
 import javax.xml.bind.DatatypeConverter;
 
 import com.maestrano.Maestrano;
-
-import exception.ApiException;
-import exception.AuthenticationException;
+import com.maestrano.exception.ApiException;
+import com.maestrano.exception.AuthenticationException;
 
 public class MnoHttpClient {
 	private String defaultUserAgent;

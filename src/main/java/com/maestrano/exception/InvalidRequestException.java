@@ -1,4 +1,4 @@
-package exception;
+package com.maestrano.exception;
 
 public class InvalidRequestException extends MnoException {
 	

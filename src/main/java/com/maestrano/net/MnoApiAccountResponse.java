@@ -3,7 +3,7 @@ package com.maestrano.net;
 import java.lang.reflect.Type;
 import java.util.Map;
 
-import exception.InvalidRequestException;
+import com.maestrano.exception.InvalidRequestException;
 
 public class MnoApiAccountResponse<T> {
 	private Boolean success;

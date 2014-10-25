@@ -1,4 +1,4 @@
-package exception;
+package com.maestrano.exception;
 
 public class AuthenticationException extends MnoException{
 	private static final long serialVersionUID = 1L;

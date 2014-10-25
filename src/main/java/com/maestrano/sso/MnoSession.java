@@ -11,11 +11,10 @@ import javax.xml.bind.DatatypeConverter;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.maestrano.Maestrano;
+import com.maestrano.exception.ApiException;
+import com.maestrano.exception.AuthenticationException;
 import com.maestrano.helpers.MnoDateHelper;
 import com.maestrano.net.MnoHttpClient;
-
-import exception.ApiException;
-import exception.AuthenticationException;
 
 
 public class MnoSession {
