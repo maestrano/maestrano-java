@@ -42,15 +42,18 @@ A **java demo application** is also available: https://github.com/maestrano/demo
 
 ### Installation
 
-To install Maestrano, you can this dependency to your project's POM
-```
+**Important Note**: we are currently in the process of getting our group id (com.maestrano) accepted in the Maven central repository. We expect it to be ready by 30/10/2014.
+
+In the meantime please download the jar from the pkg/ folder and add to the project manually. The way to do that will depend on how your environment is setup. If you need any help please send us an email to support@maestrano.com.
+
+*To install Maestrano, you can this dependency to your project's POM*
+```xml
 <dependency>
   <groupId>com.maestrano</groupId>
   <artifactId>stripe-maestrano</artifactId>
-  <version>0.5</version>
+  <version>0.4.0</version>
 </dependency>
 ```
-
 
 ### Configuration
 #### Via config file
