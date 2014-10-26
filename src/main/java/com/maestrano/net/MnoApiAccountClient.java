@@ -120,7 +120,7 @@ public class MnoApiAccountClient {
 	 * @throws InvalidRequestException
 	 */
 	public static <T> List<T> all(Class<T> clazz, Map<String,String> params, MnoHttpClient httpClient) throws AuthenticationException, ApiException, InvalidRequestException {
-		String jsonBody = httpClient.get(getCollectionUrl(clazz), params);
+		String jsonBody = httpClient.get(getCollectionUrl(clazz), MnoMapHelper.toUnderscoreHash(params));
 		
 		Type parsingType = new MnoResponseParameterizedType(new ListParameterizedType(clazz));
 		MnoApiAccountResponse<List<T>> resp = GSON.fromJson(jsonBody, parsingType);

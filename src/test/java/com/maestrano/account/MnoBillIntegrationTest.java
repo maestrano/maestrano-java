@@ -37,6 +37,18 @@ public class MnoBillIntegrationTest {
 		assertEquals("2014-05-29T05:57:10Z",MnoDateHelper.toIso8601(bill.getCreatedAt()));
 	}
 	
+	@Test
+	public void all_withFilters_itRetrievesSelectBills() throws Exception {
+		Map<String,String> filters = new HashMap<String,String>();
+		filters.put("status", "cancelled");
+		
+		List<MnoBill> billList = MnoBill.all(filters);
+		
+		for (MnoBill bill : billList) {
+			assertEquals("cancelled",bill.getStatus());
+		}
+	}
+	
 	@Test 
 	public void retrieve_itRetrievesASingleBill() throws Exception {
 		MnoBill bill = MnoBill.retrieve("bill-1");

@@ -39,6 +39,18 @@ private Properties props = new Properties();
 		assertEquals("2014-06-19T12:29:25Z",MnoDateHelper.toIso8601(bill.getCreatedAt()));
 	}
 	
+	@Test
+	public void all_withFilters_itRetrievesSelectBills() throws Exception {
+		Map<String,String> filters = new HashMap<String,String>();
+		filters.put("status", "cancelled");
+		
+		List<MnoRecurringBill> billList = MnoRecurringBill.all(filters);
+		
+		for (MnoRecurringBill bill : billList) {
+			assertEquals("cancelled",bill.getStatus());
+		}
+	}
+	
 	@Test 
 	public void retrieve_itRetrievesASingleBill() throws Exception {
 		MnoRecurringBill bill = MnoRecurringBill.retrieve("rbill-1");

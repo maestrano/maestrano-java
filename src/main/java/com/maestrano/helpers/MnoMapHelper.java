@@ -7,17 +7,24 @@ public class MnoMapHelper {
 	
 	/**
 	 * Convert all keys to snake case style
+	 * @param <V>
 	 * @param hash
 	 * @return
 	 */
-	public static Map<String,Object> toUnderscoreHash(Map<String,Object> hash) {
-		Map<String,Object> newHash = new HashMap<String,Object>();
+	public static <V> Map<String,V> toUnderscoreHash(Map<String,V> hash) {
+		if (hash == null) return null;
 		
-		for (Map.Entry<String, Object> entry : hash.entrySet())
+		Map<String,V> newHash = new HashMap<String,V>();
+		
+		for (Map.Entry<String, V> entry : hash.entrySet())
 		{
 			newHash.put(MnoStringHelper.toSnakeCase(entry.getKey()), entry.getValue());
 		}
 		
 		return newHash;
 	}
+	
+//	public static Map<String,Object> toUnderscoreHash(Map<String,String> hash) {
+//		
+//	}
 }
