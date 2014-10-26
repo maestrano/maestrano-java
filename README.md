@@ -240,7 +240,7 @@ Based on your application requirements the consume action might look like this:
     }
     
     // Set Maestrano session (for Single Logout)
-    new mnoSession = new MnoSession(request.getSession(),mnoUser);
+    MnoSession mnoSession = new MnoSession(request.getSession(),mnoUser);
     mnoSession.save();
     
     // Redirect to you application home page
