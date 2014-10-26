@@ -95,12 +95,12 @@ sso.idm=https\://idp.myapp.com
 # This is your application path to the SAML endpoint that allows users to initialize SSO authentication. 
 # Upon reaching this endpoint users your application will automatically create a SAML request and redirect the user to Maestrano. Maestrano will then authenticate and authorize the user. 
 # Upon authorization the user gets redirected to your application consumer endpoint (see below) for initial setup and/or login.
-sso.initPath=/maestrano/auth/saml/init.jsp
+sso.initPath=/maestrano/auth/saml/init
 
 # => consumePath
 #This is your application path to the SAML endpoint that allows users to finalize SSO authentication. 
 # During the 'consume' action your application sets users (and associated group) up and/or log them in.
-sso.consumePath=/maestrano/auth/saml/consume.jsp
+sso.consumePath=/maestrano/auth/saml/consume
 
 # => creationMode
 # !IMPORTANT
