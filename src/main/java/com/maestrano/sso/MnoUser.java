@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.Map;
 
 import com.maestrano.Maestrano;
+import com.maestrano.helpers.MnoDateHelper;
 
 public class MnoUser {
 	
@@ -28,11 +29,10 @@ public class MnoUser {
 	 * @throws ParseException 
 	 */
 	public MnoUser(com.maestrano.saml.Response samlResponse) throws ParseException {
-		SimpleDateFormat simpleDf = new SimpleDateFormat("yyyy-MM-dd'T'H:mm:ssZ");
 		Map<String,String> att = samlResponse.getAttributes();
         
 		this.ssoSession = att.get("mno_session");
-        this.ssoSessionRecheck = simpleDf.parse(att.get("mno_session_recheck"));
+        this.ssoSessionRecheck = MnoDateHelper.fromIso8601(att.get("mno_session_recheck"));
         this.groupUid = att.get("group_uid");
         this.groupRole = att.get("group_role");
         this.uid = att.get("uid");

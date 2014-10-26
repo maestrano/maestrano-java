@@ -6,6 +6,8 @@ import java.util.Date;
 import java.util.Map;
 import java.util.TimeZone;
 
+import com.maestrano.helpers.MnoDateHelper;
+
 public class MnoGroup {
 	private String uid;
 	private String name;
@@ -26,14 +28,13 @@ public class MnoGroup {
      */
     public MnoGroup(com.maestrano.saml.Response samlResponse) throws ParseException
     {
-    	SimpleDateFormat simpleDf = new SimpleDateFormat("yyyy-MM-dd'T'H:mm:ssZ");
         Map<String,String> att = samlResponse.getAttributes();
         
         // General info
         this.uid = att.get("group_uid");
         this.name = att.get("group_name");
         this.email = att.get("group_email");
-        this.freeTrialEndAt = simpleDf.parse(att.get("group_end_free_trial"));
+        this.freeTrialEndAt = MnoDateHelper.fromIso8601(att.get("group_end_free_trial"));
         this.companyName = att.get("company_name");
         this.hasCreditCard = (att.get("group_has_credit_card") != null && att.get("group_has_credit_card").equals("true"));
 
