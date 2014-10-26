@@ -185,8 +185,6 @@ So here is an example of page to adapt depending on the framework you're using:
 
 <%
   java.io.PrintWriter writer = response.getWriter();
-  writer.write("Failed");
-  
 
   if (Maestrano.authenticate(request)) {
     writer.write(Maestrano.toMetadata());
