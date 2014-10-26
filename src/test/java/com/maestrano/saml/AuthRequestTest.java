@@ -21,6 +21,7 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 import com.maestrano.Maestrano;
+import com.maestrano.helpers.MnoZipHelper;
 
 import static org.junit.Assert.assertEquals;
 
@@ -39,15 +40,16 @@ public class AuthRequestTest {
 	}
 	
 	@Test
-	public void getXmlBase64Request_itReturnsABase64EncodedRequest() throws XMLStreamException {
+	public void getXmlBase64Request_itReturnsABase64EncodedRequest() throws Exception {
 		DatatypeConverter.parseBase64Binary(subject.getXmlBase64Request());
 	}
 	
 	@Test
-	public void getXmlBase64Request_itSetsTheRightSAMLParameters() throws XMLStreamException, ParserConfigurationException, SAXException, IOException {
+	public void getXmlBase64Request_itSetsTheRightSAMLParameters() throws Exception {
 		String actual;
 		byte[] encoded = DatatypeConverter.parseBase64Binary(subject.getXmlBase64Request());
-		String xmlReq = new String(encoded,"UTF-8");
+		byte[] encodedDeflated = MnoZipHelper.inflate(encoded);
+		String xmlReq = new String(encodedDeflated,"UTF-8");
 		
 		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 		DocumentBuilder db = dbf.newDocumentBuilder();
@@ -61,7 +63,7 @@ public class AuthRequestTest {
 	}
 	
 	@Test
-	public void getRedirectUrl_itGeneratesTheRightBaseUrl() throws UnsupportedEncodingException, XMLStreamException {
+	public void getRedirectUrl_itGeneratesTheRightBaseUrl() throws Exception {
 		String expected = "https://maestrano.com/api/v1/auth/saml?SAMLRequest=";
 		expected += URLEncoder.encode(subject.getXmlBase64Request(),"UTF-8");
 		
@@ -69,7 +71,7 @@ public class AuthRequestTest {
 	}
 	
 	@Test
-	public void getRedirectUrl_itAddsTheProvidedParameters() throws XMLStreamException, UnsupportedEncodingException {
+	public void getRedirectUrl_itAddsTheProvidedParameters() throws Exception {
 		Map<String,String> params = new HashMap<String,String>();
 		params.put("group_id", "cld-9");
 		params.put("other", "value with spaces");
