@@ -44,6 +44,8 @@ public class MnoBillIntegrationTest {
 		
 		List<MnoBill> billList = MnoBill.all(filters);
 		
+		assertTrue(billList.size() > 0);
+		
 		for (MnoBill bill : billList) {
 			assertEquals("cancelled",bill.getStatus());
 		}
