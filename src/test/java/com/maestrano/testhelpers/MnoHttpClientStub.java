@@ -1,12 +1,19 @@
 package com.maestrano.testhelpers;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.maestrano.json.DateSerializer;
 import com.maestrano.net.MnoHttpClient;
 
 public class MnoHttpClientStub extends MnoHttpClient {
+	public static final Gson GSON = new GsonBuilder()
+		.registerTypeAdapter(Date.class, new DateSerializer())
+		.create();
+	
 	private String defaultResponseStub;
 	private Map<String,String> responseStubs;
 	
@@ -19,7 +26,7 @@ public class MnoHttpClientStub extends MnoHttpClient {
 		return getResponseStub(url,null,null);
 	}
 	
-	public String get(String url, Map<String,String> params) {
+	public <V> String get(String url, Map<String,V> params) {
 		return getResponseStub(url,params,null);
 	}
 	
@@ -39,7 +46,7 @@ public class MnoHttpClientStub extends MnoHttpClient {
 		return defaultResponseStub;
 	}
 	
-	public String getResponseStub(String url, Map<String,String> params, String payload) {
+	public <V> String getResponseStub(String url, Map<String,V> params, String payload) {
 		String keyStr = url;
 		String paramsStr = stringifyHash(params);
 		
@@ -92,14 +99,14 @@ public class MnoHttpClientStub extends MnoHttpClient {
 		this.defaultResponseStub = gson.toJson(responseStub);
 	}
 	
-	private String stringifyHash(Map<String,String> hash) {
+	private <V> String stringifyHash(Map<String,V> hash) {
 		if (hash == null || hash.isEmpty()) return null;
 		
 		String stringified = "";
-		for (Map.Entry<String, String> param : hash.entrySet())
+		for (Map.Entry<String, V> param : hash.entrySet())
 		{
 			String key = param.getKey();
-			String val = param.getValue();
+			String val = GSON.toJson(param.getValue());
 			stringified += "&" + key + "=" + val;
 		}
 		

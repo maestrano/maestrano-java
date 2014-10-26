@@ -2,7 +2,10 @@ package com.maestrano.account;
 
 import static org.junit.Assert.assertEquals;
 
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 import org.junit.Before;
@@ -32,6 +35,18 @@ public class MnoGroupIntegrationTest {
 		
 		assertEquals("cld-3",entity.getId());
 		assertEquals("2014-05-21T00:31:26Z",MnoDateHelper.toIso8601(entity.getCreatedAt()));
+	}
+	
+	@Test
+	public void all_withFilters_itRetrievesSelectedGroups() throws Exception {
+		Map<String,Object> filters = new HashMap<String,Object>();
+		Date d = MnoDateHelper.fromIso8601("2014-06-21T00:31:26Z");
+		filters.put("freeTrialEndAtAfter", d);
+		filters.put("freeTrialEndAtBefore", d);
+		
+		List<MnoGroup> billList = MnoGroup.all(filters);
+		
+		assertEquals(1,billList.size());
 	}
 
 	@Test 

@@ -98,6 +98,7 @@ public class MnoApiAccountClient {
 	
 	/**
 	 * Return all the entities matching the parameters
+	 * @param <V>
 	 * @param entity class
 	 * @param params criteria
 	 * @return list of entities
@@ -105,12 +106,13 @@ public class MnoApiAccountClient {
 	 * @throws ApiException
 	 * @throws InvalidRequestException
 	 */
-	public static <T> List<T> all(Class<T> clazz, Map<String,String> params) throws AuthenticationException, ApiException, InvalidRequestException {
+	public static <T, V> List<T> all(Class<T> clazz, Map<String,V> params) throws AuthenticationException, ApiException, InvalidRequestException {
 		return all(clazz,params,MnoHttpClient.getAuthenticatedClient());
 	}
 	
 	/**
 	 * Return all the entities matching the parameters and using the provided client
+	 * @param <V>
 	 * @param entity class
 	 * @param params criteria
 	 * @param httpClient MnoHttpClient to use
@@ -119,7 +121,7 @@ public class MnoApiAccountClient {
 	 * @throws ApiException
 	 * @throws InvalidRequestException
 	 */
-	public static <T> List<T> all(Class<T> clazz, Map<String,String> params, MnoHttpClient httpClient) throws AuthenticationException, ApiException, InvalidRequestException {
+	public static <T, V> List<T> all(Class<T> clazz, Map<String,V> params, MnoHttpClient httpClient) throws AuthenticationException, ApiException, InvalidRequestException {
 		String jsonBody = httpClient.get(getCollectionUrl(clazz), MnoMapHelper.toUnderscoreHash(params));
 		
 		Type parsingType = new MnoResponseParameterizedType(new ListParameterizedType(clazz));

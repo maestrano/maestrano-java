@@ -9,16 +9,24 @@ import java.net.HttpURLConnection;
 import java.net.ProtocolException;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.xml.bind.DatatypeConverter;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.maestrano.Maestrano;
 import com.maestrano.exception.ApiException;
 import com.maestrano.exception.AuthenticationException;
+import com.maestrano.json.DateSerializer;
 
 public class MnoHttpClient {
+	public static final Gson GSON = new GsonBuilder()
+		.registerTypeAdapter(Date.class, new DateSerializer())
+		.create();
+	
 	private String defaultUserAgent;
 	private String basicAuthHash;
 	private String defaultContentType;
@@ -54,24 +62,26 @@ public class MnoHttpClient {
 	
 	/**
 	 * Perform a GET request on the specified endpoint
+	 * @param <V>
 	 * @param url
 	 * @return response body
 	 * @throws ApiException 
 	 * @throws AuthenticationException 
 	 */
-	public String get(String url, Map<String,String> params) throws AuthenticationException, ApiException {
+	public <V> String get(String url, Map<String,V> params) throws AuthenticationException, ApiException {
 		return performRequest(url,"GET",params, null,null);
 	}
 	
 	/**
 	 * Perform a GET request on the specified endpoint
+	 * @param <V>
 	 * @param url
 	 * @return response body
 	 * @throws IOException
 	 * @throws ApiException 
 	 * @throws AuthenticationException 
 	 */
-	public String get(String url, Map<String,String> params, Map<String,String> header) throws AuthenticationException, ApiException {
+	public <V> String get(String url, Map<String,V> params, Map<String,String> header) throws AuthenticationException, ApiException {
 		return performRequest(url,"GET",params, header,null);
 	}
 	
@@ -116,6 +126,7 @@ public class MnoHttpClient {
 	
 	/**
 	 * Perform a request to the remote endpoint
+	 * @param <V>
 	 * @param url the remote endpoint to contact
 	 * @param method such as 'GET', 'PUT', 'POST' or 'DELETE'
 	 * @param header values
@@ -124,7 +135,7 @@ public class MnoHttpClient {
 	 * @throws AuthenticationException 
 	 * @throws ApiException 
 	 */
-	protected String performRequest(String url, String method, Map<String,String> params, Map<String,String> header, String payload) throws AuthenticationException, ApiException {
+	protected <V> String performRequest(String url, String method, Map<String, V> params, Map<String,String> header, String payload) throws AuthenticationException, ApiException {
 		// Prepare header
 		if (header == null) {
 			header = new HashMap<String,String>();
@@ -159,14 +170,18 @@ public class MnoHttpClient {
 		String realUrl = url;
 		if (params != null && !params.isEmpty()) {
 			realUrl += "?";
+			boolean isFirst = true;
 			
-			for (Map.Entry<String, String> param : params.entrySet())
+			for (Map.Entry<String, V> param : params.entrySet())
 			{
 				String key;
 				try {
 					key = URLEncoder.encode(param.getKey(),"UTF-8");
-					String val = URLEncoder.encode(param.getValue(), "UTF-8");
-					realUrl += "&" + key + "=" + val;
+					String realParam = GSON.fromJson(GSON.toJson(param.getValue()),String.class);
+					String val = URLEncoder.encode(realParam, "UTF-8");
+					if (!isFirst) realUrl += "&";
+					realUrl += key + "=" + val;
+					isFirst = false;
 				} catch (UnsupportedEncodingException e) {
 					throw new ApiException("Wrong query parameter encoding for pair: " + param.getKey() + " = " + param.getValue(),e);
 				}

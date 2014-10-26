@@ -29,13 +29,14 @@ public class MnoGroup extends MnoObject {
 	
 	/**
 	 * Return all groups using the application and matching the criteria
+	 * @param <V>
 	 * @param params
 	 * @return list of groups
 	 * @throws ApiException 
 	 * @throws AuthenticationException 
 	 * @throws InvalidRequestException 
 	 */
-	public static List<MnoGroup> all(Map<String,String> params) throws AuthenticationException, ApiException, InvalidRequestException {
+	public static <V> List<MnoGroup> all(Map<String,V> params) throws AuthenticationException, ApiException, InvalidRequestException {
 		return MnoApiAccountClient.all(MnoGroup.class, params);
 	}
 	
