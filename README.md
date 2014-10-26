@@ -47,7 +47,7 @@ A **java demo application** is also available: https://github.com/maestrano/demo
 In the meantime please download the jar from the pkg/ folder and add to the project manually. The way to do that will depend on how your environment is setup. If you need any help please send us an email to support@maestrano.com.
 
 *To install Maestrano, you can this dependency to your project's POM*
-```xml
+```console
 <dependency>
   <groupId>com.maestrano</groupId>
   <artifactId>stripe-maestrano</artifactId>
