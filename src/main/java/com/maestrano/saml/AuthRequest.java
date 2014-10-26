@@ -2,7 +2,6 @@ package com.maestrano.saml;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -10,7 +9,6 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-import java.util.zip.Deflater;
 
 import javax.servlet.ServletRequest;
 import javax.xml.stream.XMLOutputFactory;
