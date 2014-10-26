@@ -54,7 +54,7 @@ public class AuthRequestTest {
 		assertEquals(props.getProperty("api.id"), actual);
 		
 		actual = dom.getElementsByTagName("samlp:AuthnRequest").item(0).getAttributes().getNamedItem("AssertionConsumerServiceURL").getNodeValue();
-		assertEquals(props.getProperty("app.host") + "/maestrano/auth/saml/consume.jsp", actual);
+		assertEquals(props.getProperty("app.host") + "/maestrano/auth/saml/consume", actual);
 	}
 	
 	@Test

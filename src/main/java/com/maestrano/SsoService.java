@@ -116,7 +116,7 @@ public class SsoService {
 	 * @return String
 	 */
 	public String getInitPath() {
-		if (initPath == null || initPath.isEmpty()) return "/maestrano/auth/saml/init.jsp";
+		if (initPath == null || initPath.isEmpty()) return "/maestrano/auth/saml/init";
 		return initPath;
 	}
 	
@@ -129,7 +129,7 @@ public class SsoService {
 	 * @return
 	 */
 	public String getConsumePath() {
-		if (consumePath == null || consumePath.isEmpty()) return "/maestrano/auth/saml/consume.jsp";
+		if (consumePath == null || consumePath.isEmpty()) return "/maestrano/auth/saml/consume";
 		return consumePath;
 	}
 	
