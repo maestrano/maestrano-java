@@ -36,7 +36,7 @@ For testing purpose we provide an API Sandbox where you can freely obtain an App
 
 To get started just go to: http://api-sandbox.maestrano.io
 
-An example java application is also available: https://github.com/maestrano/demoapp-java
+A **java demo application** is also available: https://github.com/maestrano/demoapp-java
 
 ## Getting Started
 
