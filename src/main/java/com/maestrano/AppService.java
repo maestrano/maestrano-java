@@ -44,9 +44,10 @@ public class AppService {
 	
 	/**
 	 * The current application environment
-	 * @return String either 'test' or 'production'
+	 * @return String either 'test' or 'production', 'test' by default
 	 */
 	public String getEnvironment() {
+		if (environment == null || environment.isEmpty()) return "test";
 		return environment;
 	}
 	public void setEnvironment(String environment) {
