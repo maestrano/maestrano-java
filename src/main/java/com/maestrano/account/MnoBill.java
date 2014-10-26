@@ -38,13 +38,14 @@ public class MnoBill extends MnoObject {
 	
 	/**
 	 * Return all bills matching the criteria passed in argument
+	 * @param <V>
 	 * @param params
 	 * @return list of bills
 	 * @throws ApiException 
 	 * @throws AuthenticationException 
 	 * @throws InvalidRequestException 
 	 */
-	public static List<MnoBill> all(Map<String,String> params) throws AuthenticationException, ApiException, InvalidRequestException {
+	public static <V> List<MnoBill> all(Map<String,V> params) throws AuthenticationException, ApiException, InvalidRequestException {
 		return MnoApiAccountClient.all(MnoBill.class, params);
 	}
 	

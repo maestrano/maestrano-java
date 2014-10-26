@@ -33,13 +33,14 @@ public class MnoUser extends MnoObject {
 	
 	/**
 	 * Return all users using the application and matching the criteria
+	 * @param <V>
 	 * @param params
 	 * @return list of users
 	 * @throws ApiException 
 	 * @throws AuthenticationException 
 	 * @throws InvalidRequestException 
 	 */
-	public static List<MnoUser> all(Map<String,String> params) throws AuthenticationException, ApiException, InvalidRequestException {
+	public static <V> List<MnoUser> all(Map<String,V> params) throws AuthenticationException, ApiException, InvalidRequestException {
 		return MnoApiAccountClient.all(MnoUser.class, params);
 	}
 	
