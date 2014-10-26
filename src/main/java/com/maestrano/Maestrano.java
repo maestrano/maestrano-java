@@ -16,7 +16,7 @@ import com.google.gson.Gson;
  */
 public final class Maestrano 
 {
-    private static final String version = "0.1.0";
+    private static final String version = "0.2.0";
     
     // Private constructor
     private Maestrano() {}
