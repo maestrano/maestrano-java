@@ -44,7 +44,7 @@ A **java demo application** is also available: https://github.com/maestrano/demo
 
 ### Installation
 
-To install Maestrano, you can this dependency to your project's POM:
+To install maestrano-java using Maven, add this dependency to your project's POM:
 ```
 <dependency>
   <groupId>com.maestrano</groupId>
