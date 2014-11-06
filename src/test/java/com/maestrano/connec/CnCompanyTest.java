@@ -53,5 +53,11 @@ public class CnCompanyTest {
 		assertEquals(phone.get("landline"),subject.getPhone().getLandline());
 		assertEquals(phone.get("mobile"),subject.getPhone().getMobile());
 		assertEquals(phone.get("fax"),subject.getPhone().getFax());
+		
+		// Logo
+		Map<String,String> logo = (Map<String,String>) hash.get("logo");
+		assertEquals(logo.get("logo"),subject.getLogo().getLogo());
+		assertEquals(logo.get("thumb"),subject.getLogo().getThumb());
+		assertEquals(logo.get("mini_thumb"),subject.getLogo().getMiniThumb());
 	}
 }

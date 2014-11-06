@@ -17,7 +17,7 @@ public class CnCompany extends CnObject {
 	private CnAddressGroup address;
 	private CnWebsite website;
 	private CnPhone phone;
-	private String logoUrl;
+	private CnLogo logo;
 	
 	public static CnCompany fromJson(String jsonStr) {
 		CnCompany obj = MnoApiConnecClient.GSON.fromJson(jsonStr, CnCompany.class);
@@ -96,10 +96,10 @@ public class CnCompany extends CnObject {
 	public void setPhone(CnPhone phone) {
 		this.phone = phone;
 	}
-	public String getLogoUrl() {
-		return logoUrl;
+	public CnLogo getLogo() {
+		return logo;
 	}
-	public void setLogoUrl(String logoUrl) {
-		this.logoUrl = logoUrl;
+	public void setLogo(CnLogo logo) {
+		this.logo = logo;
 	}
 }
