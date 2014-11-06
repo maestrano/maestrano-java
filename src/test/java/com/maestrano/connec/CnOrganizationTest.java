@@ -1,6 +1,7 @@
 package com.maestrano.connec;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.lang.reflect.Type;
 import java.util.Map;
@@ -25,7 +26,7 @@ public class CnOrganizationTest {
 		Type stringStringMap = new TypeToken<Map<String, Object>>(){}.getType();
 		hash = MnoApiConnecClient.GSON.fromJson(jsonStr, stringStringMap);
 		
-		subject = MnoApiConnecClient.GSON.fromJson(jsonStr, CnOrganization.class);
+		subject = CnOrganization.fromJson(jsonStr);
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -47,5 +48,26 @@ public class CnOrganizationTest {
 		assertEquals(phone.get("landline"),subject.getPhone().getLandline());
 		assertEquals(phone.get("mobile"),subject.getPhone().getMobile());
 		assertEquals(phone.get("fax"),subject.getPhone().getFax());
+	}
+	
+	@Test
+	public void attributes_itTracksChanges() {
+		subject.setIndustry("something");
+		
+		//System.out.println(MnoApiConnecClient.GSON.toJson(subject.getChangedAttributes()));
+		
+		assertTrue(subject.isChanged());
+	}
+	
+	@Test
+	public void subObject_itTracksChanges() {
+		subject.getAddress().getBilling().setCity("some-city-in-the-world");
+		
+		System.out.println(subject.getAddress());
+		
+		//System.out.println(MnoApiConnecClient.GSON.toJson(subject.getChangedAttributes()));
+		//System.out.println(subject.getAddress()._parentPcs);
+		
+		assertTrue(subject.isChanged());
 	}
 }

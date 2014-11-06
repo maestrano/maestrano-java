@@ -1,7 +1,5 @@
 package com.maestrano.connec;
 
-
-
-public class CnPerson {
+public class CnPerson extends CnObject {
 
 }
