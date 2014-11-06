@@ -16,7 +16,7 @@ import com.maestrano.Maestrano;
 import com.maestrano.account.MnoBill;
 import com.maestrano.testhelpers.MnoHttpClientStub;
 
-public class MnoApiAccountResourceTest {
+public class MnoApiAccountClientTest {
 	private Properties props = new Properties();
 	private MnoHttpClientStub httpClient;
 
