@@ -42,5 +42,10 @@ public class CnOrganizationTest {
 		assertEquals(billing.get("city"),subject.getAddress().getBilling().getCity());
 		assertEquals(billing.get("region"),subject.getAddress().getBilling().getRegion());
 		assertEquals(billing.get("postal_code"),subject.getAddress().getBilling().getPostalCode());
+		
+		Map<String,Object> phone = (Map<String,Object>) hash.get("phone");
+		assertEquals(phone.get("landline"),subject.getPhone().getLandline());
+		assertEquals(phone.get("mobile"),subject.getPhone().getMobile());
+		assertEquals(phone.get("fax"),subject.getPhone().getFax());
 	}
 }
