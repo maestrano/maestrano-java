@@ -12,6 +12,8 @@ public class ApiService {
 	private String base;
 	private Boolean verifySslCerts;
 	private String host;
+	private String connecHost;
+	private String connecBase;
 	
 	// Private Constructor
 	private ApiService() {}
@@ -106,6 +108,38 @@ public class ApiService {
 
 	public void setBase(String base) {
 		this.base = base;
+	}
+	
+	/**
+	 * Return the host used to make API calls on Connec!
+	 * @return String host
+	 */
+	public String getConnecHost() {
+		if (connecHost == null || connecHost.isEmpty()) {
+			if (Maestrano.appService().getEnvironment().equals("production")) {
+				return "https://api.maestrano.com";
+			} else {
+				return "http://api-sandbox.maestrano.io";
+			}
+		}
+		return connecHost;
+	}
+
+	public void setConnecHost(String connecHost) {
+		this.connecHost = connecHost;
+	}
+	
+	/**
+	 * Return the base of the API endpoint
+	 * @return String base
+	 */
+	public String getConnecBase() {
+		if (connecBase == null || connecBase.isEmpty()) return "/api/v2";
+		return connecBase;
+	}
+
+	public void setConnecBase(String connecBase) {
+		this.connecBase = connecBase;
 	}
 	
 	/**

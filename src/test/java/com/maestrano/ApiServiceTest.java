@@ -56,8 +56,18 @@ public class ApiServiceTest {
 	}
 	
 	@Test
+	public void getConnecHost_itReturnsTheRightProductionValue() {
+		assertEquals("https://api.maestrano.com",subject.getConnecHost());
+	}
+	
+	@Test
 	public void getBase_itReturnsTheRightValue() {
 		assertEquals("/api/v1", subject.getBase());
+	}
+	
+	@Test
+	public void getConnecBase_itReturnsTheRightValue() {
+		assertEquals("/api/v2", subject.getConnecBase());
 	}
 	
 	@Test
