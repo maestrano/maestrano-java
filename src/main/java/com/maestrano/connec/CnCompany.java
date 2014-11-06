@@ -2,7 +2,9 @@ package com.maestrano.connec;
 
 import java.util.TimeZone;
 
-public class CnCompany {
+import com.maestrano.net.MnoApiConnecClient;
+
+public class CnCompany extends CnObject {
 	private String name;
 	private String currency;
 	private String note;
@@ -16,6 +18,11 @@ public class CnCompany {
 	private CnWebsite website;
 	private CnPhone phone;
 	private String logoUrl;
+	
+	public static CnCompany fromJson(String jsonStr) {
+		CnCompany obj = MnoApiConnecClient.GSON.fromJson(jsonStr, CnCompany.class);
+		return obj;
+	}
 	
 	public String getName() {
 		return name;
