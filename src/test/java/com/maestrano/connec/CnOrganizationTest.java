@@ -49,25 +49,4 @@ public class CnOrganizationTest {
 		assertEquals(phone.get("mobile"),subject.getPhone().getMobile());
 		assertEquals(phone.get("fax"),subject.getPhone().getFax());
 	}
-	
-	@Test
-	public void attributes_itTracksChanges() {
-		subject.setIndustry("something");
-		
-		//System.out.println(MnoApiConnecClient.GSON.toJson(subject.getChangedAttributes()));
-		
-		assertTrue(subject.isChanged());
-	}
-	
-	@Test
-	public void subObject_itTracksChanges() {
-		subject.getAddress().getBilling().setCity("some-city-in-the-world");
-		
-		System.out.println(subject.getAddress());
-		
-		//System.out.println(MnoApiConnecClient.GSON.toJson(subject.getChangedAttributes()));
-		//System.out.println(subject.getAddress()._parentPcs);
-		
-		assertTrue(subject.isChanged());
-	}
 }
