@@ -46,21 +46,21 @@ public class MnoApiConnecClientTest {
 
 	@Test
 	public void class_getCollectionEndpoint_itReturnsTheRightEntityApiEndpoint() {
-		assertEquals("/api/v2/some_models",MnoApiConnecClient.getCollectionEndpoint(CnSomeModel.class));
+		assertEquals("/api/v2/cld-1/some_models",MnoApiConnecClient.getCollectionEndpoint(CnSomeModel.class,"cld-1"));
 	}
 
 	@Test
 	public void getInstanceEndpoint_itReturnsTheRightEntityInstanceApiEndpoint() {
-		assertEquals("/api/v2/some_models/1",MnoApiConnecClient.getInstanceEndpoint(CnSomeModel.class,"1"));
+		assertEquals("/api/v2/cld-1/some_models/1",MnoApiConnecClient.getInstanceEndpoint(CnSomeModel.class,"cld-1","1"));
 	}
 
 	@Test
 	public void class_getCollectionUrl_itReturnsTheRightEntityApiUrl() {
-		assertEquals("https://connec.maestrano.com/api/v2/some_models",MnoApiConnecClient.getCollectionUrl(CnSomeModel.class));
+		assertEquals("https://connec.maestrano.com/api/v2/cld-1/some_models",MnoApiConnecClient.getCollectionUrl(CnSomeModel.class,"cld-1"));
 	}
 
 	@Test
 	public void getInstanceUrl_itReturnsTheRightEntityInstanceApiUrl() {
-		assertEquals("https://connec.maestrano.com/api/v2/some_models/1",MnoApiConnecClient.getInstanceUrl(CnSomeModel.class,"1"));
+		assertEquals("https://connec.maestrano.com/api/v2/cld-1/some_models/1",MnoApiConnecClient.getInstanceUrl(CnSomeModel.class,"cld-1","1"));
 	}
 }

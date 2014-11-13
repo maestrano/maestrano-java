@@ -51,38 +51,42 @@ public class MnoApiConnecClient {
 	/**
 	 * Return the path to the entity collection endpoint
 	 * @param entity class
+	 * @param customer group id
 	 * @return collection endpoint
 	 */
-	public static String getCollectionEndpoint(Class<?> clazz) {
-		return Maestrano.apiService().getConnecBase() + "/" + getEntitiesName(clazz);
+	public static String getCollectionEndpoint(Class<?> clazz, String groupId) {
+		return Maestrano.apiService().getConnecBase() + "/" + groupId + "/" + getEntitiesName(clazz);
 	}
 	
 	/**
 	 * Return the url to the collection endpoint
 	 * @param entity class
+	 * @param customer group id
 	 * @return collection url
 	 */
-	public static String getCollectionUrl(Class<?> clazz) {
-		return Maestrano.apiService().getConnecHost() + getCollectionEndpoint(clazz);
+	public static String getCollectionUrl(Class<?> clazz, String groupId) {
+		return Maestrano.apiService().getConnecHost() + getCollectionEndpoint(clazz,groupId);
 	}
 	
 	/**
 	 * Return the path to the instance endpoint
 	 * @param entity class
+	 * @param customer group id
 	 * @param entity id
 	 * @return instance path
 	 */
-	public static String getInstanceEndpoint(Class<?> clazz, String id) {
-		return getCollectionEndpoint(clazz) + "/" + id;
+	public static String getInstanceEndpoint(Class<?> clazz, String groupId, String id) {
+		return getCollectionEndpoint(clazz,groupId) + "/" + id;
 	}
 	
 	/**
 	 * Return the url to the instance endpoint
 	 * @param entity class
+	 * @param customer group id
 	 * @param entity id
 	 * @return instance url
 	 */
-	public static String getInstanceUrl(Class<?> clazz, String id) {
-		return Maestrano.apiService().getConnecHost() + getInstanceEndpoint(clazz,id);
+	public static String getInstanceUrl(Class<?> clazz, String groupId, String id) {
+		return Maestrano.apiService().getConnecHost() + getInstanceEndpoint(clazz,groupId,id);
 	}
 }
