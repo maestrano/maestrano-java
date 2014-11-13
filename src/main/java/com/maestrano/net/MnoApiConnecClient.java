@@ -1,17 +1,27 @@
 package com.maestrano.net;
 
+import java.lang.reflect.Type;
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
 import java.util.TimeZone;
 
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.maestrano.Maestrano;
+import com.maestrano.exception.ApiException;
+import com.maestrano.exception.AuthenticationException;
+import com.maestrano.exception.InvalidRequestException;
+import com.maestrano.helpers.MnoMapHelper;
 import com.maestrano.helpers.MnoStringHelper;
 import com.maestrano.json.DateDeserializer;
 import com.maestrano.json.DateSerializer;
 import com.maestrano.json.TimeZoneDeserializer;
 import com.maestrano.json.TimeZoneSerializer;
+import com.maestrano.reflect.ListParameterizedType;
+import com.maestrano.reflect.MnoConnecResponseParameterizedType;
+import com.maestrano.reflect.MnoResponseParameterizedType;
 
 public class MnoApiConnecClient {
 	public static final Gson GSON = new GsonBuilder()
@@ -88,5 +98,190 @@ public class MnoApiConnecClient {
 	 */
 	public static String getInstanceUrl(Class<?> clazz, String groupId, String id) {
 		return Maestrano.apiService().getConnecHost() + getInstanceEndpoint(clazz,groupId,id);
+	}
+	
+	/**
+	 * Return all the entities 
+	 * @param clazz entity class
+	 * @param groupId customer group id
+	 * @return list of entities
+	 * @throws AuthenticationException
+	 * @throws ApiException
+	 * @throws InvalidRequestException
+	 */
+	public static <T> List<T> all(Class<T> clazz, String groupId) throws AuthenticationException, ApiException, InvalidRequestException {
+		return all(clazz,groupId,null,MnoHttpClient.getAuthenticatedClient());
+	}
+	
+	/**
+	 * Return all the entities matching the parameters
+	 * @param <V>
+	 * @param clazz entity class
+	 * @param groupId customer group id
+	 * @param params criteria
+	 * @return list of entities
+	 * @throws AuthenticationException
+	 * @throws ApiException
+	 * @throws InvalidRequestException
+	 */
+	public static <T, V> List<T> all(Class<T> clazz, String groupId, Map<String,V> params) throws AuthenticationException, ApiException, InvalidRequestException {
+		return all(clazz,groupId,params,MnoHttpClient.getAuthenticatedClient());
+	}
+	
+	/**
+	 * Return all the entities matching the parameters and using the provided client
+	 * @param <V>
+	 * @param clazz entity class
+	 * @param groupId customer group id
+	 * @param params criteria
+	 * @param httpClient MnoHttpClient to use
+	 * @return list of entities
+	 * @throws AuthenticationException
+	 * @throws ApiException
+	 * @throws InvalidRequestException
+	 */
+	public static <T, V> List<T> all(Class<T> clazz, String groupId, Map<String,V> params, MnoHttpClient httpClient) throws AuthenticationException, ApiException, InvalidRequestException {
+		String jsonBody = httpClient.get(getCollectionUrl(clazz,groupId), MnoMapHelper.toUnderscoreHash(params));
+		
+		Type parsingType = new MnoConnecResponseParameterizedType(clazz);
+		MnoApiConnecResponse<T> resp = GSON.fromJson(jsonBody, parsingType);
+		
+		return resp.getEntities();
+	}
+	
+	/**
+	 * Create an entity remotely
+	 * @param clazz entity class
+	 * @param groupId customer group id
+	 * @param hash entity attributes
+	 * @return created entity
+	 * @throws AuthenticationException
+	 * @throws ApiException
+	 * @throws InvalidRequestException
+	 */
+	public static <T> T create(Class<T> clazz, String groupId, Map<String,Object> hash) throws AuthenticationException, ApiException, InvalidRequestException {
+		return create(clazz,groupId,hash,MnoHttpClient.getAuthenticatedClient());
+	}
+	
+	/**
+	 * Create an entity remotely
+	 * @param clazz entity class
+	 * @param groupId customer group id
+	 * @param hash entity attributes
+	 * @param httpClient
+	 * @return created entity
+	 * @throws AuthenticationException
+	 * @throws ApiException
+	 * @throws InvalidRequestException
+	 */
+	public static <T> T create(Class<T> clazz, String groupId, Map<String,Object> hash, MnoHttpClient httpClient) throws AuthenticationException, ApiException, InvalidRequestException {
+		String jsonBody = httpClient.post(getCollectionUrl(clazz,groupId), GSON.toJson(MnoMapHelper.toUnderscoreHash(hash)));
+		
+		Type parsingType = new MnoConnecResponseParameterizedType(clazz);
+		MnoApiConnecResponse<T> resp = GSON.fromJson(jsonBody, parsingType);
+		
+		return resp.getEntity();
+	}
+	
+	/**
+	 * Fetch an entity by id
+	 * @param clazz entity class
+	 * @param groupId customer group id
+	 * @param entityId id of the entity to retrieve
+	 * @return entity
+	 * @throws AuthenticationException
+	 * @throws ApiException
+	 * @throws InvalidRequestException
+	 */
+	public static <T> T retrieve(Class<T> clazz, String groupId, String entityId) throws AuthenticationException, ApiException, InvalidRequestException {
+		return retrieve(clazz,groupId,entityId,MnoHttpClient.getAuthenticatedClient());
+	}
+	
+	/**
+	 * Fetch an entity by id
+	 * @param clazz entity class
+	 * @param groupId customer group id
+	 * @param entityId id of the entity to retrieve
+	 * @param httpClient
+	 * @return entity
+	 * @throws AuthenticationException
+	 * @throws ApiException
+	 * @throws InvalidRequestException
+	 */
+	public static <T> T retrieve(Class<T> clazz, String groupId, String entityId, MnoHttpClient httpClient) throws AuthenticationException, ApiException, InvalidRequestException {
+		String jsonBody = httpClient.get(getInstanceUrl(clazz,groupId,entityId));
+		
+		Type parsingType = new MnoConnecResponseParameterizedType(clazz);
+		MnoApiConnecResponse<T> resp = GSON.fromJson(jsonBody, parsingType);
+		
+		return resp.getEntity();
+	}
+	
+	/**
+	 * Update an entity remotely
+	 * @param clazz entity class
+	 * @param groupId customer group id
+	 * @param entityId id of the entity to retrieve
+	 * @param hash entity attributes to update 
+	 * @return updated entity
+	 * @throws AuthenticationException
+	 * @throws ApiException
+	 * @throws InvalidRequestException
+	 */
+	public static <T> T update(Class<T> clazz, String groupId, String entityId, Map<String,Object> hash) throws AuthenticationException, ApiException, InvalidRequestException {
+		return update(clazz,groupId,entityId,hash,MnoHttpClient.getAuthenticatedClient());
+	}
+	
+	/**
+	 * Update an entity remotely
+	 * @param clazz entity class
+	 * @param groupId customer group id
+	 * @param entityId id of the entity to retrieve
+	 * @param hash entity attributes to update 
+	 * @param httpClient
+	 * @return updated entity
+	 * @throws AuthenticationException
+	 * @throws ApiException
+	 * @throws InvalidRequestException
+	 */
+	public static <T> T update(Class<T> clazz, String groupId, String entityId, Map<String,Object> hash, MnoHttpClient httpClient) throws AuthenticationException, ApiException, InvalidRequestException {
+		String jsonBody = httpClient.put(getInstanceUrl(clazz,groupId,entityId),GSON.toJson(MnoMapHelper.toUnderscoreHash(hash)));
+		
+		Type parsingType = new MnoConnecResponseParameterizedType(clazz);
+		MnoApiConnecResponse<T> resp = GSON.fromJson(jsonBody, parsingType);
+		
+		return resp.getEntity();
+	}
+	
+	/**
+	 * Delete or cancel an entity remotely 
+	 * @param clazz entity class
+	 * @param groupId customer group id
+	 * @param entityId id of the entity to delete 
+	 * @return deleted/cancelled entity
+	 * @throws AuthenticationException
+	 * @throws ApiException
+	 */
+	public static <T> T delete(Class<T> clazz, String groupId, String entityId) throws AuthenticationException, ApiException {
+		return delete(clazz,groupId,entityId,MnoHttpClient.getAuthenticatedClient());
+	}
+	
+	/**
+	 * Delete or cancel an entity remotely 
+	 * @param clazz entity class
+	 * @param groupId customer group id
+	 * @param entityId id of the entity to delete 
+	 * @param httpClient
+	 * @return deleted/cancelled entity
+	 * @throws AuthenticationException
+	 * @throws ApiException
+	 */
+	public static <T> T delete(Class<T> clazz, String groupId, String entityId, MnoHttpClient httpClient) throws AuthenticationException, ApiException {
+		String jsonBody = httpClient.delete(getInstanceUrl(clazz,groupId,entityId));
+		
+		Type parsingType = new MnoConnecResponseParameterizedType(clazz);
+		MnoApiConnecResponse<T> resp = GSON.fromJson(jsonBody, parsingType);
+		
+		return resp.getEntity();
 	}
 }
