@@ -135,7 +135,14 @@ public class ApiService {
 	 * @return String base
 	 */
 	public String getConnecBase() {
-		if (connecBase == null || connecBase.isEmpty()) return "/api/v2";
+		if (connecBase == null || connecBase.isEmpty()) {
+			if (Maestrano.appService().getEnvironment().equals("production")) {
+				return "/api/v2";
+			} else {
+				return "/connec/api/v2";
+			}
+		}
+		
 		return connecBase;
 	}
 
