@@ -9,9 +9,9 @@ public class ApiService {
 	
 	private String id;
 	private String key;
-	private String base;
 	private Boolean verifySslCerts;
-	private String host;
+	private String accountBase;
+	private String accountHost;
 	private String connecHost;
 	private String connecBase;
 	
@@ -45,13 +45,14 @@ public class ApiService {
 	public void configure(Properties props) {
 		this.id = props.getProperty("api.id");
 		this.key = props.getProperty("api.key");
-		this.base = props.getProperty("api.base");
+		this.accountBase = props.getProperty("api.accountBase");
+		this.accountHost = props.getProperty("api.accountHost");
+		this.connecBase = props.getProperty("api.connecBase");
+		this.connecHost = props.getProperty("api.connecHost");
 		
 		if (props.getProperty("api.verifySslCerts") != null) {
 			this.verifySslCerts = props.getProperty("api.verifySslCerts").equalsIgnoreCase("true");
 		}
-		
-		this.host = props.getProperty("api.host");
 	}
 	
 	/**
@@ -82,32 +83,32 @@ public class ApiService {
 	 * Return the host used to make API calls
 	 * @return String host
 	 */
-	public String getHost() {
-		if (host == null || host.isEmpty()) {
+	public String getAccountHost() {
+		if (accountHost == null || accountHost.isEmpty()) {
 			if (Maestrano.appService().getEnvironment().equals("production")) {
 				return "https://maestrano.com";
 			} else {
 				return "http://api-sandbox.maestrano.io";
 			}
 		}
-		return host;
+		return accountHost;
 	}
 
-	public void setHost(String host) {
-		this.host = host;
+	public void setAccountHost(String accountHost) {
+		this.accountHost = accountHost;
 	}
 	
 	/**
 	 * Return the base of the API endpoint
 	 * @return String base
 	 */
-	public String getBase() {
-		if (base == null || base.isEmpty()) return "/api/v1";
-		return base;
+	public String getAccountBase() {
+		if (accountBase == null || accountBase.isEmpty()) return "/api/v1/account";
+		return accountBase;
 	}
 
-	public void setBase(String base) {
-		this.base = base;
+	public void setAccountBase(String accountBase) {
+		this.accountBase = accountBase;
 	}
 	
 	/**
@@ -140,14 +141,6 @@ public class ApiService {
 
 	public void setConnecBase(String connecBase) {
 		this.connecBase = connecBase;
-	}
-	
-	/**
-	 * Return the base for the "Account" API
-	 * @return String base
-	 */
-	public String getAccountBase() {
-		return getBase() + "/account";
 	}
 	
 	/**

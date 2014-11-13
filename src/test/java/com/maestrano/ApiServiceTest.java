@@ -51,8 +51,8 @@ public class ApiServiceTest {
 	}
 	
 	@Test
-	public void getHost_itReturnsTheRightProductionValue() {
-		assertEquals("https://maestrano.com", subject.getHost());
+	public void getAccountHost_itReturnsTheRightProductionValue() {
+		assertEquals("https://maestrano.com", subject.getAccountHost());
 	}
 	
 	@Test
@@ -61,8 +61,8 @@ public class ApiServiceTest {
 	}
 	
 	@Test
-	public void getBase_itReturnsTheRightValue() {
-		assertEquals("/api/v1", subject.getBase());
+	public void getAccountBase_itReturnsTheRightValue() {
+		assertEquals("/api/v1/account", subject.getAccountBase());
 	}
 	
 	@Test
@@ -71,12 +71,12 @@ public class ApiServiceTest {
 	}
 	
 	@Test
-	public void getHost_itReturnsTheRightValue() {
+	public void getAccountHost_itReturnsTheRightValue() {
 		String host = "https://mysuperapp.com";
-		props.setProperty("api.host", host);
+		props.setProperty("api.accountHost", host);
 		Maestrano.configure(props);
 		
-		assertEquals(host, subject.getHost());
+		assertEquals(host, subject.getAccountHost());
 	}
 	
 	@Test

@@ -61,7 +61,7 @@ public class MnoApiAccountClient {
 	 * @return collection url
 	 */
 	public static String getCollectionUrl(Class<?> clazz) {
-		return Maestrano.apiService().getHost() + getCollectionEndpoint(clazz);
+		return Maestrano.apiService().getAccountHost() + getCollectionEndpoint(clazz);
 	}
 	
 	/**
@@ -81,7 +81,7 @@ public class MnoApiAccountClient {
 	 * @return instance url
 	 */
 	public static String getInstanceUrl(Class<?> clazz, String id) {
-		return Maestrano.apiService().getHost() + getInstanceEndpoint(clazz,id);
+		return Maestrano.apiService().getAccountHost() + getInstanceEndpoint(clazz,id);
 	}
 	
 	/**
