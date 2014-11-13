@@ -25,7 +25,6 @@ public class CnCompanyTest {
 		// Get hash version of the json string
 		Type stringStringMap = new TypeToken<Map<String, Object>>(){}.getType();
 		hash = MnoApiConnecClient.GSON.fromJson(jsonStr, stringStringMap);
-		System.out.println(TimeZone.getTimeZone("America/New_York").getID());
 		subject = CnCompany.fromJson(jsonStr);
 	}
 	
