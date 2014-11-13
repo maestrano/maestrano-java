@@ -40,7 +40,7 @@ public class MnoApiAccountClientTest {
 	}
 
 	@Test
-	public void class_getEntityName_itReturnsTheRightEntitiesName() {
+	public void class_getEntitiesName_itReturnsTheRightEntitiesName() {
 		assertEquals("some_models",MnoApiAccountClient.getEntitiesName(MnoSomeModel.class));
 	}
 
