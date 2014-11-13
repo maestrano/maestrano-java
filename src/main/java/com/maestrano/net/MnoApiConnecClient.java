@@ -30,7 +30,7 @@ public class MnoApiConnecClient {
 	 * @return entity name
 	 */
 	public static String getEntityName(Class<?> clazz) {
-		return MnoStringHelper.toSnakeCase(clazz.getSimpleName()).replaceFirst("^cnc_", "");
+		return MnoStringHelper.toSnakeCase(clazz.getSimpleName()).replaceFirst("^cn_", "");
 	}
 	
 	/**
