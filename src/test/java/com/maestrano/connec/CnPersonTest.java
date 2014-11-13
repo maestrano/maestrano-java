@@ -10,7 +10,7 @@ import org.junit.Test;
 
 import com.google.gson.reflect.TypeToken;
 import com.maestrano.helpers.MnoDateHelper;
-import com.maestrano.net.MnoApiConnecClient;
+import com.maestrano.net.ConnecClient;
 
 public class CnPersonTest {
 	private String jsonStr;
@@ -23,7 +23,7 @@ public class CnPersonTest {
 		
 		// Get hash version of the json string
 		Type stringStringMap = new TypeToken<Map<String, Object>>(){}.getType();
-		hash = MnoApiConnecClient.GSON.fromJson(jsonStr, stringStringMap);
+		hash = ConnecClient.GSON.fromJson(jsonStr, stringStringMap);
 		
 		subject = CnPerson.fromJson(jsonStr);
 	}

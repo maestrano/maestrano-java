@@ -4,14 +4,13 @@ import static org.junit.Assert.assertEquals;
 
 import java.lang.reflect.Type;
 import java.util.Map;
-import java.util.TimeZone;
 
 import org.junit.Before;
 import org.junit.Test;
 
 import com.google.gson.reflect.TypeToken;
 import com.maestrano.helpers.MnoDateHelper;
-import com.maestrano.net.MnoApiConnecClient;
+import com.maestrano.net.ConnecClient;
 
 public class CnCompanyTest {
 	private String jsonStr;
@@ -24,7 +23,7 @@ public class CnCompanyTest {
 		
 		// Get hash version of the json string
 		Type stringStringMap = new TypeToken<Map<String, Object>>(){}.getType();
-		hash = MnoApiConnecClient.GSON.fromJson(jsonStr, stringStringMap);
+		hash = ConnecClient.GSON.fromJson(jsonStr, stringStringMap);
 		subject = CnCompany.fromJson(jsonStr);
 	}
 	

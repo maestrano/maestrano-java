@@ -7,7 +7,7 @@ import java.util.Map;
 import com.maestrano.exception.ApiException;
 import com.maestrano.exception.AuthenticationException;
 import com.maestrano.exception.InvalidRequestException;
-import com.maestrano.net.MnoApiAccountClient;
+import com.maestrano.net.MnoAccountClient;
 
 public class MnoGroup extends MnoObject {
 	private String id;
@@ -24,7 +24,7 @@ public class MnoGroup extends MnoObject {
 	 * @throws InvalidRequestException 
 	 */
 	public static List<MnoGroup> all() throws AuthenticationException, ApiException, InvalidRequestException {
-		return MnoApiAccountClient.all(MnoGroup.class);
+		return MnoAccountClient.all(MnoGroup.class);
 	}
 	
 	/**
@@ -37,7 +37,7 @@ public class MnoGroup extends MnoObject {
 	 * @throws InvalidRequestException 
 	 */
 	public static <V> List<MnoGroup> all(Map<String,V> params) throws AuthenticationException, ApiException, InvalidRequestException {
-		return MnoApiAccountClient.all(MnoGroup.class, params);
+		return MnoAccountClient.all(MnoGroup.class, params);
 	}
 	
 	/**
@@ -49,7 +49,7 @@ public class MnoGroup extends MnoObject {
 	 * @throws InvalidRequestException 
 	 */
 	public static MnoGroup retrieve(String entityId) throws AuthenticationException, ApiException, InvalidRequestException {
-		return MnoApiAccountClient.retrieve(MnoGroup.class, entityId);
+		return MnoAccountClient.retrieve(MnoGroup.class, entityId);
 	}
 	
 	public String getId() {

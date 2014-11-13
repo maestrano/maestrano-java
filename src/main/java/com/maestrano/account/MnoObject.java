@@ -4,7 +4,7 @@ import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.maestrano.net.MnoApiAccountClient;
+import com.maestrano.net.MnoAccountClient;
 
 class MnoObject {
 	public Map<String,Object> changedAttributes;
@@ -16,7 +16,7 @@ class MnoObject {
 	}
 	
 	public String toString() {
-		return MnoApiAccountClient.GSON.toJson(this);
+		return MnoAccountClient.GSON.toJson(this);
 	}
 	
 	protected void changeAttribute(String attrName, Object value) {

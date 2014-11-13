@@ -3,7 +3,7 @@ package com.maestrano.net;
 import java.util.List;
 import java.util.Map;
 
-public class MnoApiConnecResponse<T> {
+public class ConnecResponse<T> {
 	private T entity;
 	private List<T> entities;
 	private Map<String,String> metadata;

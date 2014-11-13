@@ -2,7 +2,7 @@ package com.maestrano.connec;
 
 import java.util.Date;
 
-import com.maestrano.net.MnoApiConnecClient;
+import com.maestrano.net.ConnecClient;
 
 class ConnecResource extends ConnecObject {
 	protected String id;
@@ -15,7 +15,7 @@ class ConnecResource extends ConnecObject {
 	}
 	
 	public String toString() {
-		return MnoApiConnecClient.GSON.toJson(this);
+		return ConnecClient.GSON.toJson(this);
 	}
 	
 	public String getId() {

@@ -3,12 +3,12 @@ package com.maestrano.reflect;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 
-import com.maestrano.net.MnoApiConnecResponse;
+import com.maestrano.net.ConnecResponse;
 
-public class MnoConnecResponseParameterizedType implements ParameterizedType {
+public class ConnecResponseParameterizedType implements ParameterizedType {
 	private Type type;
 
-    public MnoConnecResponseParameterizedType(Type type) {
+    public ConnecResponseParameterizedType(Type type) {
         this.type = type;
     }
 
@@ -17,7 +17,7 @@ public class MnoConnecResponseParameterizedType implements ParameterizedType {
     }
 
     public Type getRawType() {
-        return MnoApiConnecResponse.class;
+        return ConnecResponse.class;
     }
 
     public Type getOwnerType() {

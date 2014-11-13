@@ -16,7 +16,7 @@ import com.maestrano.Maestrano;
 import com.maestrano.connec.CnPerson;
 import com.maestrano.testhelpers.MnoHttpClientStub;
 
-public class MnoApiConnecClientTest {
+public class ConnecClientTest {
 	private Properties props = new Properties();
 	private String groupId;
 	private MnoHttpClientStub httpClient;
@@ -48,37 +48,37 @@ public class MnoApiConnecClientTest {
 
 	@Test
 	public void class_getEntityName_itReturnsTheRightEntityName() {
-		assertEquals("some_model",MnoApiConnecClient.getEntityName(CnSomeModel.class));
+		assertEquals("some_model",ConnecClient.getEntityName(CnSomeModel.class));
 	}
 
 	@Test
 	public void class_getEntitiesName_itReturnsTheRightEntitiesName() {
-		assertEquals("some_models",MnoApiConnecClient.getEntitiesName(CnSomeModel.class));
+		assertEquals("some_models",ConnecClient.getEntitiesName(CnSomeModel.class));
 	}
 	
 	@Test
 	public void class_getEntitiesName_itReturnTheRightPluralVersionForPerson() {
-		assertEquals("people",MnoApiConnecClient.getEntitiesName(CnPerson.class));
+		assertEquals("people",ConnecClient.getEntitiesName(CnPerson.class));
 	}
 
 	@Test
 	public void class_getCollectionEndpoint_itReturnsTheRightEntityApiEndpoint() {
-		assertEquals("/api/v2/cld-1/some_models",MnoApiConnecClient.getCollectionEndpoint(CnSomeModel.class,"cld-1"));
+		assertEquals("/api/v2/cld-1/some_models",ConnecClient.getCollectionEndpoint(CnSomeModel.class,"cld-1"));
 	}
 
 	@Test
 	public void getInstanceEndpoint_itReturnsTheRightEntityInstanceApiEndpoint() {
-		assertEquals("/api/v2/cld-1/some_models/1",MnoApiConnecClient.getInstanceEndpoint(CnSomeModel.class,"cld-1","1"));
+		assertEquals("/api/v2/cld-1/some_models/1",ConnecClient.getInstanceEndpoint(CnSomeModel.class,"cld-1","1"));
 	}
 
 	@Test
 	public void class_getCollectionUrl_itReturnsTheRightEntityApiUrl() {
-		assertEquals("https://connec.maestrano.com/api/v2/cld-1/some_models",MnoApiConnecClient.getCollectionUrl(CnSomeModel.class,"cld-1"));
+		assertEquals("https://connec.maestrano.com/api/v2/cld-1/some_models",ConnecClient.getCollectionUrl(CnSomeModel.class,"cld-1"));
 	}
 
 	@Test
 	public void getInstanceUrl_itReturnsTheRightEntityInstanceApiUrl() {
-		assertEquals("https://connec.maestrano.com/api/v2/cld-1/some_models/1",MnoApiConnecClient.getInstanceUrl(CnSomeModel.class,"cld-1","1"));
+		assertEquals("https://connec.maestrano.com/api/v2/cld-1/some_models/1",ConnecClient.getInstanceUrl(CnSomeModel.class,"cld-1","1"));
 	}
 	
 	@Test
@@ -92,10 +92,10 @@ public class MnoApiConnecClientTest {
 		// Prepare response
 		Gson gson = new Gson();
 		httpClient = new MnoHttpClientStub();
-		httpClient.setResponseStub(gson.toJson(hash), MnoApiConnecClient.getCollectionUrl(CnPerson.class,this.groupId));
+		httpClient.setResponseStub(gson.toJson(hash), ConnecClient.getCollectionUrl(CnPerson.class,this.groupId));
 
 		// Test
-		List<CnPerson> respList = MnoApiConnecClient.all(CnPerson.class, this.groupId, null, httpClient);
+		List<CnPerson> respList = ConnecClient.all(CnPerson.class, this.groupId, null, httpClient);
 		assertEquals("123456",respList.get(0).getId());
 		assertEquals("John",respList.get(0).getFirstName());
 		assertEquals("Doe",respList.get(0).getLastName());
@@ -111,10 +111,10 @@ public class MnoApiConnecClientTest {
 		// Prepare response
 		Gson gson = new Gson();
 		httpClient = new MnoHttpClientStub();
-		httpClient.setResponseStub(gson.toJson(hash), MnoApiConnecClient.getInstanceUrl(CnPerson.class,this.groupId,"bill-1234"));
+		httpClient.setResponseStub(gson.toJson(hash), ConnecClient.getInstanceUrl(CnPerson.class,this.groupId,"bill-1234"));
 
 		// Test
-		CnPerson resp = MnoApiConnecClient.retrieve(CnPerson.class, this.groupId, "bill-1234", httpClient);
+		CnPerson resp = ConnecClient.retrieve(CnPerson.class, this.groupId, "bill-1234", httpClient);
 		assertEquals("123456",resp.getId());
 		assertEquals("John",resp.getFirstName());
 		assertEquals("Doe",resp.getLastName());
@@ -137,10 +137,10 @@ public class MnoApiConnecClientTest {
 		Gson gson = new Gson();
 		httpClient = new MnoHttpClientStub();
 		httpClient.setResponseStub(gson.toJson(hash), 
-				MnoApiConnecClient.getCollectionUrl(CnPerson.class, this.groupId),null,gson.toJson(createHash));
+				ConnecClient.getCollectionUrl(CnPerson.class, this.groupId),null,gson.toJson(createHash));
 		
 		// Test
-		CnPerson resp = MnoApiConnecClient.create(CnPerson.class, this.groupId, createHash, httpClient);
+		CnPerson resp = ConnecClient.create(CnPerson.class, this.groupId, createHash, httpClient);
 		assertEquals("123456",resp.getId());
 		assertEquals("John",resp.getFirstName());
 		assertEquals("Doe",resp.getLastName());
@@ -161,10 +161,10 @@ public class MnoApiConnecClientTest {
 		Gson gson = new Gson();
 		httpClient = new MnoHttpClientStub();
 		httpClient.setResponseStub(gson.toJson(hash), 
-				MnoApiConnecClient.getInstanceUrl(CnPerson.class, this.groupId,"123456"),null,gson.toJson(updHash));
+				ConnecClient.getInstanceUrl(CnPerson.class, this.groupId,"123456"),null,gson.toJson(updHash));
 		
 		// Test
-		CnPerson resp = MnoApiConnecClient.update(CnPerson.class, this.groupId, "123456", updHash, httpClient);
+		CnPerson resp = ConnecClient.update(CnPerson.class, this.groupId, "123456", updHash, httpClient);
 		assertEquals("123456",resp.getId());
 		assertEquals("John",resp.getFirstName());
 		assertEquals("Doe",resp.getLastName());
@@ -181,10 +181,10 @@ public class MnoApiConnecClientTest {
 		Gson gson = new Gson();
 		httpClient = new MnoHttpClientStub();
 		httpClient.setResponseStub(gson.toJson(hash), 
-				MnoApiConnecClient.getInstanceUrl(CnPerson.class, this.groupId,"123456"));
+				ConnecClient.getInstanceUrl(CnPerson.class, this.groupId,"123456"));
 		
 		// Test
-		CnPerson resp = MnoApiConnecClient.delete(CnPerson.class, this.groupId, "123456", httpClient);
+		CnPerson resp = ConnecClient.delete(CnPerson.class, this.groupId, "123456", httpClient);
 		assertEquals("123456",resp.getId());
 		assertEquals("John",resp.getFirstName());
 		assertEquals("Doe",resp.getLastName());

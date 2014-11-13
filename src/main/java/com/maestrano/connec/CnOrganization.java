@@ -1,6 +1,6 @@
 package com.maestrano.connec;
 
-import com.maestrano.net.MnoApiConnecClient;
+import com.maestrano.net.ConnecClient;
 
 public class CnOrganization extends ConnecResource {
 	private String name;
@@ -16,7 +16,7 @@ public class CnOrganization extends ConnecResource {
 	private CnPhone phone;
 	
 	public static CnOrganization fromJson(String jsonStr) {
-		CnOrganization obj = MnoApiConnecClient.GSON.fromJson(jsonStr, CnOrganization.class);
+		CnOrganization obj = ConnecClient.GSON.fromJson(jsonStr, CnOrganization.class);
 		return obj;
 	}
 	

@@ -4,7 +4,7 @@ import java.util.Map;
 
 import com.maestrano.exception.InvalidRequestException;
 
-public class MnoApiAccountResponse<T> {
+public class MnoAccountResponse<T> {
 	private Boolean success;
 	private T data;
 	private Map<String,Object> errors;
@@ -39,6 +39,6 @@ public class MnoApiAccountResponse<T> {
 	}
 	
 	public String getErrorsAsString() {
-		return MnoApiAccountClient.GSON.toJson(this.errors);
+		return MnoAccountClient.GSON.toJson(this.errors);
 	}
 }

@@ -19,11 +19,9 @@ import com.maestrano.json.DateDeserializer;
 import com.maestrano.json.DateSerializer;
 import com.maestrano.json.TimeZoneDeserializer;
 import com.maestrano.json.TimeZoneSerializer;
-import com.maestrano.reflect.ListParameterizedType;
-import com.maestrano.reflect.MnoConnecResponseParameterizedType;
-import com.maestrano.reflect.MnoResponseParameterizedType;
+import com.maestrano.reflect.ConnecResponseParameterizedType;
 
-public class MnoApiConnecClient {
+public class ConnecClient {
 	public static final Gson GSON = new GsonBuilder()
 	.setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
 	.registerTypeAdapter(Date.class, new DateSerializer())
@@ -32,7 +30,7 @@ public class MnoApiConnecClient {
 	.registerTypeAdapter(TimeZone.class, new TimeZoneDeserializer())
 	.create();
 
-	public MnoApiConnecClient() {}
+	public ConnecClient() {}
 	
 	/**
 	 * Return the entity name as expected by Maestrano
@@ -143,8 +141,8 @@ public class MnoApiConnecClient {
 	public static <T, V> List<T> all(Class<T> clazz, String groupId, Map<String,V> params, MnoHttpClient httpClient) throws AuthenticationException, ApiException, InvalidRequestException {
 		String jsonBody = httpClient.get(getCollectionUrl(clazz,groupId), MnoMapHelper.toUnderscoreHash(params));
 		
-		Type parsingType = new MnoConnecResponseParameterizedType(clazz);
-		MnoApiConnecResponse<T> resp = GSON.fromJson(jsonBody, parsingType);
+		Type parsingType = new ConnecResponseParameterizedType(clazz);
+		ConnecResponse<T> resp = GSON.fromJson(jsonBody, parsingType);
 		
 		return resp.getEntities();
 	}
@@ -177,8 +175,8 @@ public class MnoApiConnecClient {
 	public static <T> T create(Class<T> clazz, String groupId, Map<String,Object> hash, MnoHttpClient httpClient) throws AuthenticationException, ApiException, InvalidRequestException {
 		String jsonBody = httpClient.post(getCollectionUrl(clazz,groupId), GSON.toJson(MnoMapHelper.toUnderscoreHash(hash)));
 		
-		Type parsingType = new MnoConnecResponseParameterizedType(clazz);
-		MnoApiConnecResponse<T> resp = GSON.fromJson(jsonBody, parsingType);
+		Type parsingType = new ConnecResponseParameterizedType(clazz);
+		ConnecResponse<T> resp = GSON.fromJson(jsonBody, parsingType);
 		
 		return resp.getEntity();
 	}
@@ -211,8 +209,8 @@ public class MnoApiConnecClient {
 	public static <T> T retrieve(Class<T> clazz, String groupId, String entityId, MnoHttpClient httpClient) throws AuthenticationException, ApiException, InvalidRequestException {
 		String jsonBody = httpClient.get(getInstanceUrl(clazz,groupId,entityId));
 		
-		Type parsingType = new MnoConnecResponseParameterizedType(clazz);
-		MnoApiConnecResponse<T> resp = GSON.fromJson(jsonBody, parsingType);
+		Type parsingType = new ConnecResponseParameterizedType(clazz);
+		ConnecResponse<T> resp = GSON.fromJson(jsonBody, parsingType);
 		
 		return resp.getEntity();
 	}
@@ -247,8 +245,8 @@ public class MnoApiConnecClient {
 	public static <T> T update(Class<T> clazz, String groupId, String entityId, Map<String,Object> hash, MnoHttpClient httpClient) throws AuthenticationException, ApiException, InvalidRequestException {
 		String jsonBody = httpClient.put(getInstanceUrl(clazz,groupId,entityId),GSON.toJson(MnoMapHelper.toUnderscoreHash(hash)));
 		
-		Type parsingType = new MnoConnecResponseParameterizedType(clazz);
-		MnoApiConnecResponse<T> resp = GSON.fromJson(jsonBody, parsingType);
+		Type parsingType = new ConnecResponseParameterizedType(clazz);
+		ConnecResponse<T> resp = GSON.fromJson(jsonBody, parsingType);
 		
 		return resp.getEntity();
 	}
@@ -279,8 +277,8 @@ public class MnoApiConnecClient {
 	public static <T> T delete(Class<T> clazz, String groupId, String entityId, MnoHttpClient httpClient) throws AuthenticationException, ApiException {
 		String jsonBody = httpClient.delete(getInstanceUrl(clazz,groupId,entityId));
 		
-		Type parsingType = new MnoConnecResponseParameterizedType(clazz);
-		MnoApiConnecResponse<T> resp = GSON.fromJson(jsonBody, parsingType);
+		Type parsingType = new ConnecResponseParameterizedType(clazz);
+		ConnecResponse<T> resp = GSON.fromJson(jsonBody, parsingType);
 		
 		return resp.getEntity();
 	}

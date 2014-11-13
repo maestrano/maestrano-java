@@ -1,7 +1,6 @@
 package com.maestrano.connec;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 import java.lang.reflect.Type;
 import java.util.Map;
@@ -11,7 +10,7 @@ import org.junit.Test;
 
 import com.google.gson.reflect.TypeToken;
 import com.maestrano.helpers.MnoDateHelper;
-import com.maestrano.net.MnoApiConnecClient;
+import com.maestrano.net.ConnecClient;
 
 public class CnOrganizationTest {
 	private String jsonStr;
@@ -24,7 +23,7 @@ public class CnOrganizationTest {
 		
 		// Get hash version of the json string
 		Type stringStringMap = new TypeToken<Map<String, Object>>(){}.getType();
-		hash = MnoApiConnecClient.GSON.fromJson(jsonStr, stringStringMap);
+		hash = ConnecClient.GSON.fromJson(jsonStr, stringStringMap);
 		
 		subject = CnOrganization.fromJson(jsonStr);
 	}

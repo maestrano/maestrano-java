@@ -7,7 +7,7 @@ import java.util.Map;
 import com.maestrano.exception.ApiException;
 import com.maestrano.exception.AuthenticationException;
 import com.maestrano.exception.InvalidRequestException;
-import com.maestrano.net.MnoApiAccountClient;
+import com.maestrano.net.MnoAccountClient;
 
 public class MnoRecurringBill extends MnoObject {
 	public String id;
@@ -36,7 +36,7 @@ public class MnoRecurringBill extends MnoObject {
 	 * @throws InvalidRequestException 
 	 */
 	public static List<MnoRecurringBill> all() throws AuthenticationException, ApiException, InvalidRequestException {
-		return MnoApiAccountClient.all(MnoRecurringBill.class);
+		return MnoAccountClient.all(MnoRecurringBill.class);
 	}
 	
 	/**
@@ -49,7 +49,7 @@ public class MnoRecurringBill extends MnoObject {
 	 * @throws InvalidRequestException 
 	 */
 	public static <V> List<MnoRecurringBill> all(Map<String,V> params) throws AuthenticationException, ApiException, InvalidRequestException {
-		return MnoApiAccountClient.all(MnoRecurringBill.class, params);
+		return MnoAccountClient.all(MnoRecurringBill.class, params);
 	}
 	
 	/**
@@ -61,7 +61,7 @@ public class MnoRecurringBill extends MnoObject {
 	 * @throws InvalidRequestException 
 	 */
 	public static MnoRecurringBill retrieve(String billId) throws AuthenticationException, ApiException, InvalidRequestException {
-		return MnoApiAccountClient.retrieve(MnoRecurringBill.class, billId);
+		return MnoAccountClient.retrieve(MnoRecurringBill.class, billId);
 	}
 	
 	/**
@@ -73,7 +73,7 @@ public class MnoRecurringBill extends MnoObject {
 	 * @throws InvalidRequestException 
 	 */
 	public static MnoRecurringBill create(Map<String,Object> params) throws AuthenticationException, ApiException, InvalidRequestException {
-		return MnoApiAccountClient.create(MnoRecurringBill.class, params);
+		return MnoAccountClient.create(MnoRecurringBill.class, params);
 	}
 	
 	/**
@@ -84,7 +84,7 @@ public class MnoRecurringBill extends MnoObject {
 	 */
 	public Boolean cancel() throws AuthenticationException, ApiException {
 		if (this.id != null && !this.id.isEmpty()) {
-			MnoRecurringBill newBill = MnoApiAccountClient.delete(MnoRecurringBill.class, this.id);
+			MnoRecurringBill newBill = MnoAccountClient.delete(MnoRecurringBill.class, this.id);
 			this.merge(newBill);
 			return this.status.equals("cancelled");
 		}

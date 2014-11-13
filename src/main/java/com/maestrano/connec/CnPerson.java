@@ -3,7 +3,7 @@ package com.maestrano.connec;
 import java.util.Date;
 import java.util.Map;
 
-import com.maestrano.net.MnoApiConnecClient;
+import com.maestrano.net.ConnecClient;
 
 public class CnPerson extends ConnecResource {
 	private String title;
@@ -23,7 +23,7 @@ public class CnPerson extends ConnecResource {
 	private Map<String,CnNote> notes;
 	
 	public static CnPerson fromJson(String jsonStr) {
-		CnPerson obj = MnoApiConnecClient.GSON.fromJson(jsonStr, CnPerson.class);
+		CnPerson obj = ConnecClient.GSON.fromJson(jsonStr, CnPerson.class);
 		return obj;
 	}
 	
