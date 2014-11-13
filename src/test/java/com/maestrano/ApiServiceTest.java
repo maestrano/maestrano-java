@@ -57,7 +57,7 @@ public class ApiServiceTest {
 	
 	@Test
 	public void getConnecHost_itReturnsTheRightProductionValue() {
-		assertEquals("https://api.maestrano.com",subject.getConnecHost());
+		assertEquals("https://connec.maestrano.com",subject.getConnecHost());
 	}
 	
 	@Test
