@@ -1,6 +1,6 @@
 package com.maestrano.connec;
 
-public class CnAddressGroup extends CnBaseObject {
+public class CnAddressGroup extends ConnecObject {
 	private CnAddress billing;
 	private CnAddress billing2;
 	private CnAddress shipping;

@@ -1,6 +1,6 @@
 package com.maestrano.connec;
 
-public class CnEmail extends CnBaseObject {
+public class CnEmail extends ConnecObject {
 	private String address;
 	private String address2;
 	

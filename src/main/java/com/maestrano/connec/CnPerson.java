@@ -5,7 +5,7 @@ import java.util.Map;
 
 import com.maestrano.net.MnoApiConnecClient;
 
-public class CnPerson extends CnObject {
+public class CnPerson extends ConnecResource {
 	private String title;
 	private String firstName;
 	private String lastName;

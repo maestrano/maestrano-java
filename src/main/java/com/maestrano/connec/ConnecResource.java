@@ -4,13 +4,13 @@ import java.util.Date;
 
 import com.maestrano.net.MnoApiConnecClient;
 
-class CnObject extends CnBaseObject {
+class ConnecResource extends ConnecObject {
 	protected String id;
 	protected Date createdAt;
 	protected Date updatedAt;
 	protected String groupId;
 	
-	public CnObject() {
+	public ConnecResource() {
 		super();
 	}
 	

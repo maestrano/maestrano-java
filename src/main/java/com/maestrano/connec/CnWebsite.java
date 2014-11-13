@@ -1,6 +1,6 @@
 package com.maestrano.connec;
 
-public class CnWebsite extends CnBaseObject {
+public class CnWebsite extends ConnecObject {
 	private String url;
 	private String url2;
 	

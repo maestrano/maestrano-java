@@ -1,6 +1,6 @@
 package com.maestrano.connec;
 
-public class CnLogo extends CnBaseObject {
+public class CnLogo extends ConnecObject {
 	private String logo;
 	private String thumb;
 	private String miniThumb;

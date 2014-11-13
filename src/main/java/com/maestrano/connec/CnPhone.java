@@ -1,6 +1,6 @@
 package com.maestrano.connec;
 
-public class CnPhone extends CnBaseObject {
+public class CnPhone extends ConnecObject {
 	private String landline;
 	private String landline2;
 	private String mobile;

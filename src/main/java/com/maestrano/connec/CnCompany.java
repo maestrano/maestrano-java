@@ -4,7 +4,7 @@ import java.util.TimeZone;
 
 import com.maestrano.net.MnoApiConnecClient;
 
-public class CnCompany extends CnObject {
+public class CnCompany extends ConnecResource {
 	private String name;
 	private String currency;
 	private String note;

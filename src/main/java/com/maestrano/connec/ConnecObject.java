@@ -2,7 +2,7 @@ package com.maestrano.connec;
 
 import java.lang.reflect.Field;
 
-public class CnBaseObject {
+public class ConnecObject {
 	
 	protected void merge(Object obj) {
 		Field[] fs = this.getClass().getDeclaredFields();

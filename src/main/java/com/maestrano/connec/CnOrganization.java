@@ -2,7 +2,7 @@ package com.maestrano.connec;
 
 import com.maestrano.net.MnoApiConnecClient;
 
-public class CnOrganization extends CnObject {
+public class CnOrganization extends ConnecResource {
 	private String name;
 	private String industry;
 	private Integer annualRevenue;

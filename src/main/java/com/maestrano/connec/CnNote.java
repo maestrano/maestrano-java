@@ -1,6 +1,6 @@
 package com.maestrano.connec;
 
-public class CnNote extends CnBaseObject {
+public class CnNote extends ConnecObject {
 	private String tag;
 	private String description;
 	private String value;
