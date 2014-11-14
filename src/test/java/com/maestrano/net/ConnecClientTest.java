@@ -13,7 +13,9 @@ import org.junit.Test;
 
 import com.google.gson.Gson;
 import com.maestrano.Maestrano;
+import com.maestrano.connec.CnCompany;
 import com.maestrano.connec.CnPerson;
+import com.maestrano.helpers.MnoMapHelper;
 import com.maestrano.testhelpers.MnoHttpClientStub;
 
 public class ConnecClientTest {
@@ -60,7 +62,12 @@ public class ConnecClientTest {
 	public void class_getEntitiesName_itReturnTheRightPluralVersionForPerson() {
 		assertEquals("people",ConnecClient.getEntitiesName(CnPerson.class));
 	}
-
+	
+	@Test
+	public void class_getEntitiesName_itReturnASingularVersionForCompany() {
+		assertEquals("company",ConnecClient.getEntitiesName(CnCompany.class));
+	}
+	
 	@Test
 	public void class_getCollectionEndpoint_itReturnsTheRightEntityApiEndpoint() {
 		assertEquals("/api/v2/cld-1/some_models",ConnecClient.getCollectionEndpoint(CnSomeModel.class,"cld-1"));
@@ -130,14 +137,17 @@ public class ConnecClientTest {
 		
 		// Prepare Creation data
 		Map<String,Object> createHash = new HashMap<String,Object>();
-		createHash.put("first_name", "John");
-		createHash.put("last_name", "Doe");
+		createHash.put("firstName", "John");
+		createHash.put("lastName", "Doe");
 		
 		// Prepare response
 		Gson gson = new Gson();
+		Map<String,Map<String,Object>> reqEnvelope = new HashMap<String,Map<String,Object>>();
+		reqEnvelope.put("entity", MnoMapHelper.toUnderscoreHash(createHash));
+		
 		httpClient = new MnoHttpClientStub();
 		httpClient.setResponseStub(gson.toJson(hash), 
-				ConnecClient.getCollectionUrl(CnPerson.class, this.groupId),null,gson.toJson(createHash));
+				ConnecClient.getCollectionUrl(CnPerson.class, this.groupId),null,gson.toJson(reqEnvelope));
 		
 		// Test
 		CnPerson resp = ConnecClient.create(CnPerson.class, this.groupId, createHash, httpClient);
@@ -155,13 +165,15 @@ public class ConnecClientTest {
 		
 		// Prepare update data
 		Map<String,Object> updHash = new HashMap<String,Object>();
-		updHash.put("last_name", "Robert");
+		updHash.put("lastName", "Robert");
 		
 		// Prepare response
 		Gson gson = new Gson();
+		Map<String,Map<String,Object>> reqEnvelope = new HashMap<String,Map<String,Object>>();
+		reqEnvelope.put("entity", MnoMapHelper.toUnderscoreHash(updHash));
 		httpClient = new MnoHttpClientStub();
 		httpClient.setResponseStub(gson.toJson(hash), 
-				ConnecClient.getInstanceUrl(CnPerson.class, this.groupId,"123456"),null,gson.toJson(updHash));
+				ConnecClient.getInstanceUrl(CnPerson.class, this.groupId,"123456"),null,gson.toJson(reqEnvelope));
 		
 		// Test
 		CnPerson resp = ConnecClient.update(CnPerson.class, this.groupId, "123456", updHash, httpClient);

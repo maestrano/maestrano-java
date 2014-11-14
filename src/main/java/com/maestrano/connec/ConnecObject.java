@@ -8,6 +8,7 @@ public class ConnecObject {
 		Field[] fs = this.getClass().getDeclaredFields();
 		
 		for (Field f : fs) {
+			System.out.println(f.toString());
 			try {
 				f.set(this,f.get(obj));
 			} catch (Exception e) {}

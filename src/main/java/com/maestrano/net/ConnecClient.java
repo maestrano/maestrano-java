@@ -2,6 +2,7 @@ package com.maestrano.net;
 
 import java.lang.reflect.Type;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
@@ -51,6 +52,8 @@ public class ConnecClient {
 		
 		if (name.equals("person")) {
 			return "people";
+		} else if (name.equals("company")) {
+			return "company";
 		} else {
 			return name + "s";
 		}
@@ -84,7 +87,13 @@ public class ConnecClient {
 	 * @return instance path
 	 */
 	public static String getInstanceEndpoint(Class<?> clazz, String groupId, String id) {
-		return getCollectionEndpoint(clazz,groupId) + "/" + id;
+		String edp = getCollectionEndpoint(clazz,groupId);
+		
+		if (id != null && !id.isEmpty()) {
+			edp += "/" + id;
+		}
+		
+		return edp;
 	}
 	
 	/**
@@ -173,7 +182,11 @@ public class ConnecClient {
 	 * @throws InvalidRequestException
 	 */
 	public static <T> T create(Class<T> clazz, String groupId, Map<String,Object> hash, MnoHttpClient httpClient) throws AuthenticationException, ApiException, InvalidRequestException {
-		String jsonBody = httpClient.post(getCollectionUrl(clazz,groupId), GSON.toJson(MnoMapHelper.toUnderscoreHash(hash)));
+		Map<String,Map<String,Object>> envelope = new HashMap<String,Map<String,Object>>();
+		envelope.put("entity",MnoMapHelper.toUnderscoreHash(hash));
+		String payload = GSON.toJson(envelope);
+		
+		String jsonBody = httpClient.post(getCollectionUrl(clazz,groupId), payload);
 		
 		Type parsingType = new ConnecResponseParameterizedType(clazz);
 		ConnecResponse<T> resp = GSON.fromJson(jsonBody, parsingType);
@@ -226,6 +239,25 @@ public class ConnecClient {
 	 * @throws ApiException
 	 * @throws InvalidRequestException
 	 */
+	public static <T> T update(Class<T> clazz, String groupId, String entityId, T obj) throws AuthenticationException, ApiException, InvalidRequestException {
+		Map<String,T> envelope = new HashMap<String,T>();
+		envelope.put("entity",obj);
+		String payload = GSON.toJson(envelope);
+		
+		return update(clazz,groupId,entityId,payload,MnoHttpClient.getAuthenticatedClient());
+	}
+	
+	/**
+	 * Update an entity remotely
+	 * @param clazz entity class
+	 * @param groupId customer group id
+	 * @param entityId id of the entity to retrieve
+	 * @param hash entity attributes to update 
+	 * @return updated entity
+	 * @throws AuthenticationException
+	 * @throws ApiException
+	 * @throws InvalidRequestException
+	 */
 	public static <T> T update(Class<T> clazz, String groupId, String entityId, Map<String,Object> hash) throws AuthenticationException, ApiException, InvalidRequestException {
 		return update(clazz,groupId,entityId,hash,MnoHttpClient.getAuthenticatedClient());
 	}
@@ -243,13 +275,34 @@ public class ConnecClient {
 	 * @throws InvalidRequestException
 	 */
 	public static <T> T update(Class<T> clazz, String groupId, String entityId, Map<String,Object> hash, MnoHttpClient httpClient) throws AuthenticationException, ApiException, InvalidRequestException {
-		String jsonBody = httpClient.put(getInstanceUrl(clazz,groupId,entityId),GSON.toJson(MnoMapHelper.toUnderscoreHash(hash)));
+		Map<String,Map<String,Object>> envelope = new HashMap<String,Map<String,Object>>();
+		envelope.put("entity",MnoMapHelper.toUnderscoreHash(hash));
+		String payload = GSON.toJson(envelope);
+		
+		return update(clazz,groupId,entityId,payload,httpClient);
+	}
+	
+	/**
+	 * Update an entity remotely
+	 * @param clazz entity class
+	 * @param groupId customer group id
+	 * @param entityId id of the entity to retrieve
+	 * @param jsonStr entity attributes to update 
+	 * @param httpClient
+	 * @return updated entity
+	 * @throws AuthenticationException
+	 * @throws ApiException
+	 * @throws InvalidRequestException
+	 */
+	public static <T> T update(Class<T> clazz, String groupId, String entityId, String jsonStr, MnoHttpClient httpClient) throws AuthenticationException, ApiException, InvalidRequestException {
+		String jsonBody = httpClient.put(getInstanceUrl(clazz,groupId,entityId),jsonStr);
 		
 		Type parsingType = new ConnecResponseParameterizedType(clazz);
 		ConnecResponse<T> resp = GSON.fromJson(jsonBody, parsingType);
 		
 		return resp.getEntity();
 	}
+	
 	
 	/**
 	 * Delete or cancel an entity remotely 

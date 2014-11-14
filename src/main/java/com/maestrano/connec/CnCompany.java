@@ -3,6 +3,9 @@ package com.maestrano.connec;
 import java.util.Map;
 import java.util.TimeZone;
 
+import com.maestrano.exception.ApiException;
+import com.maestrano.exception.AuthenticationException;
+import com.maestrano.exception.InvalidRequestException;
 import com.maestrano.helpers.MnoMapHelper;
 import com.maestrano.net.ConnecClient;
 
@@ -42,6 +45,35 @@ public class CnCompany extends ConnecResource {
 		CnCompany obj = fromJson(jsonStr);
 		return obj;
 	}
+	
+	/**
+	 * Retrieve the company corresponding to the provided groupId
+	 * @param groupId customer group id
+	 * @return a company entity if found, null otherwise
+	 * @throws ApiException 
+	 * @throws AuthenticationException 
+	 * @throws InvalidRequestException 
+	 */
+	public static CnCompany retrieve(String groupId) throws AuthenticationException, ApiException, InvalidRequestException {
+		return ConnecClient.retrieve(CnCompany.class, groupId,null);
+	}
+	
+	/**
+	 * Update an entity remotely
+	 * @param clazz entity class
+	 * @param groupId customer group id
+	 * @param entityId id of the entity to retrieve
+	 * @param hash entity attributes to update 
+	 * @return updated entity
+	 * @throws AuthenticationException
+	 * @throws ApiException
+	 * @throws InvalidRequestException
+	 */
+	public void save() throws AuthenticationException, ApiException, InvalidRequestException {
+		CnCompany obj = ConnecClient.update(CnCompany.class,groupId,null,this);
+		this.merge(obj);
+	}
+	
 	
 	public String getName() {
 		return name;
