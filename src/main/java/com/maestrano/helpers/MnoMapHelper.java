@@ -11,6 +11,7 @@ public class MnoMapHelper {
 	 * @param hash
 	 * @return
 	 */
+	@SuppressWarnings("unchecked")
 	public static <V> Map<String,V> toUnderscoreHash(Map<String,V> hash) {
 		if (hash == null) return null;
 		
@@ -18,13 +19,16 @@ public class MnoMapHelper {
 		
 		for (Map.Entry<String, V> entry : hash.entrySet())
 		{
-			newHash.put(MnoStringHelper.toSnakeCase(entry.getKey()), entry.getValue());
+			V value = entry.getValue();
+			
+			// Apply toUnderscoreHash recursively on sub-hashes
+			if (value instanceof Map) {
+				value = (V) toUnderscoreHash((Map<String,Object>) value);
+			}
+			newHash.put(MnoStringHelper.toSnakeCase(entry.getKey()), value);
+			
 		}
 		
 		return newHash;
 	}
-	
-//	public static Map<String,Object> toUnderscoreHash(Map<String,String> hash) {
-//		
-//	}
 }
