@@ -1,7 +1,9 @@
 package com.maestrano.connec;
 
+import java.util.Map;
 import java.util.TimeZone;
 
+import com.maestrano.helpers.MnoMapHelper;
 import com.maestrano.net.ConnecClient;
 
 public class CnCompany extends ConnecResource {
@@ -19,8 +21,25 @@ public class CnCompany extends ConnecResource {
 	private CnPhone phone;
 	private CnLogo logo;
 	
+	/**
+	 * Instantiate a new Company entity from a JSON string
+	 * 
+	 * @param jsonStr representing the object attributes using snake case keys
+	 * @return
+	 */
 	public static CnCompany fromJson(String jsonStr) {
 		CnCompany obj = ConnecClient.GSON.fromJson(jsonStr, CnCompany.class);
+		return obj;
+	}
+	
+	/**
+	 * Instantiate a new Company entity from a map of attributes
+	 * @param map of attributes
+	 * @return
+	 */
+	public static CnCompany fromMap(Map<String,Object> map) {
+		String jsonStr = ConnecClient.GSON.toJson(MnoMapHelper.toUnderscoreHash(map));
+		CnCompany obj = fromJson(jsonStr);
 		return obj;
 	}
 	
