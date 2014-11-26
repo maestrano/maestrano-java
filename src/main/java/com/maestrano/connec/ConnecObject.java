@@ -4,14 +4,24 @@ import java.lang.reflect.Field;
 
 public class ConnecObject {
 	
+	/**
+	 * Merge a provided object into the current object
+	 * @param obj object to merge from
+	 */
 	protected void merge(Object obj) {
-		Field[] fs = this.getClass().getDeclaredFields();
+		Class<?> klass = this.getClass();
 		
-		for (Field f : fs) {
-			System.out.println(f.toString());
-			try {
-				f.set(this,f.get(obj));
-			} catch (Exception e) {}
+		while (klass != null) {
+			Field[] fs = klass.getDeclaredFields();
+			
+			for (Field f : fs) {
+				try {
+					f.set(this,f.get(obj));
+				} catch (Exception e) {}
+			}
+			
+			klass = klass.getSuperclass();
 		}
+		
 	}
 }
