@@ -24,7 +24,6 @@ public class CnCompanyIntegrationTest {
 		props.setProperty("app.environment", "test");
 		props.setProperty("api.id", "app-1");
 		props.setProperty("api.key", "gfcmbu8269wyi0hjazk4t7o1sndpvrqxl53e1");
-		//props.setProperty("api.connecHost", "http://localhost:3000");
 		Maestrano.configure(props);
 		
 		this.groupId = "cld-3";
