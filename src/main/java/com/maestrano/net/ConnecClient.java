@@ -157,6 +157,24 @@ public class ConnecClient {
 	}
 	
 	/**
+	 * Create an entity remotely from an object
+	 * @param clazz
+	 * @param groupId
+	 * @param obj
+	 * @return
+	 * @throws AuthenticationException
+	 * @throws ApiException
+	 * @throws InvalidRequestException
+	 */
+	public static <T> T create(Class<T> clazz, String groupId, T obj) throws AuthenticationException, ApiException, InvalidRequestException {
+		Map<String,T> envelope = new HashMap<String,T>();
+		envelope.put("entity",obj);
+		String payload = GSON.toJson(envelope);
+		
+		return create(clazz,groupId,payload,MnoHttpClient.getAuthenticatedClient());
+	}
+	
+	/**
 	 * Create an entity remotely
 	 * @param clazz entity class
 	 * @param groupId customer group id
@@ -166,7 +184,7 @@ public class ConnecClient {
 	 * @throws ApiException
 	 * @throws InvalidRequestException
 	 */
-	public static <T> T create(Class<T> clazz, String groupId, Map<String,Object> hash) throws AuthenticationException, ApiException, InvalidRequestException {
+	public static <T> T create(Class<T> clazz, String groupId, Map<String,Object> hash) throws AuthenticationException, ApiException, InvalidRequestException {		
 		return create(clazz,groupId,hash,MnoHttpClient.getAuthenticatedClient());
 	}
 	
@@ -186,7 +204,22 @@ public class ConnecClient {
 		envelope.put("entity",MnoMapHelper.toUnderscoreHash(hash));
 		String payload = GSON.toJson(envelope);
 		
-		String jsonBody = httpClient.post(getCollectionUrl(clazz,groupId), payload);
+		return create(clazz,groupId,payload,httpClient);
+	}
+	
+	/**
+	 * Create an entity remotely
+	 * @param clazz entity class
+	 * @param groupId customer group id
+	 * @param jsonStr attributes as json string
+	 * @param httpClient
+	 * @return created entity
+	 * @throws AuthenticationException
+	 * @throws ApiException
+	 * @throws InvalidRequestException
+	 */
+	public static <T> T create(Class<T> clazz, String groupId, String jsonStr, MnoHttpClient httpClient) throws AuthenticationException, ApiException, InvalidRequestException {		
+		String jsonBody = httpClient.post(getCollectionUrl(clazz,groupId), jsonStr);
 		
 		Type parsingType = new ConnecResponseParameterizedType(clazz);
 		ConnecResponse<T> resp = GSON.fromJson(jsonBody, parsingType);
