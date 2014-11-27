@@ -64,14 +64,16 @@ public class CnCompany extends ConnecResource {
 	 * @param groupId customer group id
 	 * @param entityId id of the entity to retrieve
 	 * @param hash entity attributes to update 
-	 * @return updated entity
+	 * @return true if the resource was saved
 	 * @throws AuthenticationException
 	 * @throws ApiException
 	 * @throws InvalidRequestException
 	 */
-	public void save() throws AuthenticationException, ApiException, InvalidRequestException {
+	public boolean save() throws AuthenticationException, ApiException, InvalidRequestException {
 		CnCompany obj = ConnecClient.update(CnCompany.class,groupId,null,this);
 		this.merge(obj);
+		
+		return true;
 	}
 	
 	
