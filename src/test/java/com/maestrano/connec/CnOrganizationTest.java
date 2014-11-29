@@ -3,6 +3,7 @@ package com.maestrano.connec;
 import static org.junit.Assert.assertEquals;
 
 import java.lang.reflect.Type;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.junit.Before;
@@ -47,5 +48,31 @@ public class CnOrganizationTest {
 		assertEquals(phone.get("landline"),subject.getPhone().getLandline());
 		assertEquals(phone.get("mobile"),subject.getPhone().getMobile());
 		assertEquals(phone.get("fax"),subject.getPhone().getFax());
+	}
+	
+	@Test
+	public void fromHash_itBuildsTheRightObjectWhenHashMapProvided() {
+		Map<String,Object> camelCaseHash = new HashMap<String,Object>();
+		camelCaseHash.put("name", "Doe Pty Ltd");
+		
+		Map<String,Object> addressGroup = new HashMap<String,Object>();
+		Map<String,Object> billing = new HashMap<String,Object>();
+		billing.put("line1", "some street address");
+		billing.put("city", "some city");
+		billing.put("region", "some region");
+		billing.put("postalCode", "some postal code");
+		addressGroup.put("billing", billing);
+		camelCaseHash.put("address", addressGroup);
+		
+		subject = CnOrganization.fromMap(camelCaseHash);
+		
+		assertEquals(camelCaseHash.get("name"),subject.getName());
+		
+		// Address
+		assertEquals(billing.get("line1"),subject.getAddress().getBilling().getLine1());
+		assertEquals(billing.get("city"),subject.getAddress().getBilling().getCity());
+		assertEquals(billing.get("region"),subject.getAddress().getBilling().getRegion());
+		assertEquals(billing.get("postalCode"),subject.getAddress().getBilling().getPostalCode());
+		
 	}
 }
