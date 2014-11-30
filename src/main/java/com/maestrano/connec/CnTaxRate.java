@@ -12,6 +12,7 @@ import com.maestrano.net.ConnecClient;
 public class CnTaxRate extends ConnecResource {
 	private String name;
 	private double rate;
+	private String taxTypeApplicable;
 	
 	/**
 	 * Instantiate a new TaxRate from a JSON string
@@ -118,5 +119,13 @@ public class CnTaxRate extends ConnecResource {
 	}
 	public void setRate(double rate) {
 		this.rate = rate;
+	}
+
+	public String getTaxTypeApplicable() {
+		return taxTypeApplicable;
+	}
+
+	public void setTaxTypeApplicable(String taxTypeApplicable) {
+		this.taxTypeApplicable = taxTypeApplicable;
 	}
 }

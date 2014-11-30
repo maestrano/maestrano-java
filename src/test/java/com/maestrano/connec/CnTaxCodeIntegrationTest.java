@@ -38,12 +38,14 @@ public class CnTaxCodeIntegrationTest {
 		attrsMap = new HashMap<String, Object>();
 		attrsMap.put("name", "GST (Sales)");
 		attrsMap.put("rate", 6.0);
+		attrsMap.put("taxTypeApplicable", "TaxOnAmount");
 		CnTaxRate saleTaxRate = CnTaxRate.create(this.groupId, attrsMap);
 		
 		// Create Purchase Tax Rate
 		attrsMap = new HashMap<String, Object>();
 		attrsMap.put("name", "GST (Purchase)");
 		attrsMap.put("rate", 2.0);
+		attrsMap.put("taxTypeApplicable", "TaxOnAmount");
 		CnTaxRate purchaseTaxRate = CnTaxRate.create(this.groupId, attrsMap);
 		
 		// Create TaxCode
@@ -61,6 +63,7 @@ public class CnTaxCodeIntegrationTest {
 		assertFalse(entity.getId() == null);
 		assertEquals(this.groupId,entity.getGroupId());
 		assertEquals("State Tax on goods",entity.getName());
+		assertEquals("TaxOnAmount",entity.getSaleTaxes().get(0).getTaxTypeApplicable());
 	}
 	
 	@Test 
