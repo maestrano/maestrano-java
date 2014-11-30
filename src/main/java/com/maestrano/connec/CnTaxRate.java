@@ -14,7 +14,7 @@ public class CnTaxRate extends ConnecResource {
 	private double rate;
 	
 	/**
-	 * Instantiate a new TaxCode from a JSON string
+	 * Instantiate a new TaxRate from a JSON string
 	 * @param jsonStr
 	 * @return new tax code object
 	 */
@@ -24,7 +24,7 @@ public class CnTaxRate extends ConnecResource {
 	}
 	
 	/**
-	 * Instantiate a new Person entity from a map of attributes
+	 * Instantiate a new TaxRate entity from a map of attributes
 	 * @param map of attributes
 	 * @return new tax code object
 	 */
@@ -35,7 +35,7 @@ public class CnTaxRate extends ConnecResource {
 	}
 	
 	/**
-	 * Return all tax codes
+	 * Return all tax rates
 	 * @param groupId the groupId for which to retrieve organizations
 	 * @return list of organizations
 	 * @throws ApiException 
@@ -47,7 +47,7 @@ public class CnTaxRate extends ConnecResource {
 	}
 	
 	/**
-	 * Retrieve the tax code corresponding to the provided group and id
+	 * Retrieve the tax rates corresponding to the provided group and id
 	 * @param groupId customer group id
 	 * @param id group id
 	 * @return a company entity if found, null otherwise
