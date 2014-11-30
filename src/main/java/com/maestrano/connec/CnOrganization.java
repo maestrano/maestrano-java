@@ -45,7 +45,7 @@ public class CnOrganization extends ConnecResource {
 	}
 	
 	/**
-	 * Return all group organizations
+	 * Return all organizations
 	 * @param groupId the groupId for which to retrieve organizations
 	 * @return list of organizations
 	 * @throws ApiException 
@@ -57,7 +57,7 @@ public class CnOrganization extends ConnecResource {
 	}
 	
 	/**
-	 * Retrieve the company corresponding to the provided groupId
+	 * Retrieve the organization corresponding to the provided group and id
 	 * @param groupId customer group id
 	 * @param id group id
 	 * @return a company entity if found, null otherwise
