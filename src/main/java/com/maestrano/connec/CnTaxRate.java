@@ -9,7 +9,7 @@ import com.maestrano.exception.InvalidRequestException;
 import com.maestrano.helpers.MnoMapHelper;
 import com.maestrano.net.ConnecClient;
 
-public class CnTaxCode extends ConnecResource {
+public class CnTaxRate extends ConnecResource {
 	private String name;
 	private double rate;
 	
@@ -18,8 +18,8 @@ public class CnTaxCode extends ConnecResource {
 	 * @param jsonStr
 	 * @return new tax code object
 	 */
-	public static CnTaxCode fromJson(String jsonStr) {
-		CnTaxCode obj = ConnecClient.GSON.fromJson(jsonStr, CnTaxCode.class);
+	public static CnTaxRate fromJson(String jsonStr) {
+		CnTaxRate obj = ConnecClient.GSON.fromJson(jsonStr, CnTaxRate.class);
 		return obj;
 	}
 	
@@ -28,9 +28,9 @@ public class CnTaxCode extends ConnecResource {
 	 * @param map of attributes
 	 * @return new tax code object
 	 */
-	public static CnTaxCode fromMap(Map<String,Object> map) {
+	public static CnTaxRate fromMap(Map<String,Object> map) {
 		String jsonStr = ConnecClient.GSON.toJson(MnoMapHelper.toUnderscoreHash(map));
-		CnTaxCode obj = fromJson(jsonStr);
+		CnTaxRate obj = fromJson(jsonStr);
 		return obj;
 	}
 	
@@ -42,8 +42,8 @@ public class CnTaxCode extends ConnecResource {
 	 * @throws AuthenticationException 
 	 * @throws InvalidRequestException 
 	 */
-	public static List<CnTaxCode> all(String groupId) throws AuthenticationException, ApiException, InvalidRequestException {
-		return ConnecClient.all(CnTaxCode.class,groupId);
+	public static List<CnTaxRate> all(String groupId) throws AuthenticationException, ApiException, InvalidRequestException {
+		return ConnecClient.all(CnTaxRate.class,groupId);
 	}
 	
 	/**
@@ -55,8 +55,8 @@ public class CnTaxCode extends ConnecResource {
 	 * @throws AuthenticationException 
 	 * @throws InvalidRequestException 
 	 */
-	public static CnTaxCode retrieve(String groupId, String id) throws AuthenticationException, ApiException, InvalidRequestException {
-		return ConnecClient.retrieve(CnTaxCode.class, groupId,id);
+	public static CnTaxRate retrieve(String groupId, String id) throws AuthenticationException, ApiException, InvalidRequestException {
+		return ConnecClient.retrieve(CnTaxRate.class, groupId,id);
 	}
 	
 	/**
@@ -68,8 +68,8 @@ public class CnTaxCode extends ConnecResource {
 	 * @throws AuthenticationException 
 	 * @throws InvalidRequestException 
 	 */
-	public static CnTaxCode create(String groupId, Map<String,Object> params) throws AuthenticationException, ApiException, InvalidRequestException {
-		return ConnecClient.create(CnTaxCode.class,groupId,params);
+	public static CnTaxRate create(String groupId, Map<String,Object> params) throws AuthenticationException, ApiException, InvalidRequestException {
+		return ConnecClient.create(CnTaxRate.class,groupId,params);
 	}
 	
 	/**
@@ -95,11 +95,11 @@ public class CnTaxCode extends ConnecResource {
 		if (groupId == null) return false;
 		this.groupId = groupId;
 		
-		CnTaxCode obj;
+		CnTaxRate obj;
 		if (this.id == null) {
-			obj = ConnecClient.create(CnTaxCode.class,this.groupId,this);
+			obj = ConnecClient.create(CnTaxRate.class,this.groupId,this);
 		} else {
-			obj = ConnecClient.update(CnTaxCode.class,this.groupId,this.id,this);
+			obj = ConnecClient.update(CnTaxRate.class,this.groupId,this.id,this);
 		}
 		
 		this.merge(obj);

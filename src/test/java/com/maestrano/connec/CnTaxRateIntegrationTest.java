@@ -14,7 +14,7 @@ import org.junit.Test;
 
 import com.maestrano.Maestrano;
 
-public class CnTaxCodeIntegrationTest {
+public class CnTaxRateIntegrationTest {
 	private Properties props = new Properties();
 	private String groupId;
 	
@@ -34,7 +34,7 @@ public class CnTaxCodeIntegrationTest {
 		attrsMap.put("name", "GST (Sales)");
 		attrsMap.put("rate", 6.0);
 		
-		CnTaxCode entity = CnTaxCode.create(this.groupId, attrsMap);
+		CnTaxRate entity = CnTaxRate.create(this.groupId, attrsMap);
 		System.out.println(entity.getId());
 		assertFalse(entity.getId() == null);
 		assertEquals(this.groupId,entity.getGroupId());
@@ -44,8 +44,8 @@ public class CnTaxCodeIntegrationTest {
 	
 	@Test 
 	public void all_itRetrievesAllEntities() throws Exception {
-		List<CnTaxCode> entities = CnTaxCode.all(groupId);
-		CnTaxCode entity = entities.get(0);
+		List<CnTaxRate> entities = CnTaxRate.all(groupId);
+		CnTaxRate entity = entities.get(0);
 		
 		assertTrue(entity.getId() != null);
 		assertEquals(this.groupId,entity.getGroupId());
@@ -53,7 +53,7 @@ public class CnTaxCodeIntegrationTest {
 	
 	@Test 
 	public void retrieve_itRetrievesASingleEntity() throws Exception {
-		CnTaxCode entity = CnTaxCode.retrieve(groupId, "3a40d150-5a73-0132-9102-6a46f43bd3fe");
+		CnTaxRate entity = CnTaxRate.retrieve(groupId, "a60a14a0-5a73-0132-9104-6a46f43bd3fe");
 		
 		assertTrue(entity.getId() != null);
 		assertEquals(this.groupId,entity.getGroupId());
@@ -61,7 +61,7 @@ public class CnTaxCodeIntegrationTest {
 	
 	@Test 
 	public void save_itUpdatesAnEntity() throws Exception {
-		CnTaxCode entity = CnTaxCode.retrieve(groupId, "3a40d150-5a73-0132-9102-6a46f43bd3fe");
+		CnTaxRate entity = CnTaxRate.retrieve(groupId, "a60a14a0-5a73-0132-9104-6a46f43bd3fe");
 		double newRate = entity.getRate() + 1;
 		entity.setRate(newRate);
 		

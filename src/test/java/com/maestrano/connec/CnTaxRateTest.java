@@ -13,9 +13,9 @@ import com.google.gson.reflect.TypeToken;
 import com.maestrano.helpers.MnoDateHelper;
 import com.maestrano.net.ConnecClient;
 
-public class CnTaxCodeTest {
+public class CnTaxRateTest {
 	private String jsonStr;
-	private CnTaxCode subject;
+	private CnTaxRate subject;
 	private Map<String,Object> hash;
 	
 	@Before
@@ -26,7 +26,7 @@ public class CnTaxCodeTest {
 		Type stringStringMap = new TypeToken<Map<String, Object>>(){}.getType();
 		hash = ConnecClient.GSON.fromJson(jsonStr, stringStringMap);
 		
-		subject = CnTaxCode.fromJson(jsonStr);
+		subject = CnTaxRate.fromJson(jsonStr);
 	}
 	
 	@Test
@@ -49,7 +49,7 @@ public class CnTaxCodeTest {
 		camelCaseHash.put("name", "GST (sales)");
 		camelCaseHash.put("rate", 5.0);
 		
-		subject = CnTaxCode.fromMap(camelCaseHash);
+		subject = CnTaxRate.fromMap(camelCaseHash);
 		
 		assertEquals(camelCaseHash.get("name"),subject.getName());
 		assertEquals(camelCaseHash.get("rate"),subject.getRate());
