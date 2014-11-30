@@ -14,7 +14,7 @@ public class CnTaxCode extends ConnecResource {
 	private String description;
 	private double saleTaxRate;
 	private double purchaseTaxRate;
-	private List<CnTaxRate> salesTaxes;
+	private List<CnTaxRate> saleTaxes;
 	private List<CnTaxRate> purchaseTaxes;
 	
 	/**
@@ -135,11 +135,11 @@ public class CnTaxCode extends ConnecResource {
 	public void setPurchaseTaxRate(double purchaseTaxRate) {
 		this.purchaseTaxRate = purchaseTaxRate;
 	}
-	public List<CnTaxRate> getSalesTaxes() {
-		return salesTaxes;
+	public List<CnTaxRate> getSaleTaxes() {
+		return saleTaxes;
 	}
-	public void setSalesTaxes(List<CnTaxRate> salesTaxes) {
-		this.salesTaxes = salesTaxes;
+	public void setSaleTaxes(List<CnTaxRate> saleTaxes) {
+		this.saleTaxes = saleTaxes;
 	}
 	public List<CnTaxRate> getPurchaseTaxes() {
 		return purchaseTaxes;

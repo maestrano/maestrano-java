@@ -51,8 +51,8 @@ public class CnTaxCodeIntegrationTest {
 		attrsMap.put("name", "State Tax on goods");
 		attrsMap.put("saleTaxRate", 6.0); // not needed - calculated by Connec!
 		attrsMap.put("purchaseTaxRate", 2.0); // not needed - calculated by Connec!
-		attrsMap.put("salesTaxes", new ArrayList<CnTaxRate>());
-		((ArrayList<CnTaxRate>) attrsMap.get("salesTaxes")).add(saleTaxRate);
+		attrsMap.put("saleTaxes", new ArrayList<CnTaxRate>());
+		((ArrayList<CnTaxRate>) attrsMap.get("saleTaxes")).add(saleTaxRate);
 		attrsMap.put("purchaseTaxes", new ArrayList<CnTaxRate>());
 		((ArrayList<CnTaxRate>) attrsMap.get("purchaseTaxes")).add(purchaseTaxRate);
 		
@@ -74,17 +74,17 @@ public class CnTaxCodeIntegrationTest {
 	
 	@Test 
 	public void retrieve_itRetrievesASingleEntity() throws Exception {
-		CnTaxCode entity = CnTaxCode.retrieve(groupId, "81d48ba0-5a7b-0132-9108-6a46f43bd3fe");
+		CnTaxCode entity = CnTaxCode.retrieve(groupId, "8419d770-5a82-0132-9116-6a46f43bd3fe");
 		
 		assertTrue(entity.getId() != null);
 		assertEquals(this.groupId,entity.getGroupId());
-		assertTrue(entity.getSalesTaxes().get(0).getRate() > 0);
+		assertTrue(entity.getSaleTaxes().get(0).getRate() > 0);
 		assertTrue(entity.getPurchaseTaxes().get(0).getRate() > 0);
 	}
 	
 	@Test 
 	public void save_itUpdatesAnEntity() throws Exception {
-		CnTaxCode entity = CnTaxCode.retrieve(groupId, "81d48ba0-5a7b-0132-9108-6a46f43bd3fe");
+		CnTaxCode entity = CnTaxCode.retrieve(groupId, "8419d770-5a82-0132-9116-6a46f43bd3fe");
 		String newName = entity.getName() + "a";
 		entity.setName(newName);
 		
