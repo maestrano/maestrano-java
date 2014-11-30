@@ -1,7 +1,6 @@
 package com.maestrano.connec;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.util.HashMap;
@@ -12,8 +11,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.maestrano.Maestrano;
-import com.maestrano.account.MnoBill;
-import com.maestrano.helpers.MnoDateHelper;
 
 public class CnCompanyIntegrationTest {
 	private Properties props = new Properties();

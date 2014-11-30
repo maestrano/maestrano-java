@@ -3,13 +3,11 @@ package com.maestrano.connec;
 import java.util.List;
 import java.util.Map;
 
-import com.maestrano.account.MnoBill;
 import com.maestrano.exception.ApiException;
 import com.maestrano.exception.AuthenticationException;
 import com.maestrano.exception.InvalidRequestException;
 import com.maestrano.helpers.MnoMapHelper;
 import com.maestrano.net.ConnecClient;
-import com.maestrano.net.MnoAccountClient;
 
 public class CnOrganization extends ConnecResource {
 	private String name;
