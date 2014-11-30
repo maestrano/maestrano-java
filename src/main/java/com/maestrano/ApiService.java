@@ -118,7 +118,7 @@ public class ApiService {
 	public String getConnecHost() {
 		if (connecHost == null || connecHost.isEmpty()) {
 			if (Maestrano.appService().getEnvironment().equals("production")) {
-				return "https://connec.maestrano.com";
+				return "https://api.connec.maestrano.com";
 			} else {
 				return "http://api-sandbox.maestrano.io";
 			}
