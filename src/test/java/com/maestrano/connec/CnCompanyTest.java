@@ -28,6 +28,11 @@ public class CnCompanyTest {
 		subject = CnCompany.fromJson(jsonStr);
 	}
 	
+	@Test
+	public void toJson_itReturnsTheRightRepresentation() {
+		assertEquals(ConnecClient.GSON.toJson(subject),subject.toJson());
+	}
+	
 	@SuppressWarnings("unchecked")
 	@Test
 	public void gsonCasting_itBuildsTheRightObject() {

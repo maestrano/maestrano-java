@@ -14,8 +14,19 @@ class ConnecResource extends ConnecObject {
 		super();
 	}
 	
-	public String toString() {
+	/**
+	 * Return a JSON representation of the entity
+	 * @return
+	 */
+	public String toJson() {
 		return ConnecClient.GSON.toJson(this);
+	}
+	
+	/**
+	 * Return a String representation of the entity (JSON representation)
+	 */
+	public String toString() {
+		return this.toJson();
 	}
 	
 	public String getId() {
