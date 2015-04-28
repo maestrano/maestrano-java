@@ -37,7 +37,7 @@ public class CnPersonTest {
 	@SuppressWarnings("unchecked")
 	@Test
 	public void gsonCasting_itBuildsTheRightObject() {
-		assertEquals(hash.get("id"),subject.getId()); 
+		assertEquals(hash.get("id"),subject.getId());
 		assertEquals(hash.get("created_at"), MnoDateHelper.toIso8601(subject.getCreatedAt()));
 		assertEquals(hash.get("updated_at"), MnoDateHelper.toIso8601(subject.getUpdatedAt()));
 		assertEquals(hash.get("first_name"),subject.getFirstName());

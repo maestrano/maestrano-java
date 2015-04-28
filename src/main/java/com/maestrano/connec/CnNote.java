@@ -23,6 +23,4 @@ public class CnNote extends ConnecObject {
 	public void setValue(String value) {
 		this.value = value;
 	}
-	
-	
 }

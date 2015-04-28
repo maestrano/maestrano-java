@@ -34,7 +34,7 @@ public class CnOrganizationIntegrationTest {
 		attrsMap.put("name", "Doe Pty Ltd");
 		attrsMap.put("industry", "Banking");
 		
-		CnOrganization entity = CnOrganization.create(this.groupId, attrsMap);
+		CnOrganization entity = CnOrganization.create(this.groupId, attrsMap, CnOrganization.class);
 		System.out.println(entity.getId());
 		assertFalse(entity.getId() == null);
 		assertEquals(this.groupId,entity.getGroupId());
@@ -44,7 +44,7 @@ public class CnOrganizationIntegrationTest {
 	
 	@Test 
 	public void all_itRetrievesAllOrganizations() throws Exception {
-		List<CnOrganization> entities = CnOrganization.all(groupId);
+		List<CnOrganization> entities = CnOrganization.all(groupId, CnOrganization.class);
 		CnOrganization entity = entities.get(0);
 		
 		assertTrue(entity.getId() != null);
@@ -53,7 +53,7 @@ public class CnOrganizationIntegrationTest {
 	
 	@Test 
 	public void retrieve_itRetrievesASingleOrganization() throws Exception {
-		CnOrganization entity = CnOrganization.retrieve(groupId, "e50c42e0-583f-0132-c63c-1aa5759bfa45");
+		CnOrganization entity = CnOrganization.retrieve(groupId, "e50c42e0-583f-0132-c63c-1aa5759bfa45", CnOrganization.class);
 		
 		assertTrue(entity.getId() != null);
 		assertEquals(this.groupId,entity.getGroupId());
@@ -61,7 +61,7 @@ public class CnOrganizationIntegrationTest {
 	
 	@Test 
 	public void save_itUpdatesAnOrganization() throws Exception {
-		CnOrganization entity = CnOrganization.retrieve(groupId, "e50c42e0-583f-0132-c63c-1aa5759bfa45");
+		CnOrganization entity = CnOrganization.retrieve(groupId, "e50c42e0-583f-0132-c63c-1aa5759bfa45", CnOrganization.class);
 		String newName = entity.getName() + "a";
 		entity.setName(newName);
 		
