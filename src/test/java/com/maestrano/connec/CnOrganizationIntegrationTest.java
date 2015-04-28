@@ -77,28 +77,28 @@ public class CnOrganizationIntegrationTest {
 
 	    // Fetch all organizations
 	    Map<String, Object> organizations = ConnecClient.all("organizations", groupId);
-	    System.out.println("Fetched organizations: " + organizations);
+//	    System.out.println("Fetched organizations: " + organizations);
 	    // Fetched organizations: {organizations=[{name=Doe Corp Inc., id=8afd71e0-8394-0132-a4d2-2623376cdffe, group_id=cld-3, type=organizations}, ... }
 	    
 	    // Retrieve first organization
 	    List<Map<String, Object>> organizationsHashes = (List<Map<String, Object>>) organizations.get("organizations");
 	    String firstOrganizationId = (String) organizationsHashes.get(0).get("id");
 	    Map<String, Object> organization = (Map<String, Object>) ConnecClient.retrieve("organizations", groupId, firstOrganizationId).get("organizations");
-	    System.out.println("Retrieved first organization: " + organization);
+//	    System.out.println("Retrieved first organization: " + organization);
 	    // Retrieved first organization: {name=Doe Corp Inc., id=8afd71e0-8394-0132-a4d2-2623376cdffe, group_id=cld-3, type=organizations}
 	    
 	    // Create a new organization
 	    Map<String, Object> newOrganization = new HashMap<String, Object>();
 	    newOrganization.put("name", "New Organization");
 	    organization = (Map<String, Object>) ConnecClient.create("organizations", groupId, newOrganization).get("organizations");
-	    System.out.println("Created new organization: " + organization);
+//	    System.out.println("Created new organization: " + organization);
 	    // Created new organization: {name=New Organization, id=347e0fa0-cfaf-0132-4f1a-42f46dd33bd3, group_id=cld-3, type=organizations}
 	    
 	    // Update an organization
 	    organization.put("industry", "Hardware");
 	    String organizationId = (String) organization.get("id");
 	    Map<String, Object> updatedOrganization = (Map<String, Object>) ConnecClient.update("organizations", groupId, organizationId, organization).get("organizations");
-        System.out.println("Updated organization: " + updatedOrganization);
+//        System.out.println("Updated organization: " + updatedOrganization);
         // Updated organization: {name=New Organization, id=347e0fa0-cfaf-0132-4f1a-42f46dd33bd3, group_id=cld-3, industry=Hardware, type=organizations}
     }
 }
