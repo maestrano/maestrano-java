@@ -59,7 +59,6 @@ public class CnTaxCodeIntegrationTest {
 		((ArrayList<CnTaxRate>) attrsMap.get("purchaseTaxes")).add(purchaseTaxRate);
 		
 		CnTaxCode entity = CnTaxCode.create(this.groupId, attrsMap, CnTaxCode.class);
-		System.out.println(entity.getId());
 		assertFalse(entity.getId() == null);
 		assertEquals(this.groupId,entity.getGroupId());
 		assertEquals("State Tax on goods",entity.getName());
@@ -77,7 +76,7 @@ public class CnTaxCodeIntegrationTest {
 	
 	@Test 
 	public void retrieve_itRetrievesASingleEntity() throws Exception {
-		CnTaxCode entity = CnTaxCode.retrieve(groupId, "8419d770-5a82-0132-9116-6a46f43bd3fe", CnTaxCode.class);
+		CnTaxCode entity = CnTaxCode.retrieve(groupId, "647a3380-cfa3-0132-4ec8-42f46dd33bd3", CnTaxCode.class);
 		
 		assertTrue(entity.getId() != null);
 		assertEquals(this.groupId,entity.getGroupId());
@@ -87,7 +86,7 @@ public class CnTaxCodeIntegrationTest {
 	
 	@Test 
 	public void save_itUpdatesAnEntity() throws Exception {
-		CnTaxCode entity = CnTaxCode.retrieve(groupId, "8419d770-5a82-0132-9116-6a46f43bd3fe", CnTaxCode.class);
+		CnTaxCode entity = CnTaxCode.retrieve(groupId, "647a3380-cfa3-0132-4ec8-42f46dd33bd3", CnTaxCode.class);
 		String newName = entity.getName() + "a";
 		entity.setName(newName);
 		

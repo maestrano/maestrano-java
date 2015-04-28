@@ -31,7 +31,7 @@ public class ConnecClient {
 	.registerTypeAdapter(TimeZone.class, new TimeZoneDeserializer())
 	.create();
 
-	public ConnecClient() {}
+	private ConnecClient() {}
 	
 	/**
 	 * Return the path to the entity collection endpoint
@@ -90,7 +90,7 @@ public class ConnecClient {
 	 * @throws ApiException
 	 * @throws InvalidRequestException
 	 */
-	public static List<Map<String, Object>> all(String entityName, String groupId) throws AuthenticationException, ApiException, InvalidRequestException {
+	public static Map<String, Object> all(String entityName, String groupId) throws AuthenticationException, ApiException, InvalidRequestException {
 		return all(entityName,groupId,null,MnoHttpClient.getAuthenticatedClient());
 	}
 	
@@ -119,7 +119,7 @@ public class ConnecClient {
 	 * @throws ApiException
 	 * @throws InvalidRequestException
 	 */
-	public static List<Map<String, Object>> all(String entityName, String groupId, Map<String,?> params) throws AuthenticationException, ApiException, InvalidRequestException {
+	public static Map<String, Object> all(String entityName, String groupId, Map<String,?> params) throws AuthenticationException, ApiException, InvalidRequestException {
 		return all(entityName,groupId,params,MnoHttpClient.getAuthenticatedClient());
 	}
 	
@@ -134,13 +134,10 @@ public class ConnecClient {
      * @throws ApiException
      * @throws InvalidRequestException
      */
-    public static List<Map<String, Object>> all(String entityName, String groupId, Map<String,?> params, MnoHttpClient httpClient) throws AuthenticationException, ApiException, InvalidRequestException {
+    public static Map<String, Object> all(String entityName, String groupId, Map<String,?> params, MnoHttpClient httpClient) throws AuthenticationException, ApiException, InvalidRequestException {
         String jsonBody = httpClient.get(getCollectionUrl(entityName,groupId), MnoMapHelper.toUnderscoreHash(params));
-        
-        Type parsingType = new ConnecResponseParameterizedType();
-        ConnecResponse<Map<String, Object>> resp = GSON.fromJson(jsonBody, parsingType);
-        
-        return resp.getEntities();
+        Type typeOfHashMap = HashMap.class;
+        return GSON.fromJson(jsonBody, typeOfHashMap);
     }
 	
 	/**
@@ -263,11 +260,8 @@ public class ConnecClient {
      */
     public static Map<String,Object> create(String entityName, String groupId, String jsonStr, MnoHttpClient httpClient) throws AuthenticationException, ApiException, InvalidRequestException {        
         String jsonBody = httpClient.post(getCollectionUrl(entityName,groupId), jsonStr);
-        
-        Type parsingType = new ConnecResponseParameterizedType();
-        ConnecResponse<Map<String,Object>> resp = GSON.fromJson(jsonBody, parsingType);
-        
-        return resp.getEntity();
+        Type typeOfHashMap = HashMap.class;
+        return GSON.fromJson(jsonBody, typeOfHashMap);
     }
     
     /**
@@ -330,11 +324,8 @@ public class ConnecClient {
      */
     public static Map<String,Object> retrieve(String entityName, String groupId, String entityId, MnoHttpClient httpClient) throws AuthenticationException, ApiException, InvalidRequestException {
         String jsonBody = httpClient.get(getInstanceUrl(entityName,groupId,entityId));
-        
-        Type parsingType = new ConnecResponseParameterizedType();
-        ConnecResponse<Map<String,Object>> resp = GSON.fromJson(jsonBody, parsingType);
-        
-        return resp.getEntity();
+        Type typeOfHashMap = HashMap.class;
+        return GSON.fromJson(jsonBody, typeOfHashMap);
     }
     
     /**
@@ -448,11 +439,8 @@ public class ConnecClient {
 	 */
 	public static Map<String,Object> update(String entityName, String groupId, String entityId, String jsonStr, MnoHttpClient httpClient) throws AuthenticationException, ApiException, InvalidRequestException {
 		String jsonBody = httpClient.put(getInstanceUrl(entityName,groupId,entityId),jsonStr);
-		
-		Type parsingType = new ConnecResponseParameterizedType();
-		ConnecResponse<Map<String,Object>> resp = GSON.fromJson(jsonBody, parsingType);
-		
-		return resp.getEntity();
+		Type typeOfHashMap = HashMap.class;
+        return GSON.fromJson(jsonBody, typeOfHashMap);
 	}
 	
 	/**
@@ -470,7 +458,7 @@ public class ConnecClient {
      */
     public static <T> T update(String entityName, String groupId, String entityId, String jsonStr, MnoHttpClient httpClient, Class<T> clazz) throws AuthenticationException, ApiException, InvalidRequestException {
         String jsonBody = httpClient.put(getInstanceUrl(entityName,groupId,entityId),jsonStr);
-        
+
         return deserializeEntity(entityName,jsonBody,clazz);
     }
 	
@@ -500,11 +488,8 @@ public class ConnecClient {
      */
     public static Map<String, Object> delete(String entityName, String groupId, String entityId, MnoHttpClient httpClient) throws AuthenticationException, ApiException {
         String jsonBody = httpClient.delete(getInstanceUrl(entityName,groupId,entityId));
-        
-        Type parsingType = new ConnecResponseParameterizedType();
-        ConnecResponse<Map<String, Object>> resp = GSON.fromJson(jsonBody, parsingType);
-        
-        return resp.getEntity();
+        Type typeOfHashMap = HashMap.class;
+        return GSON.fromJson(jsonBody, typeOfHashMap);
     }
     
     /**

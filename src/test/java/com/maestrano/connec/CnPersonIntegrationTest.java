@@ -52,7 +52,7 @@ public class CnPersonIntegrationTest {
 	
 	@Test 
 	public void retrieve_itRetrievesASingleEntity() throws Exception {
-		CnPerson entity = CnPerson.retrieve(groupId, "8a754b80-5a6c-0132-90fe-6a46f43bd3fe", CnPerson.class);
+		CnPerson entity = CnPerson.retrieve(groupId, "c18258c0-cfa2-0132-4eb5-42f46dd33bd3", CnPerson.class);
 		
 		assertTrue(entity.getId() != null);
 		assertEquals(this.groupId,entity.getGroupId());
@@ -60,7 +60,7 @@ public class CnPersonIntegrationTest {
 	
 	@Test 
 	public void save_itUpdatesAnEntity() throws Exception {
-		CnPerson entity = CnPerson.retrieve(groupId, "8a754b80-5a6c-0132-90fe-6a46f43bd3fe", CnPerson.class);
+		CnPerson entity = CnPerson.retrieve(groupId, "c18258c0-cfa2-0132-4eb5-42f46dd33bd3", CnPerson.class);
 		String newName = entity.getFirstName() + "a";
 		entity.setFirstName(newName);
 		

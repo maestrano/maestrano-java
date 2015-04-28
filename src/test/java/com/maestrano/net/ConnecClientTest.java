@@ -59,12 +59,12 @@ public class ConnecClientTest {
 
 	@Test
 	public void class_getCollectionUrl_itReturnsTheRightEntityApiUrl() {
-		assertEquals("https://connec.maestrano.com/api/v2/cld-1/some_models",ConnecClient.getCollectionUrl("some_models","cld-1"));
+		assertEquals("https://api-connec.maestrano.com/api/v2/cld-1/some_models",ConnecClient.getCollectionUrl("some_models","cld-1"));
 	}
 
 	@Test
 	public void getInstanceUrl_itReturnsTheRightEntityInstanceApiUrl() {
-		assertEquals("https://connec.maestrano.com/api/v2/cld-1/some_models/1",ConnecClient.getInstanceUrl("some_models","cld-1","1"));
+		assertEquals("https://api-connec.maestrano.com/api/v2/cld-1/some_models/1",ConnecClient.getInstanceUrl("some_models","cld-1","1"));
 	}
 	
 	@Test
@@ -73,7 +73,7 @@ public class ConnecClientTest {
 		Map<String,Object> hash = new HashMap<String,Object>();
 		List<Map<String,Object>> list = new ArrayList<Map<String,Object>>();
 		list.add(this.preparePersonObj());
-		hash.put("entities", list);
+		hash.put("people", list);
 
 		// Prepare response
 		Gson gson = new Gson();
@@ -92,7 +92,7 @@ public class ConnecClientTest {
 	public void retrieve_itReturnsTheRightEntity() throws Exception {
 		// Prepare data
 		Map<String,Object> hash = new HashMap<String,Object>();
-		hash.put("entity", this.preparePersonObj());
+		hash.put("people", this.preparePersonObj());
 
 		// Prepare response
 		Gson gson = new Gson();
@@ -112,7 +112,7 @@ public class ConnecClientTest {
 	public void create_itCreatesTheRightEntity() throws Exception {
 		// Prepare Response data
 		Map<String,Object> hash = new HashMap<String,Object>();
-		hash.put("entity", this.preparePersonObj());
+		hash.put("people", this.preparePersonObj());
 		
 		// Prepare Creation data
 		Map<String,Object> createHash = new HashMap<String,Object>();
@@ -121,8 +121,9 @@ public class ConnecClientTest {
 		
 		// Prepare response
 		Gson gson = new Gson();
-		Map<String,Map<String,Object>> reqEnvelope = new HashMap<String,Map<String,Object>>();
-		reqEnvelope.put("entity", MnoMapHelper.toUnderscoreHash(createHash));
+		Map<String,Object> reqEnvelope = new HashMap<String,Object>();
+		reqEnvelope.put("people", MnoMapHelper.toUnderscoreHash(createHash));
+		reqEnvelope.put("resource", "people");
 		
 		httpClient = new MnoHttpClientStub();
 		httpClient.setResponseStub(gson.toJson(hash), 
@@ -140,7 +141,8 @@ public class ConnecClientTest {
 	public void update_itUpdatesTheRightEntity() throws Exception {
 		// Prepare Response data
 		Map<String,Object> hash = new HashMap<String,Object>();
-		hash.put("entity", this.preparePersonObj());
+		hash.put("people", this.preparePersonObj());
+		hash.put("resource", "people");
 		
 		// Prepare update data
 		Map<String,Object> updHash = new HashMap<String,Object>();
@@ -148,12 +150,13 @@ public class ConnecClientTest {
 		
 		// Prepare response
 		Gson gson = new Gson();
-		Map<String,Map<String,Object>> reqEnvelope = new HashMap<String,Map<String,Object>>();
-		reqEnvelope.put("entity", MnoMapHelper.toUnderscoreHash(updHash));
+		Map<String,Object> reqEnvelope = new HashMap<String,Object>();
+		reqEnvelope.put("people", MnoMapHelper.toUnderscoreHash(updHash));
+		reqEnvelope.put("resource", "people");
 		httpClient = new MnoHttpClientStub();
 		httpClient.setResponseStub(gson.toJson(hash), 
 				ConnecClient.getInstanceUrl("people", this.groupId,"123456"),null,gson.toJson(reqEnvelope));
-		
+
 		// Test
 		CnPerson resp = ConnecClient.update("people", this.groupId, "123456", updHash, httpClient, CnPerson.class);
 		assertEquals("123456",resp.getId());
@@ -166,7 +169,8 @@ public class ConnecClientTest {
 	public void delete_itDeletesTheRightEntity() throws Exception {
 		// Prepare Response data
 		Map<String,Object> hash = new HashMap<String,Object>();
-		hash.put("entity", this.preparePersonObj());
+		hash.put("people", this.preparePersonObj());
+		hash.put("resource", "people");
 		
 		// Prepare response
 		Gson gson = new Gson();

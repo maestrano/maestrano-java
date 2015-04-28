@@ -1,5 +1,6 @@
 package com.maestrano;
 
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -9,6 +10,7 @@ public class WebhookService {
 
 	private String accountGroupsPath;
 	private String accountGroupUsersPath;
+	private Map<String, Object> connecSubscriptions;
 
 	// Private Constructor
 	private WebhookService() {}
@@ -40,6 +42,19 @@ public class WebhookService {
 	public void configure(Properties props) {
 		this.accountGroupsPath = props.getProperty("webhook.account.groupsPath");
 		this.accountGroupUsersPath = props.getProperty("webhook.account.groupUsersPath");
+		
+		// Map properties under "webhook.connec.subscriptions" as a Map
+		Map<String, Object> connecSubscriptions = new HashMap<String, Object>();
+		Enumeration<String> propertyNames = (Enumeration<String>) props.propertyNames();
+		while(propertyNames.hasMoreElements()) {
+		    String propertyName = propertyNames.nextElement();
+		    if(propertyName.startsWith("webhook.connec.subscriptions")) {
+		        String entityName = propertyName.substring(propertyName.lastIndexOf('.') + 1);
+		        Boolean subscriptionFlag = Boolean.parseBoolean(props.getProperty(propertyName));
+		        connecSubscriptions.put(entityName, subscriptionFlag);
+		    }
+        }
+		this.connecSubscriptions = connecSubscriptions;
 	}
 	
 	/**
@@ -68,13 +83,32 @@ public class WebhookService {
 		this.accountGroupUsersPath = accountGroupUsersPath;
 	}
 	
-	public Map<String,Map<String,String>> toMetadataHash() {
-		Map<String,Map<String,String>> hash = new HashMap<String,Map<String,String>>();
-		Map<String,String> accountHash = new HashMap<String,String>();
+	/**
+     * Return the Connec! entities subscriptions
+     * @return connec > subscriptions
+     */
+    public Map<String, Object> getConnecSubscriptions() {
+        if (connecSubscriptions == null) return new HashMap<String, Object>();
+        return connecSubscriptions;
+    }
+
+    public void setConnecSubscriptions(Map<String, Object> connecSubscriptions) {
+        this.connecSubscriptions = connecSubscriptions;
+    }
+	
+	public Map<String,Object> toMetadataHash() {
+	    Map<String,Object> hash = new HashMap<String,Object>();
+	    
+	    // Account
+		Map<String,Object> accountHash = new HashMap<String,Object>();
 		accountHash.put("groups_path",getAccountGroupsPath());
 		accountHash.put("group_users_path",getAccountGroupUsersPath());
-		
 		hash.put("account", accountHash);
+		
+		// Subscriptions
+		Map<String,Object> connecHash = new HashMap<String,Object>();
+		connecHash.put("subscriptions", getConnecSubscriptions());
+		hash.put("connec", connecHash);
 		
 		return hash;
 	}

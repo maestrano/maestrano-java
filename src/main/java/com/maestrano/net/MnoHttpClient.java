@@ -34,8 +34,8 @@ public class MnoHttpClient {
 	
 	public MnoHttpClient() {
 		this.defaultUserAgent = "maestrano-java/" + System.getProperty("java.version");
-		this.defaultContentType = "application/json";
-		this.defaultAccept = "application/json";
+		this.defaultContentType = "application/vnd.api+json";
+		this.defaultAccept = "application/vnd.api+json";
 	}
 	
 	/**
