@@ -10,6 +10,7 @@ public class WebhookService {
 
 	private String accountGroupsPath;
 	private String accountGroupUsersPath;
+	private String notificationspath;
 	private Map<String, Object> connecSubscriptions;
 
 	// Private Constructor
@@ -42,18 +43,19 @@ public class WebhookService {
 	public void configure(Properties props) {
 		this.accountGroupsPath = props.getProperty("webhook.account.groupsPath");
 		this.accountGroupUsersPath = props.getProperty("webhook.account.groupUsersPath");
+		this.notificationspath = props.getProperty("webhook.connec.notificationsPath");
 		
 		// Map properties under "webhook.connec.subscriptions" as a Map
 		Map<String, Object> connecSubscriptions = new HashMap<String, Object>();
 		Enumeration<String> propertyNames = (Enumeration<String>) props.propertyNames();
 		while(propertyNames.hasMoreElements()) {
-		    String propertyName = propertyNames.nextElement();
-		    if(propertyName.startsWith("webhook.connec.subscriptions")) {
-		        String entityName = propertyName.substring(propertyName.lastIndexOf('.') + 1);
-		        Boolean subscriptionFlag = Boolean.parseBoolean(props.getProperty(propertyName));
-		        connecSubscriptions.put(entityName, subscriptionFlag);
-		    }
-        }
+			String propertyName = propertyNames.nextElement();
+			if(propertyName.startsWith("webhook.connec.subscriptions")) {
+				String entityName = propertyName.substring(propertyName.lastIndexOf('.') + 1);
+				Boolean subscriptionFlag = Boolean.parseBoolean(props.getProperty(propertyName));
+				connecSubscriptions.put(entityName, subscriptionFlag);
+			}
+		}
 		this.connecSubscriptions = connecSubscriptions;
 	}
 	
@@ -69,7 +71,7 @@ public class WebhookService {
 	public void setAccountGroupsPath(String accountGroupsPath) {
 		this.accountGroupsPath = accountGroupsPath;
 	}
-	
+
 	/**
 	 * Return the application endpoint to post user updates on groups
 	 * @return group > users endpoint
@@ -84,31 +86,50 @@ public class WebhookService {
 	}
 	
 	/**
-     * Return the Connec! entities subscriptions
-     * @return connec > subscriptions
-     */
-    public Map<String, Object> getConnecSubscriptions() {
-        if (connecSubscriptions == null) return new HashMap<String, Object>();
-        return connecSubscriptions;
-    }
+	 * Return the local notification endpoint
+	 * @return group > users endpoint
+	 */
+	public String getNotificationsPath() {
+		if (notificationspath == null) return "/maestrano/connec/notifications";
+		return notificationspath;
+	}
 
-    public void setConnecSubscriptions(Map<String, Object> connecSubscriptions) {
-        this.connecSubscriptions = connecSubscriptions;
-    }
+	public void setNotificationsPath(String notificationspath) {
+		this.notificationspath = notificationspath;
+	}
+	
+	/**
+	 * Return the Connec! entities subscriptions
+	 * @return connec > subscriptions
+	 */
+	public Map<String, Object> getConnecSubscriptions() {
+		if (connecSubscriptions == null) return new HashMap<String, Object>();
+		return connecSubscriptions;
+	}
+
+	public void setConnecSubscriptions(Map<String, Object> connecSubscriptions) {
+		this.connecSubscriptions = connecSubscriptions;
+	}
 	
 	public Map<String,Object> toMetadataHash() {
-	    Map<String,Object> hash = new HashMap<String,Object>();
-	    
-	    // Account
+		Map<String,Object> hash = new HashMap<String,Object>();
+		
+		// Account
 		Map<String,Object> accountHash = new HashMap<String,Object>();
 		accountHash.put("groups_path",getAccountGroupsPath());
 		accountHash.put("group_users_path",getAccountGroupUsersPath());
 		hash.put("account", accountHash);
 		
-		// Subscriptions
+		// Connec
 		Map<String,Object> connecHash = new HashMap<String,Object>();
-		connecHash.put("subscriptions", getConnecSubscriptions());
 		hash.put("connec", connecHash);
+		
+		// Connec > Notifications
+		connecHash.put("notifications_path", getNotificationsPath());
+		
+		// Connec > Subscriptions
+		connecHash.put("subscriptions", getConnecSubscriptions());
+		
 		
 		return hash;
 	}
