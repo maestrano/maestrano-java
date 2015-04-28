@@ -10,6 +10,7 @@ public class WebhookService {
 
 	private String accountGroupsPath;
 	private String accountGroupUsersPath;
+	private String notificationspath;
 	private Map<String, Object> connecSubscriptions;
 
 	// Private Constructor
@@ -42,6 +43,7 @@ public class WebhookService {
 	public void configure(Properties props) {
 		this.accountGroupsPath = props.getProperty("webhook.account.groupsPath");
 		this.accountGroupUsersPath = props.getProperty("webhook.account.groupUsersPath");
+		this.notificationspath = props.getProperty("webhook.connec.notificationsPath");
 		
 		// Map properties under "webhook.connec.subscriptions" as a Map
 		Map<String, Object> connecSubscriptions = new HashMap<String, Object>();
@@ -69,19 +71,32 @@ public class WebhookService {
 	public void setAccountGroupsPath(String accountGroupsPath) {
 		this.accountGroupsPath = accountGroupsPath;
 	}
-	
-	/**
-	 * Return the application endpoint to post user updates on groups
-	 * @return group > users endpoint
-	 */
-	public String getAccountGroupUsersPath() {
-		if (accountGroupUsersPath == null) return "/maestrano/account/groups/:group_id/users/:id";
-		return accountGroupUsersPath;
-	}
 
-	public void setAccountGroupUsersPath(String accountGroupUsersPath) {
-		this.accountGroupUsersPath = accountGroupUsersPath;
-	}
+    /**
+     * Return the application endpoint to post user updates on groups
+     * @return group > users endpoint
+     */
+    public String getAccountGroupUsersPath() {
+        if (accountGroupUsersPath == null) return "/maestrano/account/groups/:group_id/users/:id";
+        return accountGroupUsersPath;
+    }
+
+    public void setAccountGroupUsersPath(String accountGroupUsersPath) {
+        this.accountGroupUsersPath = accountGroupUsersPath;
+    }
+    
+    /**
+     * Return the local notification endpoint
+     * @return group > users endpoint
+     */
+    public String getNotificationsPath() {
+        if (notificationspath == null) return "/maestrano/connec/notifications";
+        return notificationspath;
+    }
+
+    public void setNotificationsPath(String notificationspath) {
+        this.notificationspath = notificationspath;
+    }
 	
 	/**
      * Return the Connec! entities subscriptions
@@ -105,10 +120,16 @@ public class WebhookService {
 		accountHash.put("group_users_path",getAccountGroupUsersPath());
 		hash.put("account", accountHash);
 		
-		// Subscriptions
+		// Connec
 		Map<String,Object> connecHash = new HashMap<String,Object>();
-		connecHash.put("subscriptions", getConnecSubscriptions());
 		hash.put("connec", connecHash);
+		
+		// Connec > Notifications
+		connecHash.put("notifications_path", getNotificationsPath());
+		
+		// Connec > Subscriptions
+		connecHash.put("subscriptions", getConnecSubscriptions());
+		
 		
 		return hash;
 	}

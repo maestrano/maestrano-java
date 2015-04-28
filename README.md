@@ -28,6 +28,9 @@ Maestrano Cloud Integration is currently in closed beta. Want to know more? Send
 5. [API](#api)
   * [Bill](#bill)
   * [Recurring Bill](#recurring-bill)
+5. [Connec!™ Data Sharing](#connec-data-sharing)
+  * [Making Requests](#making-requests)
+  * [Webhook Notifications](#webhook-notifications)
 
 - - -
 
@@ -149,7 +152,15 @@ sso.creationMode="virtual"
 # removed from a group.
 webhook.account.groupsPath = /maestrano/account/groups/\:id
 webhook.account.groupUsersPath = /maestrano/account/groups/\:group_id/users/\:id
-#
+
+# ===> Connec!™ Webhooks
+# == Notification Path
+# This is the path of your application where notifications (created/updated entities) will be POSTed to.
+# You should have a controller matching this path handling the update of your internal entities
+# based on the Connec!™ entities you receive
+webhook.connec.notificationsPath = /maestrano/connec/notifications
+
+# == Subscriptions
 # This is the list of entities (organizations,people,invoices etc.) for which you want to be
 # notified upon creation/update in Connec!™
 webhook.connec.subscriptions.accounts = true
@@ -713,9 +724,8 @@ System.out.println("Updated organization: " + updatedOrganization);
 ```
 
 
-
 ### Webhook Notifications
-If you have configured the Maestrano API to receive update notifications (see 'subscriptions' configuration at the top) from Connec!™ then you can expect to receive regular POST requests on the notification_path you have configured.
+If you have configured the Maestrano API to receive update notifications (see 'subscriptions' configuration at the top) from Connec!™ then you can expect to receive regular POST requests on the `webhook.connec.notificationsPath` you have configured.
 
 Notifications are JSON messages containing the list of entities that have recently changed in other systems. You will only receive notifications for entities you have subscribed to.
 
