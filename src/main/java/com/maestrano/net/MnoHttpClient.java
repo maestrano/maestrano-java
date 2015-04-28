@@ -37,12 +37,22 @@ public class MnoHttpClient {
 		this.defaultContentType = "application/vnd.api+json";
 		this.defaultAccept = "application/vnd.api+json";
 	}
+  
+	public MnoHttpClient(String contentType) {
+		this.defaultUserAgent = "maestrano-java/" + System.getProperty("java.version");
+		this.defaultContentType = contentType;
+		this.defaultAccept = contentType;
+	}
 	
+  public static MnoHttpClient getAuthenticatedClient() {
+    return getAuthenticatedClient("application/vnd.api+json");
+  }
+  
 	/**
 	 * Return a client with HTTP Basic Authentication setup
 	 */
-	public static MnoHttpClient getAuthenticatedClient() {
-		MnoHttpClient client = new MnoHttpClient();
+	public static MnoHttpClient getAuthenticatedClient(String contentType) {
+		MnoHttpClient client = new MnoHttpClient(contentType);
 		String authStr = Maestrano.apiService().getId() + ":" + Maestrano.apiService().getKey();
 		client.basicAuthHash = "Basic " + DatatypeConverter.printBase64Binary(authStr.getBytes());
 		
