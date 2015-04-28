@@ -32,18 +32,30 @@ public class WebhookServiceTest {
 	}
 	
 	@Test
-	public void getAccountGroupUsersPath_itReturnsTheRightDefaultValue() {
-		props.setProperty("webhook.account.groupUsersPath", "/bla/:id");
-		Maestrano.configure(props);
-		assertEquals("/bla/:id", subject.getAccountGroupUsersPath());
-	}
+    public void getAccountGroupUsersPath_itReturnsTheRightDefaultValue() {
+        props.setProperty("webhook.account.groupUsersPath", "/bla/:id");
+        Maestrano.configure(props);
+        assertEquals("/bla/:id", subject.getAccountGroupUsersPath());
+    }
+	
+	@Test
+    public void getConnecSubscriptions_itReturnsTheRightDefaultValue() {
+	    props.setProperty("webhook.connec.subscriptions.accounts","true");
+	    props.setProperty("webhook.connec.subscriptions.items","false");
+        Maestrano.configure(props);
+        assertEquals(true, subject.getConnecSubscriptions().get("accounts"));
+        assertEquals(false, subject.getConnecSubscriptions().get("items"));
+    }
 	
 	@Test
 	public void toMetadataHash_itReturnsTheRightValue() {
-		Map<String,Map<String,String>> hash = subject.toMetadataHash();
-		Map<String,String> accountHash = hash.get("account");
+		Map<String,Object> hash = subject.toMetadataHash();
 		
+		Map<String,Object> accountHash = (Map<String, Object>) hash.get("account");
 		assertEquals(subject.getAccountGroupsPath(), accountHash.get("groups_path"));
 		assertEquals(subject.getAccountGroupUsersPath(), accountHash.get("group_users_path"));
+		
+		Map<String,Object> connecHash = (Map<String, Object>) hash.get("connec");
+        assertEquals(subject.getConnecSubscriptions(), connecHash.get("subscriptions"));
 	}
 }

@@ -60,8 +60,7 @@ public class CnItemIntegrationTest {
 		attrsMap.put("salePrice", saleTaxRate);
 		attrsMap.put("purchasePrice", purchasePrice);
 		
-		CnItem entity = CnItem.create(this.groupId, attrsMap);
-		System.out.println(entity.getId());
+		CnItem entity = CnItem.create(this.groupId, attrsMap, CnItem.class);
 		assertFalse(entity.getId() == null);
 		assertEquals(this.groupId,entity.getGroupId());
 		assertEquals("Chair",entity.getName());
@@ -69,7 +68,7 @@ public class CnItemIntegrationTest {
 	
 	@Test 
 	public void all_itRetrievesAllEntities() throws Exception {
-		List<CnItem> entities = CnItem.all(groupId);
+		List<CnItem> entities = CnItem.all(groupId, CnItem.class);
 		CnItem entity = entities.get(0);
 		
 		assertTrue(entity.getId() != null);
@@ -78,7 +77,7 @@ public class CnItemIntegrationTest {
 	
 	@Test 
 	public void retrieve_itRetrievesASingleEntity() throws Exception {
-		CnItem entity = CnItem.retrieve(groupId, "bd89b1c0-5a81-0132-9112-6a46f43bd3fe");
+		CnItem entity = CnItem.retrieve(groupId, "d958b140-cf7f-0132-4e6d-42f46dd33bd3", CnItem.class);
 		
 		assertTrue(entity.getId() != null);
 		assertEquals(this.groupId,entity.getGroupId());
@@ -88,7 +87,7 @@ public class CnItemIntegrationTest {
 	
 	@Test 
 	public void save_itUpdatesAnEntity() throws Exception {
-		CnItem entity = CnItem.retrieve(groupId, "bd89b1c0-5a81-0132-9112-6a46f43bd3fe");
+		CnItem entity = CnItem.retrieve(groupId, "d958b140-cf7f-0132-4e6d-42f46dd33bd3", CnItem.class);
 		String newName = entity.getName() + "a";
 		entity.setName(newName);
 		

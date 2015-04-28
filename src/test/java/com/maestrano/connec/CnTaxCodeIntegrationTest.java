@@ -39,14 +39,14 @@ public class CnTaxCodeIntegrationTest {
 		attrsMap.put("name", "GST (Sales)");
 		attrsMap.put("rate", 6.0);
 		attrsMap.put("taxTypeApplicable", "TaxOnAmount");
-		CnTaxRate saleTaxRate = CnTaxRate.create(this.groupId, attrsMap);
+		CnTaxRate saleTaxRate = CnTaxRate.create(this.groupId, attrsMap, CnTaxRate.class);
 		
 		// Create Purchase Tax Rate
 		attrsMap = new HashMap<String, Object>();
 		attrsMap.put("name", "GST (Purchase)");
 		attrsMap.put("rate", 2.0);
 		attrsMap.put("taxTypeApplicable", "TaxOnAmount");
-		CnTaxRate purchaseTaxRate = CnTaxRate.create(this.groupId, attrsMap);
+		CnTaxRate purchaseTaxRate = CnTaxRate.create(this.groupId, attrsMap, CnTaxRate.class);
 		
 		// Create TaxCode
 		attrsMap = new HashMap<String, Object>();
@@ -58,8 +58,7 @@ public class CnTaxCodeIntegrationTest {
 		attrsMap.put("purchaseTaxes", new ArrayList<CnTaxRate>());
 		((ArrayList<CnTaxRate>) attrsMap.get("purchaseTaxes")).add(purchaseTaxRate);
 		
-		CnTaxCode entity = CnTaxCode.create(this.groupId, attrsMap);
-		System.out.println(entity.getId());
+		CnTaxCode entity = CnTaxCode.create(this.groupId, attrsMap, CnTaxCode.class);
 		assertFalse(entity.getId() == null);
 		assertEquals(this.groupId,entity.getGroupId());
 		assertEquals("State Tax on goods",entity.getName());
@@ -68,7 +67,7 @@ public class CnTaxCodeIntegrationTest {
 	
 	@Test 
 	public void all_itRetrievesAllEntities() throws Exception {
-		List<CnTaxCode> entities = CnTaxCode.all(groupId);
+		List<CnTaxCode> entities = CnTaxCode.all(groupId, CnTaxCode.class);
 		CnTaxCode entity = entities.get(0);
 		
 		assertTrue(entity.getId() != null);
@@ -77,7 +76,7 @@ public class CnTaxCodeIntegrationTest {
 	
 	@Test 
 	public void retrieve_itRetrievesASingleEntity() throws Exception {
-		CnTaxCode entity = CnTaxCode.retrieve(groupId, "8419d770-5a82-0132-9116-6a46f43bd3fe");
+		CnTaxCode entity = CnTaxCode.retrieve(groupId, "647a3380-cfa3-0132-4ec8-42f46dd33bd3", CnTaxCode.class);
 		
 		assertTrue(entity.getId() != null);
 		assertEquals(this.groupId,entity.getGroupId());
@@ -87,7 +86,7 @@ public class CnTaxCodeIntegrationTest {
 	
 	@Test 
 	public void save_itUpdatesAnEntity() throws Exception {
-		CnTaxCode entity = CnTaxCode.retrieve(groupId, "8419d770-5a82-0132-9116-6a46f43bd3fe");
+		CnTaxCode entity = CnTaxCode.retrieve(groupId, "647a3380-cfa3-0132-4ec8-42f46dd33bd3", CnTaxCode.class);
 		String newName = entity.getName() + "a";
 		entity.setName(newName);
 		

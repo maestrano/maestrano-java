@@ -1,12 +1,8 @@
 package com.maestrano.connec;
 
 import java.util.Date;
-import java.util.List;
 import java.util.Map;
 
-import com.maestrano.exception.ApiException;
-import com.maestrano.exception.AuthenticationException;
-import com.maestrano.exception.InvalidRequestException;
 import com.maestrano.helpers.MnoMapHelper;
 import com.maestrano.net.ConnecClient;
 
@@ -27,6 +23,10 @@ public class CnPerson extends ConnecResource {
 	private CnPhone phoneHome;
 	private Map<String,CnNote> notes;
 	
+	public String getEntityName() {
+        return "people";
+    }
+	
 	public static CnPerson fromJson(String jsonStr) {
 		CnPerson obj = ConnecClient.GSON.fromJson(jsonStr, CnPerson.class);
 		return obj;
@@ -42,80 +42,7 @@ public class CnPerson extends ConnecResource {
 		CnPerson obj = fromJson(jsonStr);
 		return obj;
 	}
-	
-	/**
-	 * Return all people
-	 * @param groupId the groupId for which to retrieve organizations
-	 * @return list of organizations
-	 * @throws ApiException 
-	 * @throws AuthenticationException 
-	 * @throws InvalidRequestException 
-	 */
-	public static List<CnPerson> all(String groupId) throws AuthenticationException, ApiException, InvalidRequestException {
-		return ConnecClient.all(CnPerson.class,groupId);
-	}
-	
-	/**
-	 * Retrieve the person corresponding to the provided group and id
-	 * @param groupId customer group id
-	 * @param id group id
-	 * @return a company entity if found, null otherwise
-	 * @throws ApiException 
-	 * @throws AuthenticationException 
-	 * @throws InvalidRequestException 
-	 */
-	public static CnPerson retrieve(String groupId, String id) throws AuthenticationException, ApiException, InvalidRequestException {
-		return ConnecClient.retrieve(CnPerson.class, groupId,id);
-	}
-	
-	/**
-	 * Create a new entity
-	 * @param groupId customer group id
-	 * @param params map of attributes
-	 * @return created entity
-	 * @throws ApiException 
-	 * @throws AuthenticationException 
-	 * @throws InvalidRequestException 
-	 */
-	public static CnPerson create(String groupId, Map<String,Object> params) throws AuthenticationException, ApiException, InvalidRequestException {
-		return ConnecClient.create(CnPerson.class,groupId,params);
-	}
-	
-	/**
-	 * Save the entity
-	 * @return true if the resource was saved
-	 * @throws AuthenticationException
-	 * @throws ApiException
-	 * @throws InvalidRequestException
-	 */
-	public boolean save() throws AuthenticationException, ApiException, InvalidRequestException {
-		return this.save(this.groupId);
-	}
-	
-	/**
-	 * Save the entity
-	 * @param groupId customer group id
-	 * @return true if the resource was saved
-	 * @throws AuthenticationException
-	 * @throws ApiException
-	 * @throws InvalidRequestException
-	 */
-	public boolean save(String groupId) throws AuthenticationException, ApiException, InvalidRequestException {
-		if (groupId == null) return false;
-		this.groupId = groupId;
-		
-		CnPerson obj;
-		if (this.id == null) {
-			obj = ConnecClient.create(CnPerson.class,this.groupId,this);
-		} else {
-			obj = ConnecClient.update(CnPerson.class,this.groupId,this.id,this);
-		}
-		
-		this.merge(obj);
-		
-		return true;
-	}
-	
+
 	public String getTitle() {
 		return title;
 	}

@@ -24,6 +24,14 @@ public class CnCompany extends ConnecResource {
 	private CnPhone phone;
 	private CnLogo logo;
 	
+	public String getEntityName() {
+        return "company";
+    }
+    
+    public static Class<?> getEntityClass() {
+        return CnCompany.class;
+    }
+	
 	/**
 	 * Instantiate a new Company entity from a JSON string
 	 * 
@@ -55,7 +63,7 @@ public class CnCompany extends ConnecResource {
 	 * @throws InvalidRequestException 
 	 */
 	public static CnCompany retrieve(String groupId) throws AuthenticationException, ApiException, InvalidRequestException {
-		return ConnecClient.retrieve(CnCompany.class, groupId,null);
+		return ConnecClient.retrieve(entityName(CnCompany.class),groupId,null,CnCompany.class);
 	}
 	
 	/**
@@ -70,7 +78,7 @@ public class CnCompany extends ConnecResource {
 	 * @throws InvalidRequestException
 	 */
 	public boolean save() throws AuthenticationException, ApiException, InvalidRequestException {
-		CnCompany obj = ConnecClient.update(CnCompany.class,groupId,null,this);
+		CnCompany obj = ConnecClient.update(getEntityName(),groupId,null,this);
 		this.merge(obj);
 		
 		return true;

@@ -34,8 +34,7 @@ public class CnPersonIntegrationTest {
 		attrsMap.put("firstName", "John");
 		attrsMap.put("lastName", "Doe");
 		
-		CnPerson entity = CnPerson.create(this.groupId, attrsMap);
-		System.out.println(entity.getId());
+		CnPerson entity = CnPerson.create(this.groupId, attrsMap, CnPerson.class);
 		assertFalse(entity.getId() == null);
 		assertEquals(this.groupId,entity.getGroupId());
 		assertEquals("John",entity.getFirstName());
@@ -44,7 +43,7 @@ public class CnPersonIntegrationTest {
 	
 	@Test 
 	public void all_itRetrievesAllEntities() throws Exception {
-		List<CnPerson> entities = CnPerson.all(groupId);
+		List<CnPerson> entities = CnPerson.all(groupId, CnPerson.class);
 		CnPerson entity = entities.get(0);
 		
 		assertTrue(entity.getId() != null);
@@ -53,7 +52,7 @@ public class CnPersonIntegrationTest {
 	
 	@Test 
 	public void retrieve_itRetrievesASingleEntity() throws Exception {
-		CnPerson entity = CnPerson.retrieve(groupId, "8a754b80-5a6c-0132-90fe-6a46f43bd3fe");
+		CnPerson entity = CnPerson.retrieve(groupId, "c18258c0-cfa2-0132-4eb5-42f46dd33bd3", CnPerson.class);
 		
 		assertTrue(entity.getId() != null);
 		assertEquals(this.groupId,entity.getGroupId());
@@ -61,7 +60,7 @@ public class CnPersonIntegrationTest {
 	
 	@Test 
 	public void save_itUpdatesAnEntity() throws Exception {
-		CnPerson entity = CnPerson.retrieve(groupId, "8a754b80-5a6c-0132-90fe-6a46f43bd3fe");
+		CnPerson entity = CnPerson.retrieve(groupId, "c18258c0-cfa2-0132-4eb5-42f46dd33bd3", CnPerson.class);
 		String newName = entity.getFirstName() + "a";
 		entity.setFirstName(newName);
 		

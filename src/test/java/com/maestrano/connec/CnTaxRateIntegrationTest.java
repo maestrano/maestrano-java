@@ -34,8 +34,7 @@ public class CnTaxRateIntegrationTest {
 		attrsMap.put("name", "GST (Sales)");
 		attrsMap.put("rate", 6.0);
 		
-		CnTaxRate entity = CnTaxRate.create(this.groupId, attrsMap);
-		System.out.println(entity.getId());
+		CnTaxRate entity = CnTaxRate.create(this.groupId, attrsMap, CnTaxRate.class);
 		assertFalse(entity.getId() == null);
 		assertEquals(this.groupId,entity.getGroupId());
 		assertEquals("GST (Sales)",entity.getName());
@@ -44,7 +43,7 @@ public class CnTaxRateIntegrationTest {
 	
 	@Test 
 	public void all_itRetrievesAllEntities() throws Exception {
-		List<CnTaxRate> entities = CnTaxRate.all(groupId);
+		List<CnTaxRate> entities = CnTaxRate.all(groupId, CnTaxRate.class);
 		CnTaxRate entity = entities.get(0);
 		
 		assertTrue(entity.getId() != null);
@@ -53,7 +52,7 @@ public class CnTaxRateIntegrationTest {
 	
 	@Test 
 	public void retrieve_itRetrievesASingleEntity() throws Exception {
-		CnTaxRate entity = CnTaxRate.retrieve(groupId, "a60a14a0-5a73-0132-9104-6a46f43bd3fe");
+		CnTaxRate entity = CnTaxRate.retrieve(groupId, "2c9f2ea0-cfa3-0132-4ebf-42f46dd33bd3", CnTaxRate.class);
 		
 		assertTrue(entity.getId() != null);
 		assertEquals(this.groupId,entity.getGroupId());
@@ -61,7 +60,7 @@ public class CnTaxRateIntegrationTest {
 	
 	@Test 
 	public void save_itUpdatesAnEntity() throws Exception {
-		CnTaxRate entity = CnTaxRate.retrieve(groupId, "a60a14a0-5a73-0132-9104-6a46f43bd3fe");
+		CnTaxRate entity = CnTaxRate.retrieve(groupId, "2c9f2ea0-cfa3-0132-4ebf-42f46dd33bd3", CnTaxRate.class);
 		double newRate = entity.getRate() + 1;
 		entity.setRate(newRate);
 		
