@@ -20,7 +20,6 @@ import com.maestrano.json.DateDeserializer;
 import com.maestrano.json.DateSerializer;
 import com.maestrano.json.TimeZoneDeserializer;
 import com.maestrano.json.TimeZoneSerializer;
-import com.maestrano.reflect.ConnecResponseParameterizedType;
 
 public class ConnecClient {
 	public static final Gson GSON = new GsonBuilder()

@@ -10,13 +10,9 @@ import javax.xml.bind.DatatypeConverter;
 
 import com.google.gson.Gson;
 
-/**
- * Hello world!
- *
- */
 public final class Maestrano 
 {
-    private static final String version = "0.6.0";
+    private static final String version = "0.7.0";
     
     // Private constructor
     private Maestrano() {}
@@ -30,22 +26,22 @@ public final class Maestrano
     }
     
     /**
-     * Return the current application environment
-     * @return either 'test' or 'production'
+     * Configure Maestrano API using a Properties object
+     * @param Properties props
      */
-    public static String getEnvironment() {
-    	return appService().getEnvironment();
+    public static void configure(Properties props) {
+        configure("default", props);
     }
     
     /**
      * Configure Maestrano API using a Properties object
      * @param Properties props
      */
-    public static void configure(Properties props) {
-    	appService().configure(props);
-    	ssoService().configure(props);
-    	apiService().configure(props);
-    	webhookService().configure(props);
+    public static void configure(String preset, Properties props) {
+    	appService().configure(preset, props);
+    	ssoService().configure(preset, props);
+    	apiService().configure(preset, props);
+    	webhookService().configure(preset, props);
     }
     
     /**
@@ -55,8 +51,19 @@ public final class Maestrano
      * @return authenticated or not
      */
     public static Boolean authenticate(String appId, String apiKey) {
-    	return appId != null && apiKey != null && 
-    			appId.equals(apiService().getId()) && apiKey.equals(apiService().getKey());
+        return authenticate("default", appId, apiKey);
+    }
+    
+    /**
+     * Authenticate a Maestrano request using the appId and apiKey
+     * @param preset
+     * @param appId
+     * @param apiKey
+     * @return authenticated or not
+     */
+    public static Boolean authenticate(String preset, String appId, String apiKey) {
+        return appId != null && apiKey != null && 
+                appId.equals(apiService().getId(preset)) && apiKey.equals(apiService().getKey(preset));
     }
     
     /**
@@ -66,6 +73,17 @@ public final class Maestrano
      * @throws UnsupportedEncodingException 
      */
     public static Boolean authenticate(HttpServletRequest request) throws UnsupportedEncodingException {
+        return authenticate("default", request);
+    }
+
+    /**
+     * Authenticate a Maestrano request by reading the Authorization header
+     * @param preset
+     * @param appId
+     * @return authenticated or not
+     * @throws UnsupportedEncodingException 
+     */
+    public static Boolean authenticate(String preset, HttpServletRequest request) throws UnsupportedEncodingException {
     	String authHeader = request.getHeader("Authorization");
     	String[] auth = null;
     	if (authHeader != null && !authHeader.isEmpty()) {
@@ -78,7 +96,7 @@ public final class Maestrano
     		String[] creds = (new String(decodedStr,"UTF-8")).split(":");
     		
     		if (creds.length == 2) {
-    			return authenticate(creds[0],creds[1]);
+    			return authenticate(preset,creds[0],creds[1]);
     		}
     	}
     	
@@ -122,9 +140,18 @@ public final class Maestrano
      * @return metadata hash
      */
     public static Map<String,Object> toMetadataHash() {
+        return toMetadataHash("default");
+    }
+    
+    /**
+     * Return the Maestrano API configuration as a hash
+     * @param preset
+     * @return metadata hash
+     */
+    public static Map<String,Object> toMetadataHash(String preset) {
     	Map<String,Object> hash = new HashMap<String,Object>();
-		hash.put("environment",Maestrano.getEnvironment());
-		hash.put("app",Maestrano.appService().toMetadataHash());
+		hash.put("environment",Maestrano.appService().getEnvironment(preset));
+		hash.put("app",Maestrano.appService().toMetadataHash(preset));
 		hash.put("api",Maestrano.apiService().toMetadataHash());
 		hash.put("sso",Maestrano.ssoService().toMetadataHash());
 		hash.put("webhook",Maestrano.webhookService().toMetadataHash());
@@ -137,8 +164,17 @@ public final class Maestrano
      * @return metadata hash
      */
     public static String toMetadata() {
+        return toMetadata("default");
+    }
+    
+   /**
+    * Return the Maestrano API configuration as a json hash
+    * @param preset
+    * @return metadata hash
+    */
+    public static String toMetadata(String preset) {
     	Gson gson = new Gson();
 		
-		return gson.toJson(toMetadataHash());
+		return gson.toJson(toMetadataHash(preset));
     }
 }
