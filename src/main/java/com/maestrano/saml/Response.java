@@ -36,13 +36,22 @@ public class Response {
 	
 	/**
 	 * Constructor
+	 * @param String preset
 	 * @throws CertificateException
 	 */
-	public Response() throws CertificateException {
-		this.settings = Maestrano.ssoService().getSamlSettings();
+	public Response(String preset) throws CertificateException {
+		this.settings = Maestrano.ssoService().getSamlSettings(preset);
 		certificate = new Certificate();
 		certificate.loadCertificate(this.settings.getIdpCertificate());
 	}
+	
+	/**
+     * Constructor
+     * @throws CertificateException
+     */
+    public Response() throws CertificateException {
+        this("default");
+    }
 	
 	/**
 	 * Load the Response with the provided XML string (not base64 encoded)

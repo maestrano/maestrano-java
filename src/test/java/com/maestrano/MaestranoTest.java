@@ -97,4 +97,12 @@ public class MaestranoTest {
 		Gson gson = new Gson();
 		assertEquals(gson.toJson(hash),Maestrano.toMetadata());
 	}
+	
+	@Test
+    public void configure_itConfiguresFromFileAndPreset() {
+	    Maestrano.configure("myconfig", "myconfig.properties");
+	    
+	    assertEquals("blabla", Maestrano.apiService().getId("myconfig"));
+	    assertEquals("secret", Maestrano.apiService().getKey("myconfig"));
+    }
 }

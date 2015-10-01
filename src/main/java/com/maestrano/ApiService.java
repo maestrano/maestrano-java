@@ -58,6 +58,15 @@ public class ApiService {
     public void configure(String preset) {
         this.configure(preset, ConfigFile.getProperties(preset));
     }
+    
+    /**
+     * Configure the service using the specified properties file and preset
+     * @param preset
+     * @param filename
+     */
+    public void configure(String preset, String filename) {
+        this.configure(preset, ConfigFile.getProperties(preset, filename));
+    }
 	
 	/**
 	 * Configure the service using a list of properties

@@ -26,6 +26,14 @@ public final class Maestrano
     }
     
     /**
+     * Configure Maestrano API using a Properties file
+     * @param String filename
+     */
+    public static void configure(String filename) {
+        configure("default", filename);
+    }
+    
+    /**
      * Configure Maestrano API using a Properties object
      * @param Properties props
      */
@@ -34,14 +42,27 @@ public final class Maestrano
     }
     
     /**
-     * Configure Maestrano API using a Properties object
+     * Configure Maestrano API using a Properties file and preset
+     * @param String preset
+     * @param Properties props
+     */
+    public static void configure(String preset, String filename) {
+        appService().configure(preset, filename);
+        ssoService().configure(preset, filename);
+        apiService().configure(preset, filename);
+        webhookService().configure(preset, filename);
+    }
+    
+    /**
+     * Configure Maestrano API using a Properties object and preset
+     * @param String preset
      * @param Properties props
      */
     public static void configure(String preset, Properties props) {
-    	appService().configure(preset, props);
-    	ssoService().configure(preset, props);
-    	apiService().configure(preset, props);
-    	webhookService().configure(preset, props);
+        appService().configure(preset, props);
+        ssoService().configure(preset, props);
+        apiService().configure(preset, props);
+        webhookService().configure(preset, props);
     }
     
     /**
@@ -152,9 +173,9 @@ public final class Maestrano
     	Map<String,Object> hash = new HashMap<String,Object>();
 		hash.put("environment",Maestrano.appService().getEnvironment(preset));
 		hash.put("app",Maestrano.appService().toMetadataHash(preset));
-		hash.put("api",Maestrano.apiService().toMetadataHash());
-		hash.put("sso",Maestrano.ssoService().toMetadataHash());
-		hash.put("webhook",Maestrano.webhookService().toMetadataHash());
+		hash.put("api",Maestrano.apiService().toMetadataHash(preset));
+		hash.put("sso",Maestrano.ssoService().toMetadataHash(preset));
+		hash.put("webhook",Maestrano.webhookService().toMetadataHash(preset));
 		
 		return hash;
     }

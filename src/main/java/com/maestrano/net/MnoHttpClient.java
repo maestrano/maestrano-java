@@ -44,20 +44,36 @@ public class MnoHttpClient {
 		this.defaultAccept = contentType;
 	}
 	
-  public static MnoHttpClient getAuthenticatedClient() {
-    return getAuthenticatedClient("application/vnd.api+json");
-  }
-  
-	/**
-	 * Return a client with HTTP Basic Authentication setup
-	 */
-	public static MnoHttpClient getAuthenticatedClient(String contentType) {
-		MnoHttpClient client = new MnoHttpClient(contentType);
-		String authStr = Maestrano.apiService().getId() + ":" + Maestrano.apiService().getKey();
-		client.basicAuthHash = "Basic " + DatatypeConverter.printBase64Binary(authStr.getBytes());
-		
-		return client;
-	}
+    /**
+     * Return a client with HTTP Basic Authentication setup
+     */
+    public static MnoHttpClient getAuthenticatedClient() {
+        return getAuthenticatedClient("default", "application/vnd.api+json");
+    }
+
+    /**
+     * Return a client with HTTP Basic Authentication setup
+     * @param preset
+     * @return
+     */
+    public static MnoHttpClient getAuthenticatedClient(String preset) {
+        return getAuthenticatedClient(preset, "application/vnd.api+json");
+    }
+
+    /**
+     * Return a client with HTTP Basic Authentication setup
+     * 
+     * @param preset
+     * @param contentType
+     * @return
+     */
+    public static MnoHttpClient getAuthenticatedClient(String preset, String contentType) {
+        MnoHttpClient client = new MnoHttpClient(contentType);
+        String authStr = Maestrano.apiService().getId(preset) + ":" + Maestrano.apiService().getKey(preset);
+        client.basicAuthHash = "Basic " + DatatypeConverter.printBase64Binary(authStr.getBytes());
+
+        return client;
+    }
 	
 	/**
 	 * Perform a GET request on the specified endpoint

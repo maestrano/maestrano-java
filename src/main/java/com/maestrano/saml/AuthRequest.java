@@ -27,33 +27,60 @@ public class AuthRequest {
 	private Map<String,String> parameters;
 
 	/**
-	 * Constructor
-	 */
-	public AuthRequest() {
-		this.settings = Maestrano.ssoService().getSamlSettings();
-		id = "_" + UUID.randomUUID().toString();
-		SimpleDateFormat simpleDf = new SimpleDateFormat("yyyy-MM-dd'T'H:mm:ssZ");
-		issueInstant = simpleDf.format(new Date());	
-	}
+     * Constructor
+     * @param String preset
+     */
+    public AuthRequest(String preset) {
+        this.settings = Maestrano.ssoService().getSamlSettings(preset);
+        id = "_" + UUID.randomUUID().toString();
+        SimpleDateFormat simpleDf = new SimpleDateFormat("yyyy-MM-dd'T'H:mm:ssZ");
+        issueInstant = simpleDf.format(new Date()); 
+    }
 
 	/**
-	 * Constructor
-	 * @param Map<String,String> request parameters
-	 */
-	public AuthRequest(Map<String, String> parameters)
-	{	
-		this();
-		this.parameters = parameters;
-	}
+     * Constructor
+     */
+    public AuthRequest() {
+        this("default");
+    }
 
-	/**
+    /**
+     * Constructor
+     * @param Map<String,String> request parameters
+     */
+    public AuthRequest(Map<String, String> parameters)
+    {   
+        this("default", parameters);
+    }
+    
+    /**
+     * Constructor
+     * @param String preset
+     * @param Map<String,String> request parameters
+     */
+    public AuthRequest(String preset, Map<String, String> parameters)
+    {   
+        this(preset);
+        this.parameters = parameters;
+    }
+
+    /**
+     * Constructor
+     * @param request
+     */
+    @SuppressWarnings("unchecked")
+    public AuthRequest(ServletRequest request) {
+        this("default", request);
+    }
+    
+    /**
 	 * Constructor
+	 * @param String preset
 	 * @param request
 	 */
 	@SuppressWarnings("unchecked")
-	public AuthRequest(ServletRequest request) {
-		this();
-		this.parameters = new HashMap<String,String>();
+	public AuthRequest(String preset, ServletRequest request) {
+		this(preset, new HashMap<String,String>());
 
 		Enumeration<String> parameterNames = request.getParameterNames();
 

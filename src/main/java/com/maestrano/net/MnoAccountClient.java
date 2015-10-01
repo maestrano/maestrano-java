@@ -20,15 +20,26 @@ import com.maestrano.reflect.ListParameterizedType;
 import com.maestrano.reflect.MnoAccountResponseParameterizedType;
 
 public class MnoAccountClient {
+    private static ThreadLocal<String> threadLocalPreset = new ThreadLocal<String>();
+    
 	public static final Gson GSON = new GsonBuilder()
 		.setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
 		.registerTypeAdapter(Date.class, new DateSerializer())
 		.registerTypeAdapter(Date.class, new DateDeserializer())
 		.create();
   
-  public static final String CTYPE = "application/json";
+    public static final String CTYPE = "application/json";
 	
 	public MnoAccountClient() {}
+	
+	public static MnoAccountClient withPreset(String preset) {
+        threadLocalPreset.set(preset);
+        return new MnoAccountClient();
+    }
+	
+	static {
+	    withPreset("default");
+    }
 	
 	/**
 	 * Return the entity name as expected by Maestrano
@@ -95,7 +106,7 @@ public class MnoAccountClient {
 	 * @throws InvalidRequestException
 	 */
 	public static <T> List<T> all(Class<T> clazz) throws AuthenticationException, ApiException, InvalidRequestException {
-		return all(clazz,null,MnoHttpClient.getAuthenticatedClient(CTYPE));
+		return all(clazz,null,MnoHttpClient.getAuthenticatedClient(threadLocalPreset.get(), CTYPE));
 	}
 	
 	/**
@@ -109,7 +120,7 @@ public class MnoAccountClient {
 	 * @throws InvalidRequestException
 	 */
 	public static <T, V> List<T> all(Class<T> clazz, Map<String,V> params) throws AuthenticationException, ApiException, InvalidRequestException {
-		return all(clazz,params,MnoHttpClient.getAuthenticatedClient(CTYPE));
+		return all(clazz,params,MnoHttpClient.getAuthenticatedClient(threadLocalPreset.get(), CTYPE));
 	}
 	
 	/**
@@ -143,7 +154,7 @@ public class MnoAccountClient {
 	 * @throws InvalidRequestException
 	 */
 	public static <T> T create(Class<T> clazz, Map<String,Object> hash) throws AuthenticationException, ApiException, InvalidRequestException {
-		return create(clazz,hash,MnoHttpClient.getAuthenticatedClient(CTYPE));
+		return create(clazz,hash,MnoHttpClient.getAuthenticatedClient(threadLocalPreset.get(), CTYPE));
 	}
 	
 	/**
@@ -176,7 +187,7 @@ public class MnoAccountClient {
 	 * @throws InvalidRequestException
 	 */
 	public static <T> T retrieve(Class<T> clazz, String entityId) throws AuthenticationException, ApiException, InvalidRequestException {
-		return retrieve(clazz,entityId,MnoHttpClient.getAuthenticatedClient(CTYPE));
+		return retrieve(clazz,entityId,MnoHttpClient.getAuthenticatedClient(threadLocalPreset.get(), CTYPE));
 	}
 	
 	/**
@@ -210,7 +221,7 @@ public class MnoAccountClient {
 	 * @throws InvalidRequestException
 	 */
 	public static <T> T update(Class<T> clazz, String entityId, Map<String,Object> hash) throws AuthenticationException, ApiException, InvalidRequestException {
-		return update(clazz,entityId,hash,MnoHttpClient.getAuthenticatedClient(CTYPE));
+		return update(clazz,entityId,hash,MnoHttpClient.getAuthenticatedClient(threadLocalPreset.get(), CTYPE));
 	}
 	
 	/**
@@ -243,7 +254,7 @@ public class MnoAccountClient {
 	 * @throws ApiException
 	 */
 	public static <T> T delete(Class<T> clazz, String entityId) throws AuthenticationException, ApiException {
-		return delete(clazz,entityId,MnoHttpClient.getAuthenticatedClient(CTYPE));
+		return delete(clazz,entityId,MnoHttpClient.getAuthenticatedClient(threadLocalPreset.get(), CTYPE));
 	}
 	
 	/**
