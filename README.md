@@ -52,14 +52,38 @@ To install maestrano-java using Maven, add this dependency to your project's POM
 <dependency>
   <groupId>com.maestrano</groupId>
   <artifactId>maestrano-java</artifactId>
-  <version>0.6.0</version>
+  <version>0.7.0</version>
 </dependency>
 ```
 
 ### Configuration
 #### Via config file
 
-You can configure maestrano by dropping a "maestrano.properties" file in the classpath which looks like this:
+You can configure maestrano using a properties file from the classpath and load it this way
+
+```java
+    Maestrano.configure("myconfig.properties");
+```
+
+You can add configuration presets progranatically by adding sets of properties in your Maestrano configuration. These additional presets can then be specified when doing particular action, such as initializing a Connec!™ client or triggering a SSO handshake. These presets are particularly useful if you are dealing with multiple Maestrano-style marketplaces (multi-enterprise integration).
+
+If this is the first time you integrate with Maestrano, we recommend adopting a multi-tenant approach. All code samples in this documentation provide examples on how to handle multi-tenancy by scoping method calls to a specific configuration preset.
+
+More information about multi-tenant integration can be found on [Our Multi-Tenant Integration Guide](https://maestrano.atlassian.net/wiki/display/CONNECAPIV2/Multi-Tenant+Integration)
+
+
+```java
+    // Load configuration
+    Maestrano.configure("config1", "config1.properties");
+    Maestrano.configure("config2", "config2.properties");
+    
+    // Access configuration with presets
+    Maestrano.toMetadata("config1");
+    Maestrano.toMetadata("config2");
+```
+
+The properties file can contain the following values
+
 ```ini
 # ===> App Configuration
 #
@@ -184,17 +208,24 @@ webhook.connec.subscriptions.time_activities = false
 webhook.connec.subscriptions.time_sheets = false
 webhook.connec.subscriptions.venues = false
 webhook.connec.subscriptions.work_locations = false
-      
 ```
 
 #### At runtime
 
-You can configure maestrano with the Properties class using the same config parameters as described above:
+You can configure maestrano with the Properties class using the same configuration parameters as described above:
 
 ```java
-Properties props = new Properties();
-props.setProperty("app.environment", "production");
-Maestrano.configure(props);
+    Properties props = new Properties();
+    props.setProperty("app.environment", "production");
+    Maestrano.configure(props);
+```
+
+Or using preset configurations to support multiple marketplaces
+```java
+    Properties myconfig1 = new Properties();
+    Properties myconfig2 = new Properties();
+    Maestrano.configure("myconfig1", myconfig1);
+    Maestrano.configure("myconfig2", myconfig2);
 ```
 
 ### Metadata Endpoint
@@ -227,6 +258,14 @@ So here is an example of page to adapt depending on the framework you're using:
 %>
 ```
 
+It is also possible to specify presets when exposing the metadata
+
+```jsp
+    ...
+    writer.write(Maestrano.toMetadata("mypreset"));
+```
+
+
 ## Single Sign-On Setup
 
 > **Heads up!** Prefer to use OpenID rather than our SAML implementation? Just look at our [OpenID Guide](https://maestrano.atlassian.net/wiki/display/CONNECAPIV2/SSO+via+OpenID) to get started!
@@ -249,6 +288,17 @@ The init action is all handled via Maestrano methods and should look like this:
 <%@ page import="com.maestrano.saml.AuthRequest" %>
 <%
   AuthRequest authReq = new AuthRequest(request);
+  String ssoUrl = authReq.getRedirectUrl();
+  
+  response.sendRedirect(ssoUrl);
+%>
+```
+
+With presets:
+```jsp
+<%@ page import="com.maestrano.saml.AuthRequest" %>
+<%
+  AuthRequest authReq = new AuthRequest("mypreset", request);
   String ssoUrl = authReq.getRedirectUrl();
   
   response.sendRedirect(ssoUrl);
@@ -290,6 +340,16 @@ Based on your application requirements the consume action might look like this:
     writer.write("Failed");
     writer.flush();
   }
+%>
+```
+
+With presets:
+Based on your application requirements the consume action might look like this:
+```jsp
+<%@ page import="com.maestrano.saml.Response,com.maestrano.sso.*" %>
+<%
+  Response authResp = new Response("mypreset");
+  ...
 %>
 ```
 
@@ -356,6 +416,15 @@ The example below needs to be adapted depending on your application:
 if (Maestrano.authenticate(request)) {
   MyGroupModel someGroup = MyGroupModel.findByMnoId(restfulGroupIdFromUrl);
   someGroup.removeUserById(restfulIdFromUrl);
+}
+```
+
+### Authenticating with presets
+The same operations can be used with presets:
+```java
+if (Maestrano.authenticate("mypreset", request)) {
+  MyGroupModel someGroup = MyGroupModel.findByMnoId(restfulGroupIdFromUrl);
+  ...
 }
 ```
 

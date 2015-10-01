@@ -7,13 +7,26 @@ import java.util.Properties;
 public class ApiService {
 	private static ApiService instance;
 	
-	private String id;
-	private String key;
-	private Boolean verifySslCerts;
-	private String accountBase;
-	private String accountHost;
-	private String connecHost;
-	private String connecBase;
+	// Map of Preset Name => AppServiceProperties
+    private Map<String, ApiServiceProperties> presetsProperties = new HashMap<String, ApiServiceProperties> ();
+    
+    /**
+     * Properties wrapper for a given preset
+     */
+    public static class ApiServiceProperties {
+        protected String preset;
+        private String id;
+    	private String key;
+    	private Boolean verifySslCerts;
+    	private String accountBase;
+    	private String accountHost;
+    	private String connecHost;
+    	private String connecBase;
+    	
+    	private ApiServiceProperties(String preset) {
+            this.preset = preset;
+        }
+    }
 	
 	// Private Constructor
 	private ApiService() {}
@@ -31,111 +44,167 @@ public class ApiService {
 	}
 	
 	/**
-	 * Configure the service using the maestrano.properties
-	 * file available in the class path
-	 */
-	public void configure() {
-		this.configure(ConfigFile.getProperties());
-	}
+     * Configure the service using the maestrano.properties
+     * file available in the class path
+     */
+    public void configure() {
+        this.configure("default");
+    }
+    
+    /**
+     * Configure the service using the maestrano.properties
+     * file available in the class path
+     */
+    public void configure(String preset) {
+        this.configure(preset, ConfigFile.getProperties(preset));
+    }
+    
+    /**
+     * Configure the service using the specified properties file and preset
+     * @param preset
+     * @param filename
+     */
+    public void configure(String preset, String filename) {
+        this.configure(preset, ConfigFile.getProperties(preset, filename));
+    }
 	
 	/**
 	 * Configure the service using a list of properties
+	 * @param preset
 	 * @param props Properties object
 	 */
-	public void configure(Properties props) {
-		this.id = props.getProperty("api.id");
-		this.key = props.getProperty("api.key");
-		this.accountBase = props.getProperty("api.accountBase");
-		this.accountHost = props.getProperty("api.accountHost");
-		this.connecBase = props.getProperty("api.connecBase");
-		this.connecHost = props.getProperty("api.connecHost");
-		
+	public void configure(String preset, Properties props) {
+	    ApiServiceProperties apiServiceProperties = new ApiServiceProperties(preset);
+
+	    apiServiceProperties.id = props.getProperty("api.id");
+	    apiServiceProperties.key = props.getProperty("api.key");
+	    apiServiceProperties.accountBase = props.getProperty("api.accountBase");
+	    apiServiceProperties.accountHost = props.getProperty("api.accountHost");
+	    apiServiceProperties.connecBase = props.getProperty("api.connecBase");
+	    apiServiceProperties.connecHost = props.getProperty("api.connecHost");
+
 		if (props.getProperty("api.verifySslCerts") != null) {
-			this.verifySslCerts = props.getProperty("api.verifySslCerts").equalsIgnoreCase("true");
+		    apiServiceProperties.verifySslCerts = props.getProperty("api.verifySslCerts").equalsIgnoreCase("true");
 		}
+
+		this.presetsProperties.put(preset, apiServiceProperties);
 	}
 	
 	/**
+     * Return the Maestrano Application ID
+     * @return String application id
+     */
+    public String getId() {
+        return getId("default");
+    }
+    
+    /**
 	 * Return the Maestrano Application ID
 	 * @return String application id
 	 */
-	public String getId() {
-		return id;
-	}
-	
-	public void setId(String id) {
-		this.id = id;
+	public String getId(String preset) {
+	    ApiServiceProperties apiServiceProperties = this.presetsProperties.get(preset);
+		return apiServiceProperties.id;
 	}
 	
 	/**
+     * Return the Maestrano API Key
+     * @return String api key
+     */
+    public String getKey() {
+        return getKey("default");
+    }
+    
+    /**
 	 * Return the Maestrano API Key
 	 * @return String api key
 	 */
-	public String getKey() {
-		return key;
-	}
-
-	public void setKey(String key) {
-		this.key = key;
+	public String getKey(String preset) {
+	    ApiServiceProperties apiServiceProperties = this.presetsProperties.get(preset);
+        return apiServiceProperties.key;
 	}
 	
 	/**
-	 * Return the host used to make API calls
-	 * @return String host
+     * Return the host used to make API calls
+     * @return String host
+     */
+    public String getAccountHost() {
+        return getAccountHost("default");
+    }
+    
+    /**
+     * Return the host used to make API calls
+     * @return String host
+     */
+    public String getAccountHost(String preset) {
+        ApiServiceProperties apiServiceProperties = this.presetsProperties.get(preset);
+        if (apiServiceProperties == null || apiServiceProperties.accountHost == null || apiServiceProperties.accountHost.isEmpty()) {
+            if (Maestrano.appService().getEnvironment().equals("production")) {
+                return "https://maestrano.com";
+            } else {
+                return "http://api-sandbox.maestrano.io";
+            }
+        }
+        return apiServiceProperties.accountHost;
+    }
+	
+    /**
+     * Return the base of the API endpoint
+     * @return String base
+     */
+    public String getAccountBase() {
+        return getAccountBase("default");
+    }
+    
+    /**
+	 * Return the base of the API endpoint
+	 * @return String base
 	 */
-	public String getAccountHost() {
-		if (accountHost == null || accountHost.isEmpty()) {
-			if (Maestrano.appService().getEnvironment().equals("production")) {
-				return "https://maestrano.com";
-			} else {
-				return "http://api-sandbox.maestrano.io";
-			}
-		}
-		return accountHost;
-	}
-
-	public void setAccountHost(String accountHost) {
-		this.accountHost = accountHost;
+	public String getAccountBase(String preset) {
+        ApiServiceProperties apiServiceProperties = this.presetsProperties.get(preset);
+		if (apiServiceProperties == null || apiServiceProperties.accountBase == null || apiServiceProperties.accountBase.isEmpty()) return "/api/v1/account";
+		return apiServiceProperties.accountBase;
 	}
 	
+	/**
+     * Return the host used to make API calls on Connec!
+     * @return String host
+     */
+    public String getConnecHost() {
+        return getConnecHost("default");
+    }
+    
+    /**
+     * Return the host used to make API calls on Connec!
+     * @return String host
+     */
+    public String getConnecHost(String preset) {
+        ApiServiceProperties apiServiceProperties = this.presetsProperties.get(preset);
+        if (apiServiceProperties == null || apiServiceProperties.connecHost == null || apiServiceProperties.connecHost.isEmpty()) {
+            if (Maestrano.appService().getEnvironment().equals("production")) {
+                return "https://api-connec.maestrano.com";
+            } else {
+                return "http://api-sandbox.maestrano.io";
+            }
+        }
+        return apiServiceProperties.connecHost;
+    }
+	
+    /**
+     * Return the base of the API endpoint
+     * @return String base
+     */
+    public String getConnecBase() {
+        return getConnecBase("default");
+    }
+    
 	/**
 	 * Return the base of the API endpoint
 	 * @return String base
 	 */
-	public String getAccountBase() {
-		if (accountBase == null || accountBase.isEmpty()) return "/api/v1/account";
-		return accountBase;
-	}
-
-	public void setAccountBase(String accountBase) {
-		this.accountBase = accountBase;
-	}
-	
-	/**
-	 * Return the host used to make API calls on Connec!
-	 * @return String host
-	 */
-	public String getConnecHost() {
-		if (connecHost == null || connecHost.isEmpty()) {
-			if (Maestrano.appService().getEnvironment().equals("production")) {
-				return "https://api-connec.maestrano.com";
-			} else {
-				return "http://api-sandbox.maestrano.io";
-			}
-		}
-		return connecHost;
-	}
-
-	public void setConnecHost(String connecHost) {
-		this.connecHost = connecHost;
-	}
-	
-	/**
-	 * Return the base of the API endpoint
-	 * @return String base
-	 */
-	public String getConnecBase() {
-		if (connecBase == null || connecBase.isEmpty()) {
+	public String getConnecBase(String preset) {
+	    ApiServiceProperties apiServiceProperties = this.presetsProperties.get(preset);
+		if (apiServiceProperties == null || apiServiceProperties.connecBase == null || apiServiceProperties.connecBase.isEmpty()) {
 			if (Maestrano.appService().getEnvironment().equals("production")) {
 				return "/api/v2";
 			} else {
@@ -143,25 +212,27 @@ public class ApiService {
 			}
 		}
 		
-		return connecBase;
+		return apiServiceProperties.connecBase;
 	}
-
-	public void setConnecBase(String connecBase) {
-		this.connecBase = connecBase;
-	}
+	
+	/**
+     * Check whether to verify the SSL certificate or not
+     * during API calls. False by default.
+     * @return Boolean whether to verify the certificate or not
+     */
+    public Boolean getVerifySslCerts() {
+        return getVerifySslCerts("default");
+    }
 	
 	/**
 	 * Check whether to verify the SSL certificate or not
 	 * during API calls. False by default.
 	 * @return Boolean whether to verify the certificate or not
 	 */
-	public Boolean getVerifySslCerts() {
-		if (verifySslCerts == null) return false;
-		return verifySslCerts;
-	}
-
-	public void setVerifySslCerts(Boolean verifySslCerts) {
-		this.verifySslCerts = verifySslCerts;
+	public Boolean getVerifySslCerts(String preset) {
+	    ApiServiceProperties apiServiceProperties = this.presetsProperties.get(preset);
+		if (apiServiceProperties == null || apiServiceProperties.verifySslCerts == null) return false;
+		return apiServiceProperties.verifySslCerts;
 	}
 	
 	public String getLang() {
@@ -177,14 +248,16 @@ public class ApiService {
 	}
 	
 	public Map<String,String> toMetadataHash() {
-		Map<String,String> hash = new HashMap<String,String>();
-		hash.put("id", getId());
-		hash.put("lang", getLang());
-		hash.put("version", getVersion());
-		hash.put("lang_version", getLangVersion());
-		
-		return hash;
-	}
+        return toMetadataHash("default");
+    }
 	
-	
+	public Map<String,String> toMetadataHash(String preset) {
+        Map<String,String> hash = new HashMap<String,String>();
+        hash.put("id", getId(preset));
+        hash.put("lang", getLang());
+        hash.put("version", getVersion());
+        hash.put("lang_version", getLangVersion());
+        
+        return hash;
+    }
 }
