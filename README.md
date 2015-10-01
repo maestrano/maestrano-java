@@ -65,7 +65,12 @@ You can configure maestrano using a properties file from the classpath and load 
     Maestrano.configure("myconfig.properties");
 ```
 
-If you need to support multiple marketplaces, you can use preset configurations
+You can add configuration presets progranatically by adding sets of properties in your Maestrano configuration. These additional presets can then be specified when doing particular action, such as initializing a Connec!™ client or triggering a SSO handshake. These presets are particularly useful if you are dealing with multiple Maestrano-style marketplaces (multi-enterprise integration).
+
+If this is the first time you integrate with Maestrano, we recommend adopting a multi-tenant approach. All code samples in this documentation provide examples on how to handle multi-tenancy by scoping method calls to a specific configuration preset.
+
+More information about multi-tenant integration can be found on [Our Multi-Tenant Integration Guide](https://maestrano.atlassian.net/wiki/display/CONNECAPIV2/Multi-Tenant+Integration)
+
 
 ```java
     // Load configuration
