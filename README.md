@@ -117,9 +117,13 @@ sso.enabled=true
 sso.sloEnabled=true
 
 # => idm
-# By default we consider that the domain managing user identification is the same as your application host (see above config.app.host parameter). 
+# By default we consider that the domain managing user identification is the same as your application host (see above config.app.host parameter).
 # If you have a dedicated domain managing user identification and therefore responsible for the single sign-on handshake (e.g: https://idp.my-app.com) then you can specify it below
 sso.idm=https\://idp.myapp.com
+
+# => idp (optional)
+# This is the URL of the identity provider to use when triggering a SSO handshake. With a multi-tenant integration, each tenant would have its own URL. Defaults to https://maestrano.com
+sso.idm=https\://maestrano.com
 
 # => initPath
 # This is your application path to the SAML endpoint that allows users to initialize SSO authentication. 
