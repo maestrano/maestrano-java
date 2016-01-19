@@ -7,9 +7,9 @@ import java.util.Map;
 import com.maestrano.exception.ApiException;
 import com.maestrano.exception.AuthenticationException;
 import com.maestrano.exception.InvalidRequestException;
-import com.maestrano.net.MnoAccountClient;
 
 public class MnoBill extends MnoObject {
+	
 	
 	public String id;
 	public Date createdAt;
@@ -33,7 +33,7 @@ public class MnoBill extends MnoObject {
 	 * @throws InvalidRequestException 
 	 */
 	public static List<MnoBill> all() throws AuthenticationException, ApiException, InvalidRequestException {
-		return MnoAccountClient.all(MnoBill.class);
+		return MNO_ACCOUNT_CLIENT.all(MnoBill.class);
 	}
 	
 	/**
@@ -46,7 +46,7 @@ public class MnoBill extends MnoObject {
 	 * @throws InvalidRequestException 
 	 */
 	public static <V> List<MnoBill> all(Map<String,V> params) throws AuthenticationException, ApiException, InvalidRequestException {
-		return MnoAccountClient.all(MnoBill.class, params);
+		return MNO_ACCOUNT_CLIENT.all(MnoBill.class, params);
 	}
 	
 	/**
@@ -58,7 +58,7 @@ public class MnoBill extends MnoObject {
 	 * @throws InvalidRequestException 
 	 */
 	public static MnoBill retrieve(String billId) throws AuthenticationException, ApiException, InvalidRequestException {
-		return MnoAccountClient.retrieve(MnoBill.class, billId);
+		return MNO_ACCOUNT_CLIENT.retrieve(MnoBill.class, billId);
 	}
 	
 	/**
@@ -70,7 +70,7 @@ public class MnoBill extends MnoObject {
 	 * @throws InvalidRequestException 
 	 */
 	public static MnoBill create(Map<String,Object> params) throws AuthenticationException, ApiException, InvalidRequestException {
-		return MnoAccountClient.create(MnoBill.class, params);
+		return MNO_ACCOUNT_CLIENT.create(MnoBill.class, params);
 	}
 	
 	/**
@@ -81,7 +81,7 @@ public class MnoBill extends MnoObject {
 	 */
 	public Boolean cancel() throws AuthenticationException, ApiException {
 		if (this.id != null && !this.id.isEmpty()) {
-			MnoBill newBill = MnoAccountClient.delete(MnoBill.class, this.id);
+			MnoBill newBill = MNO_ACCOUNT_CLIENT.delete(MnoBill.class, this.id);
 			this.merge(newBill);
 			return this.status.equals("cancelled");
 		}

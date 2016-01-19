@@ -7,7 +7,6 @@ import java.util.Map;
 import com.maestrano.exception.ApiException;
 import com.maestrano.exception.AuthenticationException;
 import com.maestrano.exception.InvalidRequestException;
-import com.maestrano.net.MnoAccountClient;
 
 public class MnoUser extends MnoObject {
 	private String id;
@@ -28,7 +27,7 @@ public class MnoUser extends MnoObject {
 	 * @throws InvalidRequestException 
 	 */
 	public static List<MnoUser> all() throws AuthenticationException, ApiException, InvalidRequestException {
-		return MnoAccountClient.all(MnoUser.class);
+		return MNO_ACCOUNT_CLIENT.all(MnoUser.class);
 	}
 	
 	/**
@@ -41,7 +40,7 @@ public class MnoUser extends MnoObject {
 	 * @throws InvalidRequestException 
 	 */
 	public static <V> List<MnoUser> all(Map<String,V> params) throws AuthenticationException, ApiException, InvalidRequestException {
-		return MnoAccountClient.all(MnoUser.class, params);
+		return MNO_ACCOUNT_CLIENT.all(MnoUser.class, params);
 	}
 	
 	/**
@@ -53,7 +52,7 @@ public class MnoUser extends MnoObject {
 	 * @throws InvalidRequestException 
 	 */
 	public static MnoUser retrieve(String entityId) throws AuthenticationException, ApiException, InvalidRequestException {
-		return MnoAccountClient.retrieve(MnoUser.class, entityId);
+		return MNO_ACCOUNT_CLIENT.retrieve(MnoUser.class, entityId);
 	}
 	
 	public String getId() {
