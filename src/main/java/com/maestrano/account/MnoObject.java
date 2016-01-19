@@ -7,6 +7,9 @@ import java.util.Map;
 import com.maestrano.net.MnoAccountClient;
 
 class MnoObject {
+	
+	protected static final MnoAccountClient MNO_ACCOUNT_CLIENT = MnoAccountClient.defaultClient();
+	
 	public Map<String,Object> changedAttributes;
 	public Map<String,Object> orginalAttributes;
 	
