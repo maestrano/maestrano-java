@@ -23,8 +23,8 @@ public class SsoServiceTest {
 		Maestrano.configure(props);
 		Properties specialProperties = new Properties(props);
 		specialProperties.setProperty("sso.enabled", "true");
-		specialProperties.setProperty("x509Fingerprint", X509FINGERPRINT_VALUE);
-		specialProperties.setProperty("x509Certificate", X509CERTIFICATE_VALUE);
+		specialProperties.setProperty("sso.x509Fingerprint", X509FINGERPRINT_VALUE);
+		specialProperties.setProperty("sso.x509Certificate", X509CERTIFICATE_VALUE);
 		Maestrano.configure(SPECIAL_PRESET, specialProperties);
 		
 		subject = Maestrano.ssoService();

@@ -167,7 +167,17 @@ sso.consumePath=/maestrano/auth/saml/consume
 # mode the email we assign to him looks like "usr-sdf54.cld-45aa2@mail.maestrano.com". But don't
 # worry we take care of forwarding any email you would send to this address
 sso.creationMode="virtual"
-      
+
+# when sso.enabled=true, this permit to overload the x509 Certificate value
+# => x509Certificate
+sso.x509Certificate=
+
+# => x509Fingerprint
+# when sso.enabled=true, this permit to overload the x509 FingerPrint value
+sso.x509Fingerprint=
+
+
+ 
 # ===> Account Webhooks
 # Single sign on has been setup into your app and Maestrano users are now able
 # to use your service. Great! Wait what happens when a business (group) decides to 
