@@ -232,7 +232,7 @@ Or using preset configurations to support multiple marketplaces
     Maestrano.configure("myconfig2", myconfig2);
 ```
 
-### Metadata Endpoint
+### Metadata Endpoint 
 Your configuration initializer is now all setup and shiny. Great! But need to know about it. Of course
 we could propose a long and boring form on maestrano.com for you to fill all these details (especially the webhooks) but we thought it would be more convenient to fetch that automatically.
 
@@ -396,7 +396,7 @@ Sad as it is a business might decide to stop using your service at some point. O
 
 Maestrano only uses this controller for service cancellation so there is no need to implement any other type of action - ie: GET, PUT/PATCH or POST. The use of other http verbs might come in the future to improve the communication between Maestrano and your service but as of now it is not required.
 
-The controller example below reimplements the authenticate_maestrano! method seen in the [metadata section](#metadata) for completeness. Utimately you should move this method to a helper if you can.
+The controller example below reimplements the authenticate_maestrano! method seen in the [metadata section](#metadata-endpoint) for completeness. Utimately you should move this method to a helper if you can.
 
 The example below needs to be adapted depending on your application:
 
@@ -412,7 +412,7 @@ A business might decide at some point to revoke access to your services for one 
 
 Maestrano only uses this controller for user membership cancellation so there is no need to implement any other type of action - ie: GET, PUT/PATCH or POST. The use of other http verbs might come in the future to improve the communication between Maestrano and your service but as of now it is not required.
 
-The controller example below reimplements the authenticate_maestrano! method seen in the [metadata section](#metadata) for completeness. Utimately you should move this method to a helper if you can.
+The controller example below reimplements the authenticate_maestrano! method seen in the [metadata section](#metadata-endpoint) for completeness. Utimately you should move this method to a helper if you can.
 
 The example below needs to be adapted depending on your application:
 
