@@ -86,7 +86,7 @@ public class MnoRecurringBill extends MnoObject {
 		if (this.id != null && !this.id.isEmpty()) {
 			MnoRecurringBill newBill = MnoAccountClient.delete(MnoRecurringBill.class, this.id);
 			this.merge(newBill);
-			return this.status.equals("cancelled");
+			return "cancelled".equals(this.status);
 		}
 		
 		return false;
