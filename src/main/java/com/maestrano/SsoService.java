@@ -93,8 +93,8 @@ public class SsoService {
 		ssoServiceProperties.idm = props.getProperty("sso.idm");
 		ssoServiceProperties.idp = props.getProperty("sso.idp");
 		ssoServiceProperties.nameIdFormat = props.getProperty("sso.nameIdFormat");
-		ssoServiceProperties.x509Fingerprint = props.getProperty("sso.enabled");
-		ssoServiceProperties.x509Certificate = props.getProperty("sso.enabled");
+		ssoServiceProperties.x509Fingerprint = props.getProperty("sso.x509Fingerprint");
+		ssoServiceProperties.x509Certificate = props.getProperty("sso.x509Certificate");
 		
 		this.presetsProperties.put(preset, ssoServiceProperties);
 	}
