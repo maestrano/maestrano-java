@@ -8,6 +8,8 @@ import java.util.Properties;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.maestrano.exception.MnoException;
+
 public class ApiServiceTest {
 	private Properties props = new Properties();
 	private ApiService subject;
@@ -17,8 +19,8 @@ public class ApiServiceTest {
 		props.setProperty("app.environment", "production");
 		props.setProperty("api.id", "someid");
 		props.setProperty("api.key", "somekey");
-		Maestrano.configure(props);
-		subject = Maestrano.apiService();
+		Maestrano maestrano = Maestrano.reloadConfiguration(props);
+		subject = maestrano.apiService();
 	}
 	
 	@Test
@@ -39,15 +41,15 @@ public class ApiServiceTest {
 	
 	
 	@Test
-	public void apiAuth_itReturnsTheRightCredentials() {
+	public void apiAuth_itReturnsTheRightCredentials() throws MnoException {
 		String apiId = "someApiId";
 		String apiKey = "someApiKey";
 		props.setProperty("api.id", apiId);
 		props.setProperty("api.key", apiKey);
-		Maestrano.configure(props);
-		
-		assertEquals(apiId, subject.getId());
-		assertEquals(apiKey, subject.getKey());
+		Maestrano maestrano = Maestrano.reloadConfiguration(props);
+		ApiService apiService = maestrano.apiService();
+		assertEquals(apiId, apiService.getId());
+		assertEquals(apiKey, apiService.getKey());
 	}
 	
 	@Test
@@ -71,12 +73,12 @@ public class ApiServiceTest {
 	}
 	
 	@Test
-	public void getAccountHost_itReturnsTheRightValue() {
+	public void getAccountHost_itReturnsTheRightValue() throws MnoException {
 		String host = "https://mysuperapp.com";
 		props.setProperty("api.accountHost", host);
-		Maestrano.configure(props);
-		
-		assertEquals(host, subject.getAccountHost());
+		Maestrano maestrano = Maestrano.reloadConfiguration(props);
+		ApiService apiService = maestrano.apiService();
+		assertEquals(host, apiService.getAccountHost());
 	}
 	
 	@Test

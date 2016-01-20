@@ -23,7 +23,7 @@ public class MnoGroup extends MnoObject {
 	 * @throws InvalidRequestException 
 	 */
 	public static List<MnoGroup> all() throws AuthenticationException, ApiException, InvalidRequestException {
-		return MNO_ACCOUNT_CLIENT.all(MnoGroup.class);
+		return getDefaultClient().all(MnoGroup.class);
 	}
 	
 	/**
@@ -36,7 +36,7 @@ public class MnoGroup extends MnoObject {
 	 * @throws InvalidRequestException 
 	 */
 	public static <V> List<MnoGroup> all(Map<String,V> params) throws AuthenticationException, ApiException, InvalidRequestException {
-		return MNO_ACCOUNT_CLIENT.all(MnoGroup.class, params);
+		return getDefaultClient().all(MnoGroup.class, params);
 	}
 	
 	/**
@@ -48,7 +48,7 @@ public class MnoGroup extends MnoObject {
 	 * @throws InvalidRequestException 
 	 */
 	public static MnoGroup retrieve(String entityId) throws AuthenticationException, ApiException, InvalidRequestException {
-		return MNO_ACCOUNT_CLIENT.retrieve(MnoGroup.class, entityId);
+		return getDefaultClient().retrieve(MnoGroup.class, entityId);
 	}
 	
 	public String getId() {

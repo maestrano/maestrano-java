@@ -9,10 +9,13 @@ import java.util.TimeZone;
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.maestrano.ApiService;
 import com.maestrano.Maestrano;
 import com.maestrano.exception.ApiException;
 import com.maestrano.exception.AuthenticationException;
 import com.maestrano.exception.InvalidRequestException;
+import com.maestrano.exception.MnoConfigurationException;
+import com.maestrano.exception.MnoException;
 import com.maestrano.helpers.MnoMapHelper;
 import com.maestrano.json.DateDeserializer;
 import com.maestrano.json.DateSerializer;
@@ -22,14 +25,16 @@ import com.maestrano.json.TimeZoneSerializer;
 public class ConnecClient {
 
 	public final Gson GSON = new GsonBuilder().setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES).registerTypeAdapter(Date.class, new DateSerializer())
-			.registerTypeAdapter(Date.class, new DateDeserializer())
-			.registerTypeAdapter(TimeZone.class, new TimeZoneSerializer())
-			.registerTypeAdapter(TimeZone.class, new TimeZoneDeserializer())
+			.registerTypeAdapter(Date.class, new DateDeserializer()).registerTypeAdapter(TimeZone.class, new TimeZoneSerializer()).registerTypeAdapter(TimeZone.class, new TimeZoneDeserializer())
 			.create();
-	private final String preset;
+	private final ApiService apiService;
 
-	private ConnecClient(String preset) {
-		this.preset = preset;
+	private ConnecClient(String preset) throws MnoConfigurationException {
+		this.apiService = Maestrano.get(preset).apiService();
+	}
+
+	private ConnecClient() {
+		this.apiService = Maestrano.getDefault().apiService();
 	}
 
 	/**
@@ -37,16 +42,19 @@ public class ConnecClient {
 	 * 
 	 * @param preset
 	 * @return
+	 * @throws MnoException
 	 */
-	public static ConnecClient withPreset(String preset) {
+	public static ConnecClient withPreset(String preset) throws MnoConfigurationException {
 		return new ConnecClient(preset);
 	}
 
 	/**
-	 * Instantiate a ConnecClient with the default preset: default
+	 * Instantiate a ConnecClient with the default preset
+	 * 
+	 * @throws MnoException
 	 */
 	public static ConnecClient defaultClient() {
-		return withPreset("default");
+		return new ConnecClient();
 	}
 
 	/**
@@ -59,7 +67,7 @@ public class ConnecClient {
 	 * @return collection endpoint
 	 */
 	public String getCollectionEndpoint(String entityName, String groupId) {
-		return Maestrano.apiService().getConnecBase() + "/" + groupId + "/" + entityName;
+		return apiService.getConnecBase() + "/" + groupId + "/" + entityName;
 	}
 
 	/**
@@ -72,7 +80,7 @@ public class ConnecClient {
 	 * @return collection url
 	 */
 	public String getCollectionUrl(String entityName, String groupId) {
-		return Maestrano.apiService().getConnecHost(preset) + getCollectionEndpoint(entityName, groupId);
+		return apiService.getConnecHost() + getCollectionEndpoint(entityName, groupId);
 	}
 
 	/**
@@ -108,7 +116,7 @@ public class ConnecClient {
 	 * @return instance url
 	 */
 	public String getInstanceUrl(String entityName, String groupId, String id) {
-		return Maestrano.apiService().getConnecHost(preset) + getInstanceEndpoint(entityName, groupId, id);
+		return apiService.getConnecHost() + getInstanceEndpoint(entityName, groupId, id);
 	}
 
 	/**
@@ -119,12 +127,10 @@ public class ConnecClient {
 	 * @param groupId
 	 *            customer group id
 	 * @return list of entity hashes
-	 * @throws AuthenticationException
-	 * @throws ApiException
-	 * @throws InvalidRequestException
+	 * @throws MnoException
 	 */
-	public Map<String, Object> all(String entityName, String groupId) throws AuthenticationException, ApiException, InvalidRequestException {
-		return all(entityName, groupId, null, MnoHttpClient.getAuthenticatedClient(preset));
+	public Map<String, Object> all(String entityName, String groupId) throws MnoException {
+		return all(entityName, groupId, null, getAuthenticatedClient());
 	}
 
 	/**
@@ -138,12 +144,10 @@ public class ConnecClient {
 	 * @param params
 	 *            criteria
 	 * @return list of entities
-	 * @throws AuthenticationException
-	 * @throws ApiException
-	 * @throws InvalidRequestException
+	 * @throws MnoException
 	 */
-	public Map<String, Object> all(String entityName, String groupId, Map<String, ?> params) throws AuthenticationException, ApiException, InvalidRequestException {
-		return all(entityName, groupId, params, MnoHttpClient.getAuthenticatedClient(preset));
+	public Map<String, Object> all(String entityName, String groupId, Map<String, ?> params) throws MnoException {
+		return all(entityName, groupId, params, getAuthenticatedClient());
 	}
 
 	/**
@@ -178,12 +182,10 @@ public class ConnecClient {
 	 * @param hash
 	 *            entity attributes
 	 * @return created entity
-	 * @throws AuthenticationException
-	 * @throws ApiException
-	 * @throws InvalidRequestException
+	 * @throws MnoException
 	 */
-	public Map<String, Object> create(String entityName, String groupId, Map<String, Object> hash) throws AuthenticationException, ApiException, InvalidRequestException {
-		return create(entityName, groupId, hash, MnoHttpClient.getAuthenticatedClient(preset));
+	public Map<String, Object> create(String entityName, String groupId, Map<String, Object> hash) throws MnoException {
+		return create(entityName, groupId, hash, getAuthenticatedClient());
 	}
 
 	/**
@@ -241,12 +243,10 @@ public class ConnecClient {
 	 * @param entityId
 	 *            id of the entity to retrieve
 	 * @return entity
-	 * @throws AuthenticationException
-	 * @throws ApiException
-	 * @throws InvalidRequestException
+	 * @throws MnoException
 	 */
-	public Map<String, Object> retrieve(String entityName, String groupId, String entityId) throws AuthenticationException, ApiException, InvalidRequestException {
-		return retrieve(entityName, groupId, entityId, MnoHttpClient.getAuthenticatedClient(preset));
+	public Map<String, Object> retrieve(String entityName, String groupId, String entityId) throws MnoException {
+		return retrieve(entityName, groupId, entityId, getAuthenticatedClient());
 	}
 
 	/**
@@ -287,11 +287,11 @@ public class ConnecClient {
 	 * @throws InvalidRequestException
 	 */
 	public Map<String, Object> update(String entityName, String groupId, String entityId, Map<String, Object> hash) throws AuthenticationException, ApiException, InvalidRequestException {
-		return update(entityName, groupId, entityId, hash, MnoHttpClient.getAuthenticatedClient(preset));
+		return update(entityName, groupId, entityId, hash, getAuthenticatedClient());
 	}
 
 	/**
-	 * Update an entity remotely
+	 * apiService Update an entity remotely
 	 * 
 	 * @param entity
 	 *            name
@@ -355,7 +355,7 @@ public class ConnecClient {
 	 * @throws ApiException
 	 */
 	public Map<String, Object> delete(String entityName, String groupId, String entityId) throws AuthenticationException, ApiException {
-		return delete(entityName, groupId, entityId, MnoHttpClient.getAuthenticatedClient(preset));
+		return delete(entityName, groupId, entityId, getAuthenticatedClient());
 	}
 
 	/**
@@ -376,5 +376,9 @@ public class ConnecClient {
 		String jsonBody = httpClient.delete(getInstanceUrl(entityName, groupId, entityId));
 		Type typeOfHashMap = HashMap.class;
 		return GSON.fromJson(jsonBody, typeOfHashMap);
+	}
+
+	private MnoHttpClient getAuthenticatedClient() {
+		return MnoHttpClient.getAuthenticatedClient(apiService);
 	}
 }

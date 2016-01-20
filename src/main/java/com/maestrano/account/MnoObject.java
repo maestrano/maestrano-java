@@ -8,7 +8,17 @@ import com.maestrano.net.MnoAccountClient;
 
 class MnoObject {
 	
-	protected static final MnoAccountClient MNO_ACCOUNT_CLIENT = MnoAccountClient.defaultClient();
+	private static MnoAccountClient MNO_ACCOUNT_CLIENT = null;
+	
+	/**
+	 * This value has to be lazy loaded, becuase it is possible to use the application without a default preset
+	 */
+	protected static MnoAccountClient getDefaultClient(){
+		if (MNO_ACCOUNT_CLIENT == null){
+				MNO_ACCOUNT_CLIENT = MnoAccountClient.defaultClient();
+		}
+		return MNO_ACCOUNT_CLIENT;
+	}
 	
 	public Map<String,Object> changedAttributes;
 	public Map<String,Object> orginalAttributes;

@@ -29,7 +29,7 @@ public class MnoAccountClientTest {
 		props.setProperty("api.id", "someid");
 		props.setProperty("api.key", "somekey");
 		props.setProperty("sso.sloEnabled", "true");
-		Maestrano.configure(props);
+		Maestrano.reloadConfiguration(props);
 
 		httpClient = new MnoHttpClientStub();
 		mnoAccountClient = MnoAccountClient.defaultClient();

@@ -23,7 +23,7 @@ private Properties props = new Properties();
 		props.setProperty("app.environment", "test");
 		props.setProperty("api.id", "app-1");
 		props.setProperty("api.key", "gfcmbu8269wyi0hjazk4t7o1sndpvrqxl53e1");
-		Maestrano.configure(props);
+		Maestrano.reloadConfiguration(props);
 	}
 	
 	@Test

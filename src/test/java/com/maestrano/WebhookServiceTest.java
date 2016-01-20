@@ -11,12 +11,15 @@ import org.junit.Test;
 public class WebhookServiceTest {
 	private Properties props = new Properties();
 	private WebhookService subject;
-	
 	@Before
 	public void beforeEach() {
 		props.setProperty("app.environment", "production");
-		Maestrano.configure(props);
-		subject = Maestrano.webhookService();
+		reloadConfiguration();
+	}
+
+	private void reloadConfiguration() {
+		Maestrano maestrano = Maestrano.reloadConfiguration(props);
+		subject = maestrano.webhookService();
 	}
 
 	@Test
@@ -27,22 +30,23 @@ public class WebhookServiceTest {
 	@Test
 	public void getAccountGroupsPath_itReturnsTheRightConfigValue() {
 		props.setProperty("webhook.account.groupsPath", "/bla/:id");
-		Maestrano.configure(props);
-		assertEquals("/bla/:id", subject.getAccountGroupsPath());
+		
+		WebhookService webhookService = Maestrano.reloadConfiguration(props).webhookService();
+		assertEquals("/bla/:id", webhookService.getAccountGroupsPath());
 	}
 	
 	@Test
     public void getAccountGroupUsersPath_itReturnsTheRightDefaultValue() {
         props.setProperty("webhook.account.groupUsersPath", "/bla/:id");
-        Maestrano.configure(props);
-        assertEquals("/bla/:id", subject.getAccountGroupUsersPath());
+        assertEquals("/bla/:id", Maestrano.reloadConfiguration(props).webhookService().getAccountGroupUsersPath());
     }
 	
 	@Test
     public void getConnecSubscriptions_itReturnsTheRightDefaultValue() {
         props.setProperty("webhook.connec.subscriptions.accounts","true");
         props.setProperty("webhook.connec.subscriptions.items","false");
-        Maestrano.configure(props);
+        
+        reloadConfiguration();
         assertEquals(true, subject.getConnecSubscriptions().get("accounts"));
         assertEquals(false, subject.getConnecSubscriptions().get("items"));
     }
@@ -50,7 +54,8 @@ public class WebhookServiceTest {
 	@Test
     public void getNotificationsPath_itReturnsTheRightDefaultValue() {
         props.setProperty("webhook.connec.notificationsPath","/path/to/notifications");
-        Maestrano.configure(props);
+        
+        reloadConfiguration();
         assertEquals("/path/to/notifications", subject.getNotificationsPath());
     }
 

@@ -1,5 +1,9 @@
 package com.maestrano.sso;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import java.text.ParseException;
 import java.util.Date;
 import java.util.HashMap;
@@ -7,18 +11,14 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.junit.Before;
+import org.junit.Test;
 
 import com.maestrano.Maestrano;
+import com.maestrano.exception.MnoException;
 import com.maestrano.helpers.MnoDateHelper;
 import com.maestrano.testhelpers.HttpSessionStub;
 import com.maestrano.testhelpers.MnoHttpClientStub;
 import com.maestrano.testhelpers.SamlMnoRespStub;
-
-import org.junit.Test;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 
 public class MnoSessionTest {
 	private Properties props = new Properties();
@@ -34,7 +34,7 @@ public class MnoSessionTest {
 		props.setProperty("api.id", "someid");
 		props.setProperty("api.key", "somekey");
 		props.setProperty("sso.sloEnabled", "true");
-		Maestrano.configure(props);
+		Maestrano.reloadConfiguration(props);
 		
 		testSessObj = new HashMap<String,String>();
 		testSessObj.put("uid","usr-1");
@@ -152,11 +152,11 @@ public class MnoSessionTest {
 	}
 
 	@Test
-	public void isValid_WhenSloDisabled_ItShouldReturnTrue()
+	public void isValid_WhenSloDisabled_ItShouldReturnTrue() throws MnoException
 	{
 		// Disable SLO
 		props.setProperty("sso.sloEnabled", "false");
-		Maestrano.configure(props);
+		Maestrano.reloadConfiguration(props);
 		
 		// Response preparation (session not valid)
 		Date date = new Date( (new Date()).getTime() + 1*60*1000);

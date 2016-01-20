@@ -1,5 +1,7 @@
 package com.maestrano.sso;
 
+import static org.junit.Assert.assertEquals;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Map;
@@ -8,7 +10,6 @@ import java.util.TimeZone;
 
 import org.junit.Before;
 import org.junit.Test;
-import static org.junit.Assert.assertEquals;
 
 import com.maestrano.Maestrano;
 import com.maestrano.saml.Response;
@@ -25,7 +26,7 @@ public class MnoGroupTest {
 		props.setProperty("app.host", "https://mysuperapp.com");
 		props.setProperty("api.id", "someid");
 		props.setProperty("api.key", "somekey");
-		Maestrano.configure(props);
+		Maestrano.reloadConfiguration(props);
 
 		samlResp = (Response) new SamlMnoRespStub();
 		subject = new MnoGroup(samlResp);

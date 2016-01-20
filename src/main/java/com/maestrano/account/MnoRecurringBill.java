@@ -35,7 +35,7 @@ public class MnoRecurringBill extends MnoObject {
 	 * @throws InvalidRequestException 
 	 */
 	public static List<MnoRecurringBill> all() throws AuthenticationException, ApiException, InvalidRequestException {
-		return MNO_ACCOUNT_CLIENT.all(MnoRecurringBill.class);
+		return getDefaultClient().all(MnoRecurringBill.class);
 	}
 	
 	/**
@@ -48,7 +48,7 @@ public class MnoRecurringBill extends MnoObject {
 	 * @throws InvalidRequestException 
 	 */
 	public static <V> List<MnoRecurringBill> all(Map<String,V> params) throws AuthenticationException, ApiException, InvalidRequestException {
-		return MNO_ACCOUNT_CLIENT.all(MnoRecurringBill.class, params);
+		return getDefaultClient().all(MnoRecurringBill.class, params);
 	}
 	
 	/**
@@ -60,7 +60,7 @@ public class MnoRecurringBill extends MnoObject {
 	 * @throws InvalidRequestException 
 	 */
 	public static MnoRecurringBill retrieve(String billId) throws AuthenticationException, ApiException, InvalidRequestException {
-		return MNO_ACCOUNT_CLIENT.retrieve(MnoRecurringBill.class, billId);
+		return getDefaultClient().retrieve(MnoRecurringBill.class, billId);
 	}
 	
 	/**
@@ -72,7 +72,7 @@ public class MnoRecurringBill extends MnoObject {
 	 * @throws InvalidRequestException 
 	 */
 	public static MnoRecurringBill create(Map<String,Object> params) throws AuthenticationException, ApiException, InvalidRequestException {
-		return MNO_ACCOUNT_CLIENT.create(MnoRecurringBill.class, params);
+		return getDefaultClient().create(MnoRecurringBill.class, params);
 	}
 	
 	/**
@@ -83,7 +83,7 @@ public class MnoRecurringBill extends MnoObject {
 	 */
 	public Boolean cancel() throws AuthenticationException, ApiException {
 		if (this.id != null && !this.id.isEmpty()) {
-			MnoRecurringBill newBill = MNO_ACCOUNT_CLIENT.delete(MnoRecurringBill.class, this.id);
+			MnoRecurringBill newBill = getDefaultClient().delete(MnoRecurringBill.class, this.id);
 			this.merge(newBill);
 			return this.status.equals("cancelled");
 		}

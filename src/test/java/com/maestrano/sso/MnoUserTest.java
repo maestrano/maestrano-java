@@ -1,5 +1,7 @@
 package com.maestrano.sso;
 
+import static org.junit.Assert.assertEquals;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Map;
@@ -7,9 +9,9 @@ import java.util.Properties;
 
 import org.junit.Before;
 import org.junit.Test;
-import static org.junit.Assert.assertEquals;
 
 import com.maestrano.Maestrano;
+import com.maestrano.exception.MnoException;
 import com.maestrano.saml.Response;
 import com.maestrano.testhelpers.SamlMnoRespStub;
 
@@ -24,7 +26,8 @@ public class MnoUserTest {
 		props.setProperty("app.host", "https://mysuperapp.com");
 		props.setProperty("api.id", "someid");
 		props.setProperty("api.key", "somekey");
-		Maestrano.configure(props);
+		
+		Maestrano.reloadConfiguration(props);
 
 		samlResp = (Response) new SamlMnoRespStub();
 		subject = new MnoUser(samlResp);
@@ -52,37 +55,41 @@ public class MnoUserTest {
 	}
 
 	@Test
-	public void toUid_whenReal_itReturnsTheRightUid()
+	public void toUid_whenReal_itReturnsTheRightUid() throws MnoException
 	{
 		props.setProperty("sso.creationMode", "real");
-		Maestrano.configure(props);
+		
+		Maestrano.reloadConfiguration(props);
 
 		assertEquals(subject.getUid(),subject.toUid());
 	}
 
 	@Test
-	public void toUid_whenVirtual_itReturnsTheRightUid()
+	public void toUid_whenVirtual_itReturnsTheRightUid() throws MnoException
 	{
-		props.setProperty("sso.creationMode", "virtual");
-		Maestrano.configure(props);
+		props.setProperty("sso.creationMoMaestranode", "virtual");
+		
+		Maestrano.reloadConfiguration(props);
 		
 		assertEquals(subject.getVirtualUid(),subject.toUid());
 	}
 
 	@Test
-	public void toEmail_whenReal_itReturnsTheRightEmail()
+	public void toEmail_whenReal_itReturnsTheRightEmail() throws MnoException
 	{
 		props.setProperty("sso.creationMode", "real");
-		Maestrano.configure(props);
+		
+		Maestrano.reloadConfiguration(props);
 
 		assertEquals(subject.getEmail(),subject.toEmail());
 	}
 
 	@Test
-	public void toEmail_whenVirtual_itReturnsTheRightEmail()
+	public void toEmail_whenVirtual_itReturnsTheRightEmail() throws MnoException
 	{
 		props.setProperty("sso.creationMode", "virtual");
-		Maestrano.configure(props);
+		
+		Maestrano.reloadConfiguration(props);
 
 		assertEquals(subject.getVirtualEmail(),subject.toEmail());
 	}

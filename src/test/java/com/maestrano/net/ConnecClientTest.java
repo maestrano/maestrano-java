@@ -13,6 +13,7 @@ import org.junit.Test;
 
 import com.google.gson.Gson;
 import com.maestrano.Maestrano;
+import com.maestrano.exception.MnoConfigurationException;
 import com.maestrano.helpers.MnoMapHelper;
 import com.maestrano.testhelpers.MnoHttpClientStub;
 
@@ -22,7 +23,7 @@ public class ConnecClientTest {
     
 	private String groupId = "654321";
 	private MnoHttpClientStub httpClient = new MnoHttpClientStub();
-	private ConnecClient connecClient;;
+	private ConnecClient connecClient;
 
 	public class CnSomeModel {}
 	
@@ -37,20 +38,20 @@ public class ConnecClientTest {
 	}
 	
 	@Before
-	public void beforeEach() throws Exception {
+	public void beforeEach()  {
 	    defaultProps.setProperty("app.environment", "production");
         defaultProps.setProperty("app.host", "https://mysuperapp.com");
         defaultProps.setProperty("api.id", "someid");
         defaultProps.setProperty("api.key", "somekey");
         defaultProps.setProperty("api.connecHost", "https://api-connec.maestrano.com");
-        Maestrano.configure(defaultProps);
+        Maestrano.reloadConfiguration(defaultProps);
         
         otherProps.setProperty("app.environment", "production");
         otherProps.setProperty("app.host", "https://myotherapp.com");
         otherProps.setProperty("api.id", "otherid");
         otherProps.setProperty("api.key", "otherkey");
         otherProps.setProperty("api.connecHost", "https://api-connec.other.com");
-        Maestrano.configure("other", otherProps);
+        Maestrano.reloadConfiguration("other", otherProps);
         
         this.connecClient = ConnecClient.defaultClient();
 	}
@@ -71,12 +72,12 @@ public class ConnecClientTest {
 	}
 
 	@Test
-	public void getInstanceUrl_itReturnsTheRightEntityInstanceApiUrl() {
+	public void getInstanceUrl_itReturnsTheRightEntityInstanceApiUrl() throws MnoConfigurationException {
 		assertEquals("https://api-connec.maestrano.com/api/v2/cld-1/some_models/1", ConnecClient.withPreset("default").getInstanceUrl("some_models", "cld-1","1"));
 	}
 	
 	@Test
-    public void class_getCollectionUrl_itReturnsTheRightEntityApiUrlWithPreset() {
+    public void class_getCollectionUrl_itReturnsTheRightEntityApiUrlWithPreset() throws MnoConfigurationException {
         assertEquals("https://api-connec.other.com/api/v2/cld-1/some_models", ConnecClient.withPreset("other").getCollectionUrl("some_models", "cld-1"));
     }
 	
@@ -174,7 +175,7 @@ public class ConnecClientTest {
 
 		// Test
 		@SuppressWarnings("unchecked")
-		Map<String, Object> personHash = (Map<String, Object>) connecClient.update("people", this.groupId, "123456", updHash, httpClient).get("people");;
+		Map<String, Object> personHash = (Map<String, Object>) connecClient.update("people", this.groupId, "123456", updHash, httpClient).get("people");
         assertEquals("123456", personHash.get("id"));
         assertEquals("John", personHash.get("first_name"));
         assertEquals("Doe", personHash.get("last_name"));

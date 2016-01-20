@@ -27,7 +27,7 @@ public class MnoUser extends MnoObject {
 	 * @throws InvalidRequestException 
 	 */
 	public static List<MnoUser> all() throws AuthenticationException, ApiException, InvalidRequestException {
-		return MNO_ACCOUNT_CLIENT.all(MnoUser.class);
+		return getDefaultClient().all(MnoUser.class);
 	}
 	
 	/**
@@ -40,7 +40,7 @@ public class MnoUser extends MnoObject {
 	 * @throws InvalidRequestException 
 	 */
 	public static <V> List<MnoUser> all(Map<String,V> params) throws AuthenticationException, ApiException, InvalidRequestException {
-		return MNO_ACCOUNT_CLIENT.all(MnoUser.class, params);
+		return getDefaultClient().all(MnoUser.class, params);
 	}
 	
 	/**
@@ -52,7 +52,7 @@ public class MnoUser extends MnoObject {
 	 * @throws InvalidRequestException 
 	 */
 	public static MnoUser retrieve(String entityId) throws AuthenticationException, ApiException, InvalidRequestException {
-		return MNO_ACCOUNT_CLIENT.retrieve(MnoUser.class, entityId);
+		return getDefaultClient().retrieve(MnoUser.class, entityId);
 	}
 	
 	public String getId() {

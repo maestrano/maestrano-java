@@ -1,5 +1,7 @@
 package com.maestrano.saml;
 
+import static org.junit.Assert.assertEquals;
+
 import java.io.StringReader;
 import java.net.URLEncoder;
 import java.util.HashMap;
@@ -18,20 +20,18 @@ import org.xml.sax.InputSource;
 import com.maestrano.Maestrano;
 import com.maestrano.helpers.MnoZipHelper;
 
-import static org.junit.Assert.assertEquals;
-
 public class AuthRequestTest {
 	private Properties props = new Properties();
 	private AuthRequest subject;
-	
+	private Maestrano maestrano;
 	@Before
 	public void beforeEach() {
 		props.setProperty("app.environment", "production");
 		props.setProperty("app.host", "https://mysuperapp.com");
 		props.setProperty("api.id", "someid");
 		props.setProperty("api.key", "somekey");
-		Maestrano.configure(props);
-		subject = new AuthRequest();
+		this.maestrano = Maestrano.reloadConfiguration(props);
+		subject = new AuthRequest(maestrano, new HashMap<String, String>());
 	}
 	
 	@Test
@@ -70,7 +70,7 @@ public class AuthRequestTest {
 		Map<String,String> params = new HashMap<String,String>();
 		params.put("group_id", "cld-9");
 		params.put("other", "value with spaces");
-		subject = new AuthRequest(params);
+		subject = new AuthRequest(maestrano, params);
 		
 		String expected = "https://maestrano.com/api/v1/auth/saml?SAMLRequest=";
 		expected += URLEncoder.encode(subject.getXmlBase64Request(),"UTF-8");
