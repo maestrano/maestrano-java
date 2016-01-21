@@ -51,7 +51,7 @@ public class MnoBill extends MnoObject {
 			if (bill.id != null && !bill.id.isEmpty()) {
 				MnoBill newBill = delete(bill.id);
 				bill.merge(newBill);
-				return bill.status.equals("cancelled");
+				return "cancelled".equals(bill.status);
 			}
 
 			return false;
