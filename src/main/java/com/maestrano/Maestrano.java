@@ -12,7 +12,7 @@ import com.google.gson.Gson;
 
 public final class Maestrano 
 {
-    private static final String version = "0.7.0";
+    private static final String version = "0.8.0";
     
     // Private constructor
     private Maestrano() {}
