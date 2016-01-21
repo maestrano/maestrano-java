@@ -59,13 +59,13 @@ To install maestrano-java using Maven, add this dependency to your project's POM
 ### Configuration
 #### Via config file
 
-You can configure maestrano using a properties file from the classpath or with an absolute path and load it this way
+You can configure maestrano using a properties file from the classpath or with an absolute path.
 
 ```java
     Maestrano.configure("myconfig.properties");
 ```
 
-You can add configuration presets programatically by adding sets of properties in your Maestrano configuration. These additional presets can then be specified when doing particular action, such as initializing a Connec!™ client or triggering a SSO handshake. These presets are particularly useful if you are dealing with multiple Maestrano-style marketplaces (multi-enterprise integration).
+You can add configuration presets programmatically by adding sets of properties in your Maestrano configuration. These additional presets can then be specified when doing particular action, such as initializing a Connec!™ client or triggering a SSO handshake. These presets are particularly useful if you are dealing with multiple Maestrano-style marketplaces (multi-enterprise integration).
 
 If this is the first time you integrate with Maestrano, we recommend adopting a multi-tenant approach. All code samples in this documentation provide examples on how to handle multi-tenancy by scoping method calls to a specific configuration preset.
 

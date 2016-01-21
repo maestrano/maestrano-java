@@ -6,6 +6,9 @@ import java.util.Properties;
 
 import com.maestrano.helpers.MnoPropertiesHelper;
 
+/**
+ * Maestrano SSO Service, related to all SSO interaction
+ */
 public class SsoService {
 	private final ApiService apiService;
 
@@ -184,7 +187,7 @@ public class SsoService {
 	 * 
 	 * @return String certificate fingerprint
 	 */
-	private String getX509Certificate(AppService appService, Properties properties) {
+	private static String getX509Certificate(AppService appService, Properties properties) {
 		String x509Certificate = properties.getProperty("sso.x509Fingerprint");
 		if (!MnoPropertiesHelper.isNullOrEmpty(x509Certificate)) {
 			return x509Certificate;
@@ -243,31 +246,34 @@ public class SsoService {
 	}
 
 	/**
-     * Return the endpoint used for remote session check (used for single logout)
-     * @param userUid Maestrano User UID
-     * @param sessionToken Maestrano User session token
-     * @return String the endpoint to reach
-     */
-    public String getSessionCheckUrl(String userUid, String sessionToken) {
-        return this.getIdpUrl() + "/" + userUid + "?session=" + sessionToken;
-    }
+	 * Return the endpoint used for remote session check (used for single logout)
+	 * 
+	 * @param userUid
+	 *            Maestrano User UID
+	 * @param sessionToken
+	 *            Maestrano User session token
+	 * @return String the endpoint to reach
+	 */
+	public String getSessionCheckUrl(String userUid, String sessionToken) {
+		return this.getIdpUrl() + "/" + userUid + "?session=" + sessionToken;
+	}
 
 	public com.maestrano.saml.Settings getSamlSettings() {
 		return new com.maestrano.saml.Settings(this.getConsumeUrl(), this.getIssuer(), this.getIdpUrl(), this.getX509Certificate(), this.getNameIdFormat());
 	}
 
-	public Map<String,String> toMetadataHash() {
-        Map<String,String> hash = new HashMap<String,String>();
-        hash.put("enabled",Boolean.toString(getEnabled()));
-        hash.put("creation_mode",getCreationMode());
-        hash.put("init_path",getInitPath());
-        hash.put("consume_path",getConsumePath());
-        hash.put("idm",getIdm());
-        hash.put("idp",getIdp());
-        hash.put("name_id_format",getNameIdFormat());
-        hash.put("x509_fingerprint",getX509Fingerprint());
-        hash.put("x509_certificate",getX509Certificate());
-        
-        return hash;
-    }
+	public Map<String, String> toMetadataHash() {
+		Map<String, String> hash = new HashMap<String, String>();
+		hash.put("enabled", Boolean.toString(getEnabled()));
+		hash.put("creation_mode", getCreationMode());
+		hash.put("init_path", getInitPath());
+		hash.put("consume_path", getConsumePath());
+		hash.put("idm", getIdm());
+		hash.put("idp", getIdp());
+		hash.put("name_id_format", getNameIdFormat());
+		hash.put("x509_fingerprint", getX509Fingerprint());
+		hash.put("x509_certificate", getX509Certificate());
+
+		return hash;
+	}
 }

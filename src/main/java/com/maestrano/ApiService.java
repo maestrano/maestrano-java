@@ -6,6 +6,9 @@ import java.util.Properties;
 
 import com.maestrano.helpers.MnoPropertiesHelper;
 
+/**
+ * Maestrano API Service, related to all Maestrano API
+ */
 public class ApiService {
 	private static final String TEST_ACCOUNT_HOST = "http://api-sandbox.maestrano.io";
 
@@ -22,13 +25,13 @@ public class ApiService {
 
 	// package private Constructor
 	ApiService(AppService appService, Properties props) {
-		id = MnoPropertiesHelper.getProperty("api.id", props);
-		key = MnoPropertiesHelper.getProperty("api.key", props);
-		accountBase = MnoPropertiesHelper.getProperty("api.accountBase", props);
-		accountHost = getAccountHost(appService, props);
-		connecBase = getConnecBase(appService, props);
-		connecHost = getConnecHost(appService, props);
-		verifySslCerts = MnoPropertiesHelper.getBooleanProperty("api.verifySslCerts", props);
+		this.id = MnoPropertiesHelper.getProperty("api.id", props);
+		this.key = MnoPropertiesHelper.getProperty("api.key", props);
+		this.accountBase = MnoPropertiesHelper.getProperty("api.accountBase", props);
+		this.accountHost = getAccountHost(appService, props);
+		this.connecBase = getConnecBase(appService, props);
+		this.connecHost = getConnecHost(appService, props);
+		this.verifySslCerts = MnoPropertiesHelper.getBooleanProperty("api.verifySslCerts", props);
 	}
 
 	/**

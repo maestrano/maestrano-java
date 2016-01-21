@@ -20,9 +20,31 @@ import com.maestrano.exception.MnoConfigurationException;
 import com.maestrano.exception.MnoException;
 
 /**
- * Entry point for Maestrano Configuration
+ * <p>
+ * Entry point for Maestrano API SDK Configuration.
+ * </p>
  * 
- * You need to call it only once the {@link #configure() methods
+ * You can configure maestrano using a properties file from the classpath or with an absolute path:</br>
+ * 
+ * <pre>
+ * Maestrano.configure("myconfig.properties");
+ * </pre>
+ * 
+ * <p>
+ * 
+ * This will configure Maestrano with the properties defined in the myconfig.properties file for the default configuration.
+ * 
+ * You can add configuration presets programmatically by adding sets of properties in your Maestrano configuration. These additional presets can then be specified when doing particular action, such as
+ * initializing a Connec!™ client or triggering a SSO handshake. These presets are particularly useful if you are dealing with multiple Maestrano-style marketplaces (multi-enterprise integration).
+ * </p>
+ * <p>
+ * If this is the first time you integrate with Maestrano, we recommend adopting a multi-tenant approach. All code samples in this documentation provide examples on how to handle multi-tenancy by
+ * scoping method calls to a specific configuration preset. </br>
+ * More information about multi-tenant integration can be found on our <a href="https://maestrano.atlassian.net/wiki/display/CONNECAPIV2/Multi-Tenant+Integration">Our Multi-Tenant Integration
+ * Guide</a>
+ * <p>
+ * The {@link #configure()} methods needs to be called only once per preset. A {@link MnoConfigurationException} will be thrown if Maestrano was previously configured. If you need to reload the
+ * configuration for a given preset, you may use the {@linkplain Maestrano#reloadConfiguration(Properties)} method.
  * 
  */
 public final class Maestrano {
@@ -49,14 +71,12 @@ public final class Maestrano {
 	 * @return String version
 	 */
 	public static String getVersion() {
-		return Maestrano.class.getPackage().getImplementationVersion();
+		return "0.0.9";
 	}
 
 	/**
-	 * Configure Maestrano API using a Properties file and return an instance of Maestrano
+	 * Configure Maestrano API using a "config.properties" file
 	 * 
-	 * @param String
-	 *            filename
 	 * @throws MnoConfigurationException
 	 *             if an instance was already configured
 	 */
@@ -65,15 +85,15 @@ public final class Maestrano {
 	}
 
 	/**
-	 * Configure Maestrano API using a Properties file and return an instance of Maestrano
+	 * Configure Maestrano API using a Properties file
 	 * 
 	 * @param String
-	 *            filename
+	 *            filePath properties file path. In the classPath or absolute
 	 * @throws MnoConfigurationException
 	 *             if an instance was already configured
 	 */
-	public static Maestrano configure(String filename) throws MnoConfigurationException {
-		return configure(DEFAULT, filename);
+	public static Maestrano configure(String filePath) throws MnoConfigurationException {
+		return configure(DEFAULT, filePath);
 	}
 
 	/**
@@ -81,7 +101,7 @@ public final class Maestrano {
 	 * 
 	 * @param Properties
 	 *            props
-	 * @throws MnoException
+	 * @throws MnoConfigurationException
 	 *             if an instance was already configured
 	 */
 	public static Maestrano configure(Properties props) throws MnoConfigurationException {
@@ -89,13 +109,14 @@ public final class Maestrano {
 	}
 
 	/**
-	 * Configure Maestrano API using a Properties file and preset
+	 * Configure Maestrano API using a Properties file for the given preset
 	 * 
 	 * @param String
 	 *            preset
 	 * @param String
-	 *            filename file in the classPath, or the absolute path of the file
+	 *            filePath properties file path. In the classPath or absolute
 	 * @throws MnoConfigurationException
+	 *             if an instance was already configured
 	 */
 	public static Maestrano configure(String preset, String filePath) throws MnoConfigurationException {
 		Properties properties = loadProperties(filePath);
@@ -103,7 +124,7 @@ public final class Maestrano {
 	}
 
 	/**
-	 * Configure Maestrano API using a Properties object and preset
+	 * Configure Maestrano API using a Properties o for the given preset
 	 * 
 	 * @param String
 	 *            preset
@@ -180,7 +201,7 @@ public final class Maestrano {
 	 * @return authenticated or not
 	 * @throws MnoException
 	 */
-	public static boolean authenticate(String appId, String apiKey) throws MnoException {
+	public static boolean authenticate(String appId, String apiKey) throws MnoConfigurationException {
 		return authenticate(DEFAULT, appId, apiKey);
 	}
 
@@ -197,7 +218,7 @@ public final class Maestrano {
 	 * 
 	 * @throws MnoException
 	 */
-	public static boolean authenticate(String preset, String appId, String apiKey) throws MnoException {
+	public static boolean authenticate(String preset, String appId, String apiKey) throws MnoConfigurationException {
 		Maestrano maestrano = get(preset);
 		ApiService apiService = maestrano.apiService();
 		return appId != null && apiKey != null && appId.equals(apiService.getId()) && apiKey.equals(apiService.getKey());
@@ -312,6 +333,13 @@ public final class Maestrano {
 		return gson.toJson(toMetadataHash());
 	}
 
+	/**
+	 * load Properties from a filePath, in the classPath or absolute
+	 * 
+	 * @param filePath
+	 * @return
+	 * @throws MnoConfigurationException
+	 */
 	public static Properties loadProperties(String filePath) throws MnoConfigurationException {
 		Properties properties = new Properties();
 		InputStream input = getInputStreamFromClassPathOrFile(filePath);

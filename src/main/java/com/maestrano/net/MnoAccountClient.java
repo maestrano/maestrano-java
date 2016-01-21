@@ -20,6 +20,9 @@ import com.maestrano.json.DateSerializer;
 import com.maestrano.reflect.ListParameterizedType;
 import com.maestrano.reflect.MnoAccountResponseParameterizedType;
 
+/**
+ * service to retrieve Maestrano Business Objects using Maestraeno API
+ */
 public class MnoAccountClient<T> {
 
 	public static final Gson GSON = new GsonBuilder().setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES).registerTypeAdapter(Date.class, new DateSerializer())
