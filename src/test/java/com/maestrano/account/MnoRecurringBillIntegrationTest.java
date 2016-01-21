@@ -13,22 +13,25 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.maestrano.Maestrano;
+import com.maestrano.account.MnoRecurringBill.MnoRecurringBillClient;
 import com.maestrano.helpers.MnoDateHelper;
 
 public class MnoRecurringBillIntegrationTest {
-private Properties props = new Properties();
+	private MnoRecurringBillClient mnoRecurringBillClient;
 	
 	@Before
 	public void beforeEach() {
+		Properties props = new Properties();
 		props.setProperty("app.environment", "test");
 		props.setProperty("api.id", "app-1");
 		props.setProperty("api.key", "gfcmbu8269wyi0hjazk4t7o1sndpvrqxl53e1");
 		Maestrano.reloadConfiguration(props);
+		mnoRecurringBillClient = MnoRecurringBill.client();
 	}
 	
 	@Test
 	public void all_itRetrievesAllBills() throws Exception {
-		List<MnoRecurringBill> billList = MnoRecurringBill.all();
+		List<MnoRecurringBill> billList = mnoRecurringBillClient.all();
 		MnoRecurringBill bill = billList.get(0);
 		
 		assertEquals("rbill-1",bill.getId());
@@ -44,7 +47,7 @@ private Properties props = new Properties();
 		Map<String,String> filters = new HashMap<String,String>();
 		filters.put("status", "cancelled");
 		
-		List<MnoRecurringBill> billList = MnoRecurringBill.all(filters);
+		List<MnoRecurringBill> billList = mnoRecurringBillClient.all(filters);
 		
 		for (MnoRecurringBill bill : billList) {
 			assertEquals("cancelled",bill.getStatus());
@@ -53,7 +56,7 @@ private Properties props = new Properties();
 	
 	@Test 
 	public void retrieve_itRetrievesASingleBill() throws Exception {
-		MnoRecurringBill bill = MnoRecurringBill.retrieve("rbill-1");
+		MnoRecurringBill bill = mnoRecurringBillClient.retrieve("rbill-1");
 		
 		assertEquals("rbill-1",bill.getId());
 		assertEquals("cld-3",bill.getGroupId());
@@ -70,7 +73,7 @@ private Properties props = new Properties();
 		attrsMap.put("priceCents", 2000);
 		attrsMap.put("description", "Product purchase");
 		
-		MnoRecurringBill bill = MnoRecurringBill.create(attrsMap);
+		MnoRecurringBill bill = mnoRecurringBillClient.create(attrsMap);
 		
 		assertFalse(bill.getId() == null);
 		assertEquals("cld-3",bill.getGroupId());
@@ -84,9 +87,9 @@ private Properties props = new Properties();
 		attrsMap.put("groupId", "cld-3");
 		attrsMap.put("priceCents", 2000);
 		attrsMap.put("description", "Product purchase");
-		MnoRecurringBill bill = MnoRecurringBill.create(attrsMap);
+		MnoRecurringBill bill = mnoRecurringBillClient.create(attrsMap);
 		
-		assertTrue(bill.cancel());
+		assertTrue(mnoRecurringBillClient.cancel(bill));
 		assertEquals("cancelled",bill.getStatus());
 	}
 }

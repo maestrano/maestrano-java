@@ -7,60 +7,54 @@ import java.util.Map;
 import com.maestrano.net.MnoAccountClient;
 
 class MnoObject {
-	
-	private static MnoAccountClient MNO_ACCOUNT_CLIENT = null;
-	
+
 	/**
-	 * This value has to be lazy loaded, becuase it is possible to use the application without a default preset
+	 * This value has to be lazy loaded, necause it is possible to use the application without a default preset
 	 */
-	protected static MnoAccountClient getDefaultClient(){
-		if (MNO_ACCOUNT_CLIENT == null){
-				MNO_ACCOUNT_CLIENT = MnoAccountClient.defaultClient();
-		}
-		return MNO_ACCOUNT_CLIENT;
-	}
-	
-	public Map<String,Object> changedAttributes;
-	public Map<String,Object> orginalAttributes;
-	
+	public Map<String, Object> changedAttributes;
+	public Map<String, Object> orginalAttributes;
+
 	public MnoObject() {
-		changedAttributes = new HashMap<String,Object>();
-		orginalAttributes = new HashMap<String,Object>();
+		changedAttributes = new HashMap<String, Object>();
+		orginalAttributes = new HashMap<String, Object>();
 	}
-	
+
 	public String toString() {
 		return MnoAccountClient.GSON.toJson(this);
 	}
-	
+
 	protected void changeAttribute(String attrName, Object value) {
 		try {
-			
+
 			Field f = this.getClass().getDeclaredField(attrName);
 			Object currentVal = f.get(this);
-			f.set(this,value);
-			
+			f.set(this, value);
+
 			if (this.orginalAttributes.get(attrName) == null) {
 				this.orginalAttributes.put(attrName, currentVal);
 			}
-			
-			if (this.orginalAttributes.get(attrName) != null 
-					&& this.orginalAttributes.get(attrName).equals(value)) {
+
+			if (this.orginalAttributes.get(attrName) != null && this.orginalAttributes.get(attrName).equals(value)) {
 				this.changedAttributes.remove(attrName);
 				this.orginalAttributes.remove(attrName);
 			} else {
 				this.changedAttributes.put(attrName, value);
 			}
-		
-		} catch (Exception e) {}
+
+		} catch (Exception wontHappen) {
+			//TODO: we should log this
+		}
 	}
-	
+
 	protected void merge(Object obj) {
 		Field[] fs = this.getClass().getDeclaredFields();
-		
+
 		for (Field f : fs) {
 			try {
-				f.set(this,f.get(obj));
-			} catch (Exception e) {}
+				f.set(this, f.get(obj));
+			} catch (Exception wontHappen) {
+				//TODO: we should log this
+			}
 		}
 	}
 }
