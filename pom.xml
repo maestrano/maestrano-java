@@ -5,7 +5,7 @@
 	<groupId>com.maestrano</groupId>
 	<artifactId>maestrano-java</artifactId>
 	<packaging>jar</packaging>
-	<version>0.8.0</version>
+	<version>0.9.0</version>
 	<name>maestrano-java</name>
 	<description>Java bindings for the Maestrano API</description>
 	<url>https://github.com/maestrano/maestrano-java</url>

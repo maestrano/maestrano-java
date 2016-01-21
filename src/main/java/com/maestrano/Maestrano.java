@@ -10,6 +10,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.bind.DatatypeConverter;
@@ -17,7 +18,7 @@ import javax.xml.bind.DatatypeConverter;
 import com.google.gson.Gson;
 import com.maestrano.exception.MnoConfigurationException;
 import com.maestrano.exception.MnoException;
-	
+
 /**
  * Entry point for Maestrano Configuration
  * 
@@ -150,7 +151,7 @@ public final class Maestrano {
 	public static Maestrano get(String preset) throws MnoConfigurationException {
 		Maestrano maestrano = instances.get(preset);
 		if (maestrano == null) {
-			throw new MnoConfigurationException("Mastrano was not configured for preset: " + preset);
+			throw new MnoConfigurationException("Mastrano was not configured for preset: " + preset + ". Maetrano.configure(" + preset + ") needs to have been called once.");
 		}
 		return maestrano;
 	}
@@ -158,9 +159,17 @@ public final class Maestrano {
 	public static Maestrano getDefault() {
 		Maestrano maestrano = instances.get(DEFAULT);
 		if (maestrano == null) {
-			throw new RuntimeException("Mastrano was not configured for default preset");
+			throw new RuntimeException("Mastrano was not configured for default preset. Maetrano.configure() needs to have been called once.");
 		}
 		return maestrano;
+	}
+
+	/**
+	 * 
+	 * @return the configured presets id
+	 */
+	public static Set<String> presets() {
+		return instances.keySet();
 	}
 
 	/**
