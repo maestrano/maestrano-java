@@ -31,7 +31,10 @@ Maestrano Cloud Integration is currently in closed beta. Want to know more? Send
 6. [Connec!™ Data Sharing](#connec-data-sharing)
   * [Making Requests](#making-requests)
   * [Webhook Notifications](#webhook-notifications)
-
+7. [Migrating from 0.*](#migrating-from-previous-version)
+  * [Migrating Maestrano methods calls](#migrating-maestrano-methods-calls)
+  * [Migrating Connec!™ API calls](#migrating-connec-api-calls)
+  * [Migrating Connec!™ Data Sharing API calls](#migrating-connec-data-sharing-api-calls)
 - - -
 
 ## Getting Setup
@@ -832,6 +835,69 @@ Example of notification message:
 ```
 
 Entities sent via notifications follow the same data structure as the one described in our REST API documentation (available at http://maestrano.github.io/connec)
+
+
+## Migrating from previous version
+
+Before the 1.0.0 version, the methods were static and directly made on the classes. Starting from 1.0.0, you need to get instances of Maestrano configuration or MnoObject connection client to do the calls.
+
+### Migrating Maestrano methods calls
+
+Before 1.0.0:
+```java
+Maestrano.configure();
+Maestrano.configure("myPreset", myPresetProperties);
+Maestrano.toMetadata();
+Maestrano.toMetadata("myPreset");
+//...
+Maestrano.ssoService().getLogoutUrl()
+Maestrano.ssoService().getLogoutUrl("myPreset")
+```
+After 1.0.0:
+```java
+Maetrano defaultInstance = Maestrano.configure();
+Maetrano presetInstance = Maestrano.configure("myPreset", myPresetProperties);
+
+defaultInstance.toMetadata();
+presetInstance.toMetadata();
+// or:
+Maestrano.getDefault().toMetadata();
+Maestrano.get("myPreset").toMetadata();
+//...
+Maestrano.getDefault().ssoService().getLogoutUrl();
+Maestrano.get("myPreset").ssoService().getLogoutUrl();
+```
+### Migrating Connec!™ API calls
+
+For API calls, you need now to retrieve an instance of a client (MnoBillClient, MnoUserClient etc..) to make the calls.
+Before 1.0.0:
+```java
+List<MnoBill> bills = MnoBill.all();
+MnoBill bill = MnoBill.retrieve("rbill-f1d2s54");
+```
+After 1.0.0:
+```java
+List<MnoBill> bills = MnoBill.client().all();
+MnoBill bill = MnoBill.client().retrieve("rbill-f1d2s54");
+// or:
+MnoBillClient client = MnoBill.client();
+List<MnoBill> bills = client.all();
+MnoBill bill = client.retrieve("rbill-f1d2s54");
+```
+
+### Migrating Connec!™ Data Sharing API calls
+
+Before you could directly make the static call on ConnecClient. Now you need to retrieve the default instance or the one configured for a given preset.
+Before 1.0.0:
+```java
+Map<String, Object> organizations = ConnecClient.all("organizations", groupId);
+organization = (Map<String, Object>) ConnecClient.create("organizations", groupId, newOrganization).get("organizations");
+```
+After 1.0.0:
+```java
+ConnecClient connecClient = ConnecClient.defaultClient();
+Map<String, Object> organizations = connecClient.all("organizations", groupId);
+organization = (Map<String, Object>) connecClient.create("organizations", groupId, newOrganization).get("organizations");
 
 ## Support
 This README is still in the process of being written and improved. As such it might not cover some of the questions you might have.
