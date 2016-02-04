@@ -1,12 +1,12 @@
 package com.maestrano;
 
+import static org.junit.Assert.assertEquals;
+
 import java.util.Map;
 import java.util.Properties;
 
 import org.junit.Before;
 import org.junit.Test;
-
-import static org.junit.Assert.assertEquals;
 
 public class AppServiceTest {
 	private Properties props = new Properties();
@@ -16,8 +16,9 @@ public class AppServiceTest {
 	public void beforeEach() {
 		props.setProperty("app.environment", "production");
 		props.setProperty("app.host", "https://mysuperapp.com");
-		Maestrano.configure(props);
-		subject = Maestrano.appService();
+		
+		Maestrano maestrano = Maestrano.reloadConfiguration(props);
+		subject = maestrano.appService();
 	}
 
 	@Test

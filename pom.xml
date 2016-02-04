@@ -5,7 +5,7 @@
 	<groupId>com.maestrano</groupId>
 	<artifactId>maestrano-java</artifactId>
 	<packaging>jar</packaging>
-	<version>0.8.0</version>
+	<version>1.0.0</version>
 	<name>maestrano-java</name>
 	<description>Java bindings for the Maestrano API</description>
 	<url>https://github.com/maestrano/maestrano-java</url>
@@ -19,17 +19,17 @@
 			<url>http://www.opensource.org/licenses/mit-license.php</url>
 		</license>
 	</licenses>
-  <distributionManagement>
-    <snapshotRepository>
-      <id>ossrh</id>
-      <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-    </snapshotRepository>
-    <repository>
-      <id>ossrh</id>
-      <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-    </repository>
-  </distributionManagement>
-  <scm>
+	<distributionManagement>
+		<snapshotRepository>
+			<id>ossrh</id>
+			<url>https://oss.sonatype.org/content/repositories/snapshots</url>
+		</snapshotRepository>
+		<repository>
+			<id>ossrh</id>
+			<url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+		</repository>
+	</distributionManagement>
+	<scm>
 		<connection>scm:git:git@github.com:maestrano/maestrano-java.git</connection>
 		<developerConnection>scm:git:git@github.com:maestrano/maestrano-java.git</developerConnection>
 		<url>git@github.com:maestrano/maestrano-java.git</url>
@@ -70,14 +70,6 @@
 		</dependencies>
 	</dependencyManagement>
 	<build>
-		<resources>
-			<resource>
-				<directory>.</directory>
-				<includes>
-					<include>VERSION</include>
-				</includes>
-			</resource>
-		</resources>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -129,15 +121,15 @@
 				</executions>
 			</plugin>
 			<plugin>
-        <groupId>org.sonatype.plugins</groupId>
-          <artifactId>nexus-staging-maven-plugin</artifactId>
-          <version>1.6.3</version>
-          <extensions>true</extensions>
-          <configuration>
-             <serverId>ossrh</serverId>
-             <nexusUrl>https://oss.sonatype.org/</nexusUrl>
-             <autoReleaseAfterClose>true</autoReleaseAfterClose>
-          </configuration>
+				<groupId>org.sonatype.plugins</groupId>
+				<artifactId>nexus-staging-maven-plugin</artifactId>
+				<version>1.6.3</version>
+				<extensions>true</extensions>
+				<configuration>
+					<serverId>ossrh</serverId>
+					<nexusUrl>https://oss.sonatype.org/</nexusUrl>
+					<autoReleaseAfterClose>true</autoReleaseAfterClose>
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>

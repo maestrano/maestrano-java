@@ -31,7 +31,10 @@ Maestrano Cloud Integration is currently in closed beta. Want to know more? Send
 6. [Connec!™ Data Sharing](#connec-data-sharing)
   * [Making Requests](#making-requests)
   * [Webhook Notifications](#webhook-notifications)
-
+7. [Migrating from 0.*](#migrating-from-previous-version)
+  * [Migrating Maestrano methods calls](#migrating-maestrano-methods-calls)
+  * [Migrating Connec!™ API calls](#migrating-connec-api-calls)
+  * [Migrating Connec!™ Data Sharing API calls](#migrating-connec-data-sharing-api-calls)
 - - -
 
 ## Getting Setup
@@ -59,13 +62,13 @@ To install maestrano-java using Maven, add this dependency to your project's POM
 ### Configuration
 #### Via config file
 
-You can configure maestrano using a properties file from the classpath and load it this way
+You can configure maestrano using a properties file from the classpath or with an absolute path.
 
 ```java
     Maestrano.configure("myconfig.properties");
 ```
 
-You can add configuration presets progranatically by adding sets of properties in your Maestrano configuration. These additional presets can then be specified when doing particular action, such as initializing a Connec!™ client or triggering a SSO handshake. These presets are particularly useful if you are dealing with multiple Maestrano-style marketplaces (multi-enterprise integration).
+You can add configuration presets programmatically by adding sets of properties in your Maestrano configuration. These additional presets can then be specified when doing particular action, such as initializing a Connec!™ client or triggering a SSO handshake. These presets are particularly useful if you are dealing with multiple Maestrano-style marketplaces (multi-enterprise integration).
 
 If this is the first time you integrate with Maestrano, we recommend adopting a multi-tenant approach. All code samples in this documentation provide examples on how to handle multi-tenancy by scoping method calls to a specific configuration preset.
 
@@ -74,12 +77,12 @@ More information about multi-tenant integration can be found on [Our Multi-Tenan
 
 ```java
     // Load configuration
-    Maestrano.configure("config1", "config1.properties");
-    Maestrano.configure("config2", "config2.properties");
+    Maestrano config1 = Maestrano.configure("config1", "config1.properties");
+    Maestrano config" = Maestrano.configure("config2", "config2.properties");
     
     // Access configuration with presets
-    Maestrano.toMetadata("config1");
-    Maestrano.toMetadata("config2");
+    config1.toMetadata();
+    config2.toMetadata();
 ```
 
 The properties file can contain the following values
@@ -253,7 +256,7 @@ So here is an example of page to adapt depending on the framework you're using:
   java.io.PrintWriter writer = response.getWriter();
 
   if (Maestrano.authenticate(request)) {
-    writer.write(Maestrano.toMetadata());
+    writer.write(Maestrano.getDefault().toMetadata());
   } else {
     writer.write("Failed");
   }
@@ -266,7 +269,7 @@ It is also possible to specify presets when exposing the metadata
 
 ```jsp
     ...
-    writer.write(Maestrano.toMetadata("mypreset"));
+    writer.write(Maestrano.get("mypreset").toMetadata());
 ```
 
 
@@ -291,7 +294,7 @@ The init action is all handled via Maestrano methods and should look like this:
 ```jsp
 <%@ page import="com.maestrano.saml.AuthRequest" %>
 <%
-  AuthRequest authReq = new AuthRequest(request);
+  AuthRequest authReq = new AuthRequest(Maestrano.getDefault(), request);
   String ssoUrl = authReq.getRedirectUrl();
   
   response.sendRedirect(ssoUrl);
@@ -302,7 +305,7 @@ With presets:
 ```jsp
 <%@ page import="com.maestrano.saml.AuthRequest" %>
 <%
-  AuthRequest authReq = new AuthRequest("mypreset", request);
+  AuthRequest authReq = new AuthRequest(Maestrano.get("mypreset"), request);
   String ssoUrl = authReq.getRedirectUrl();
   
   response.sendRedirect(ssoUrl);
@@ -323,8 +326,8 @@ Based on your application requirements the consume action might look like this:
     MnoGroup mnoGroup = new MnoGroup(authResp);
     
     // Build/Map local entities
-    MyGroup localGroup = MyGroup.FindOrCreateForMaestrano(mnoGroup);
-    MyUser localUser = MyUser.FindOrCreateForMaestrano(mnoUser);
+    MyGroup localGroup = MyGroup.findOrCreateForMaestrano(mnoGroup);
+    MyUser localUser = MyUser.findOrCreateForMaestrano(mnoUser);
     
     // Add localUser to the localGroup if not already part
     // of it
@@ -352,7 +355,7 @@ Based on your application requirements the consume action might look like this:
 ```jsp
 <%@ page import="com.maestrano.saml.Response,com.maestrano.sso.*" %>
 <%
-  Response authResp = new Response("mypreset");
+  Response authResp = new Response(Maestrano.get("mypreset"));
   ...
 %>
 ```
@@ -366,7 +369,7 @@ If you want your users to benefit from single logout then you should define the 
 MnoSession mnoSession = new MnoSession(request.getSession());
 
 if (!mnoSession.isValid()) {
-  response.sendRedirect(Maestrano.ssoService().getInitUrl());
+  response.sendRedirect(Maestrano.getDefault().ssoService().getInitUrl());
 }
 ```
 
@@ -378,14 +381,14 @@ If you start seing session check requests on every page load it means something 
 When Maestrano users sign out of your application you can redirect them to the Maestrano logout page. You can get the url of this page by calling:
 
 ```java
-Maestrano.ssoService().getLogoutUrl()
+Maestrano.getDefault().ssoService().getLogoutUrl()
 ```
 
 ### Redirecting on error
 If any error happens during the SSO handshake, you can redirect users to the following URL:
 
-```csharp
-Maestrano.ssoService().getUnauthorizedUrl()
+```java
+Maestrano.getDefault().ssoService().getUnauthorizedUrl()
 ```
 
 ## Account Webhooks
@@ -396,7 +399,7 @@ Sad as it is a business might decide to stop using your service at some point. O
 
 Maestrano only uses this controller for service cancellation so there is no need to implement any other type of action - ie: GET, PUT/PATCH or POST. The use of other http verbs might come in the future to improve the communication between Maestrano and your service but as of now it is not required.
 
-The controller example below reimplements the authenticate_maestrano! method seen in the [metadata section](#metadata) for completeness. Utimately you should move this method to a helper if you can.
+The controller example below reimplements the authenticate_maestrano! method seen in the [metadata section](#metadata-endpoint) for completeness. Utimately you should move this method to a helper if you can.
 
 The example below needs to be adapted depending on your application:
 
@@ -412,7 +415,7 @@ A business might decide at some point to revoke access to your services for one 
 
 Maestrano only uses this controller for user membership cancellation so there is no need to implement any other type of action - ie: GET, PUT/PATCH or POST. The use of other http verbs might come in the future to improve the communication between Maestrano and your service but as of now it is not required.
 
-The controller example below reimplements the authenticate_maestrano! method seen in the [metadata section](#metadata) for completeness. Utimately you should move this method to a helper if you can.
+The controller example below reimplements the authenticate_maestrano! method seen in the [metadata section](#metadata-endpoint) for completeness. Utimately you should move this method to a helper if you can.
 
 The example below needs to be adapted depending on your application:
 
@@ -561,34 +564,40 @@ com.maestrano.account.MnoBill
 
 List all bills you have created and iterate through the list
 ```java
-List<MnoBill> bills = MnoBill.all();
+List<MnoBill> bills = MnoBill.client().all();
 ```
+and if you need to precise a preset
+```java
+List<MnoBill> bills = MnoBill.client("mypreset").all();
+```
+
 
 Access a single bill by id
 ```java
-MnoBill bill = MnoBill.retrieve("bill-f1d2s54");
+MnoBill bill = MnoBill.client().retrieve("bill-f1d2s54");
 ```
 
 Create a new bill
-```csharp
+```java
 Map<String, Object> attrsMap = new HashMap<String, Object>();
 attrsMap.put("groupId", "cld-3");
 attrsMap.put("priceCents", 2000);
 attrsMap.put("description", "Product purchase");
 
-MnoBill bill = MnoBill.create(attrsMap);
+MnoBill bill = MnoBill.client().create(attrsMap);
 ```
 
 Cancel a bill
-```csharp
-MnoBill bill = MnoBill.retrieve("bill-f1d2s54");
-bill.cancel();
+```java
+MnoBillClient client = MnoBill.client();
+MnoBill bill = client.retrieve("bill-f1d2s54");
+client.cancel(bill);
 ```
 
 #### Recurring Bill
 A recurring bill charges a given customer at a regular interval without you having to do anything.
 
-```csharp
+```java
 com.maestrano.account.MnoRecurringBill
 ```
 
@@ -727,16 +736,21 @@ com.maestrano.account.MnoRecurringBill
 
 List all recurring bills you have created and iterate through the list
 ```java
-List<MnoRecurringBill> bills = MnoRecurringBill.all();
+List<MnoRecurringBill> bills = MnoRecurringBill.client().all();
 ```
+If you need to create the call for a given preset
+```java
+List<MnoRecurringBill> bills = MnoRecurringBill.client("mypreset").all();
+```
+
 
 Access a single recurring bill by id
 ```java
-MnoRecurringBill bill = MnoRecurringBill.retrieve("rbill-f1d2s54");
+MnoRecurringBill bill = MnoRecurringBill.client().retrieve("rbill-f1d2s54");
 ```
 
 Create a new recurring bill
-```csharp
+```java
 Map<String, Object> attrsMap = new HashMap<String, Object>();
 attrsMap.put("groupId", "cld-3");
 attrsMap.put("priceCents", 2000);
@@ -744,13 +758,14 @@ attrsMap.put("description", "Product purchase");
 attrsMap.put("period", "Month");
 attrsMap.put("startDate", new Date());
 
-MnoRecurringBill bill = MnoRecurringBill.create(attrsMap);
+MnoRecurringBill bill = MnoRecurringBill.client()..create(attrsMap);
 ```
 
 Cancel a recurring bill
-```csharp
-MnoRecurringBill bill = MnoRecurringBill.retrieve("rbill-f1d2s54");
-bill.cancel();
+```java
+MnoRecurringBillClient client = MnoRecurringBill.client();
+MnoRecurringBill bill = client.retrieve("rbill-f1d2s54");
+client.cancel(bill);
 ```
 
 ## Connec!™ Data Sharing
@@ -771,30 +786,32 @@ The Maestrano API provides a built-in client - for connecting to Connec!™. Thi
 
 ```java
 String groupId = "cld-3";
+// Retrieve default Connect client, if you need to get ConnecClient for a given preset, call ConnecClient.withPreset("myPreset");
+ConnecClient connecClient = ConnecClient.defaultClient();
 
 // Fetch all organizations
-Map<String, Object> organizations = ConnecClient.all("organizations", groupId);
+Map<String, Object> organizations = connecClient.all("organizations", groupId);
 System.out.println("Fetched organizations: " + organizations);
 // Fetched organizations: {organizations=[{name=Doe Corp Inc., id=8afd71e0-8394-0132-a4d2-2623376cdffe, group_id=cld-3, type=organizations}, ... }
 
 // Retrieve first organization
 List<Map<String, Object>> organizationsHashes = (List<Map<String, Object>>) organizations.get("organizations");
 String firstOrganizationId = (String) organizationsHashes.get(0).get("id");
-Map<String, Object> organization = (Map<String, Object>) ConnecClient.retrieve("organizations", groupId, firstOrganizationId).get("organizations");
+Map<String, Object> organization = (Map<String, Object>) connecClient.retrieve("organizations", groupId, firstOrganizationId).get("organizations");
 System.out.println("Retrieved first organization: " + organization);
 // Retrieved first organization: {name=Doe Corp Inc., id=8afd71e0-8394-0132-a4d2-2623376cdffe, group_id=cld-3, type=organizations}
 
 // Create a new organization
 Map<String, Object> newOrganization = new HashMap<String, Object>();
 newOrganization.put("name", "New Organization");
-organization = (Map<String, Object>) ConnecClient.create("organizations", groupId, newOrganization).get("organizations");
+organization = (Map<String, Object>) connecClient.create("organizations", groupId, newOrganization).get("organizations");
 System.out.println("Created new organization: " + organization);
 // Created new organization: {name=New Organization, id=347e0fa0-cfaf-0132-4f1a-42f46dd33bd3, group_id=cld-3, type=organizations}
 
 // Update an organization
 organization.put("industry", "Hardware");
 String organizationId = (String) organization.get("id");
-Map<String, Object> updatedOrganization = (Map<String, Object>) ConnecClient.update("organizations", groupId, organizationId, organization).get("organizations");
+Map<String, Object> updatedOrganization = (Map<String, Object>) connecClient.update("organizations", groupId, organizationId, organization).get("organizations");
 System.out.println("Updated organization: " + updatedOrganization);
 // Updated organization: {name=New Organization, id=347e0fa0-cfaf-0132-4f1a-42f46dd33bd3, group_id=cld-3, industry=Hardware, type=organizations}
 ```
@@ -806,7 +823,7 @@ If you have configured the Maestrano API to receive update notifications (see 's
 Notifications are JSON messages containing the list of entities that have recently changed in other systems. You will only receive notifications for entities you have subscribed to.
 
 Example of notification message:
-```ruby
+```javascript
 {
   "organizations": [
     { "id": "e32303c1-5102-0132-661e-600308937d74", name: "DoeCorp Inc.", ... }
@@ -818,6 +835,69 @@ Example of notification message:
 ```
 
 Entities sent via notifications follow the same data structure as the one described in our REST API documentation (available at http://maestrano.github.io/connec)
+
+
+## Migrating from previous version
+
+Before the 1.0.0 version, the methods were static and directly made on the classes. Starting from 1.0.0, you need to get instances of Maestrano configuration or MnoObject connection client to do the calls.
+
+### Migrating Maestrano methods calls
+
+Before 1.0.0:
+```java
+Maestrano.configure();
+Maestrano.configure("myPreset", myPresetProperties);
+Maestrano.toMetadata();
+Maestrano.toMetadata("myPreset");
+//...
+Maestrano.ssoService().getLogoutUrl()
+Maestrano.ssoService().getLogoutUrl("myPreset")
+```
+After 1.0.0:
+```java
+Maetrano defaultInstance = Maestrano.configure();
+Maetrano presetInstance = Maestrano.configure("myPreset", myPresetProperties);
+
+defaultInstance.toMetadata();
+presetInstance.toMetadata();
+// or:
+Maestrano.getDefault().toMetadata();
+Maestrano.get("myPreset").toMetadata();
+//...
+Maestrano.getDefault().ssoService().getLogoutUrl();
+Maestrano.get("myPreset").ssoService().getLogoutUrl();
+```
+### Migrating Connec!™ API calls
+
+For API calls, you need now to retrieve an instance of a client (MnoBillClient, MnoUserClient etc..) to make the calls.
+Before 1.0.0:
+```java
+List<MnoBill> bills = MnoBill.all();
+MnoBill bill = MnoBill.retrieve("rbill-f1d2s54");
+```
+After 1.0.0:
+```java
+List<MnoBill> bills = MnoBill.client().all();
+MnoBill bill = MnoBill.client().retrieve("rbill-f1d2s54");
+// or:
+MnoBillClient client = MnoBill.client();
+List<MnoBill> bills = client.all();
+MnoBill bill = client.retrieve("rbill-f1d2s54");
+```
+
+### Migrating Connec!™ Data Sharing API calls
+
+Before you could directly make the static call on ConnecClient. Now you need to retrieve the default instance or the one configured for a given preset.
+Before 1.0.0:
+```java
+Map<String, Object> organizations = ConnecClient.all("organizations", groupId);
+organization = (Map<String, Object>) ConnecClient.create("organizations", groupId, newOrganization).get("organizations");
+```
+After 1.0.0:
+```java
+ConnecClient connecClient = ConnecClient.defaultClient();
+Map<String, Object> organizations = connecClient.all("organizations", groupId);
+organization = (Map<String, Object>) connecClient.create("organizations", groupId, newOrganization).get("organizations");
 
 ## Support
 This README is still in the process of being written and improved. As such it might not cover some of the questions you might have.

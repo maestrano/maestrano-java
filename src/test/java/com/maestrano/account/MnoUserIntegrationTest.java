@@ -9,22 +9,27 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.maestrano.Maestrano;
+import com.maestrano.account.MnoUser.MnoUserClient;
 import com.maestrano.helpers.MnoDateHelper;
 
 public class MnoUserIntegrationTest {
-	private Properties props = new Properties();
+
+	private MnoUserClient mnoUserClient;
 
 	@Before
 	public void beforeEach() {
+		Properties props = new Properties();
 		props.setProperty("app.environment", "test");
 		props.setProperty("api.id", "app-1");
 		props.setProperty("api.key", "gfcmbu8269wyi0hjazk4t7o1sndpvrqxl53e1");
-		Maestrano.configure(props);
+		Maestrano.reloadConfiguration(props);
+		mnoUserClient = MnoUser.client();
+		
 	}
 
 	@Test
 	public void all_itRetrievesAllUsers() throws Exception {
-		List<MnoUser> list = MnoUser.all();
+		List<MnoUser> list = mnoUserClient.all();
 		MnoUser entity = null;
 		for (MnoUser elem : list) {
 			if (elem.getId().equals("usr-1")) entity = elem;
@@ -38,7 +43,7 @@ public class MnoUserIntegrationTest {
 
 	@Test 
 	public void retrieve_itRetrievesASingleUser() throws Exception {
-		MnoUser entity = MnoUser.retrieve("usr-1");
+		MnoUser entity = mnoUserClient.retrieve("usr-1");
 
 		assertEquals("usr-1",entity.getId());
 		assertEquals("John",entity.getName());

@@ -9,10 +9,10 @@ public class ConnecResponse<T> {
 	private Map<String,String> metadata;
 	
 	/**
-	 * Count the number of record returned
+	 * Count ithe number of record returned
 	 * @return number of records in the response
 	 */
-	public Integer getCount() {
+	public int getCount() {
 		if (metadata != null && metadata.get("count") != null) {
 			return Integer.parseInt(metadata.get("count"));
 		}

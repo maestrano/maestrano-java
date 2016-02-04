@@ -13,22 +13,25 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.maestrano.Maestrano;
+import com.maestrano.account.MnoBill.MnoBillClient;
 import com.maestrano.helpers.MnoDateHelper;
 
 public class MnoBillIntegrationTest {
 	private Properties props = new Properties();
+	private MnoBillClient mnoBillClient;
 	
 	@Before
 	public void beforeEach() {
 		props.setProperty("app.environment", "test");
 		props.setProperty("api.id", "app-1");
 		props.setProperty("api.key", "gfcmbu8269wyi0hjazk4t7o1sndpvrqxl53e1");
-		Maestrano.configure(props);
+		Maestrano.reloadConfiguration(props);
+		mnoBillClient = MnoBill.client();
 	}
 	
 	@Test
 	public void all_itRetrievesAllBills() throws Exception {
-		List<MnoBill> billList = MnoBill.all();
+		List<MnoBill> billList = mnoBillClient.all();
 		MnoBill bill = billList.get(0);
 		
 		assertEquals("bill-1",bill.getId());
@@ -42,7 +45,7 @@ public class MnoBillIntegrationTest {
 		Map<String,String> filters = new HashMap<String,String>();
 		filters.put("status", "cancelled");
 		
-		List<MnoBill> billList = MnoBill.all(filters);
+		List<MnoBill> billList = mnoBillClient.all(filters);
 		
 		assertTrue(billList.size() > 0);
 		
@@ -53,7 +56,7 @@ public class MnoBillIntegrationTest {
 	
 	@Test 
 	public void retrieve_itRetrievesASingleBill() throws Exception {
-		MnoBill bill = MnoBill.retrieve("bill-1");
+		MnoBill bill = mnoBillClient.retrieve("bill-1");
 		
 		assertEquals("bill-1",bill.getId());
 		assertEquals("cld-3",bill.getGroupId());
@@ -68,7 +71,7 @@ public class MnoBillIntegrationTest {
 		attrsMap.put("priceCents", 2000);
 		attrsMap.put("description", "Product purchase");
 		
-		MnoBill bill = MnoBill.create(attrsMap);
+		MnoBill bill = mnoBillClient.create(attrsMap);
 		
 		assertFalse(bill.getId() == null);
 		assertEquals("cld-3",bill.getGroupId());
@@ -82,9 +85,9 @@ public class MnoBillIntegrationTest {
 		attrsMap.put("groupId", "cld-3");
 		attrsMap.put("priceCents", 2000);
 		attrsMap.put("description", "Product purchase");
-		MnoBill bill = MnoBill.create(attrsMap);
+		MnoBill bill = mnoBillClient.create(attrsMap);
 		
-		assertTrue(bill.cancel());
+		assertTrue(mnoBillClient.cancel(bill));
 		assertEquals("cancelled",bill.getStatus());
 	}
 }

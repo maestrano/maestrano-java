@@ -12,22 +12,25 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.maestrano.Maestrano;
+import com.maestrano.account.MnoGroup.MnoGroupClient;
 import com.maestrano.helpers.MnoDateHelper;
 
 public class MnoGroupIntegrationTest {
 	private Properties props = new Properties();
+	private MnoGroupClient mnoGroupClient;
 
 	@Before
 	public void beforeEach() {
 		props.setProperty("app.environment", "test");
 		props.setProperty("api.id", "app-1");
 		props.setProperty("api.key", "gfcmbu8269wyi0hjazk4t7o1sndpvrqxl53e1");
-		Maestrano.configure(props);
+		Maestrano.reloadConfiguration(props);
+		mnoGroupClient = MnoGroup.client();
 	}
 
 	@Test
 	public void all_itRetrievesAllGroups() throws Exception {
-		List<MnoGroup> list = MnoGroup.all();
+		List<MnoGroup> list = mnoGroupClient.all();
 		MnoGroup entity = null;
 		for (MnoGroup elem : list) {
 			if (elem.getId().equals("cld-3")) entity = elem;
@@ -44,14 +47,14 @@ public class MnoGroupIntegrationTest {
 		filters.put("freeTrialEndAtAfter", d);
 		filters.put("freeTrialEndAtBefore", d);
 		
-		List<MnoGroup> billList = MnoGroup.all(filters);
+		List<MnoGroup> billList = mnoGroupClient.all(filters);
 		
 		assertEquals(1,billList.size());
 	}
 
 	@Test 
 	public void retrieve_itRetrievesASingleGroup() throws Exception {
-		MnoGroup entity = MnoGroup.retrieve("cld-3");
+		MnoGroup entity = mnoGroupClient.retrieve("cld-3");
 
 		assertEquals("cld-3",entity.getId());
 		assertEquals("2014-05-21T00:31:26Z",MnoDateHelper.toIso8601(entity.getCreatedAt()));
