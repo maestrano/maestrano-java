@@ -1,3 +1,5 @@
+https://codeship.com/projects/b206abd0-b0f4-0133-7057-3674ea8aa855/status?branch=master
+
 <p align="center">
 <img src="https://raw.github.com/maestrano/maestrano-java/master/maestrano.png" alt="Maestrano Logo">
 <br/>
