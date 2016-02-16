@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-
+	
 	<groupId>com.maestrano</groupId>
 	<artifactId>maestrano-java</artifactId>
 	<packaging>jar</packaging>
-	<version>0.9.1</version>
+	<version>0.9.1-SNAPSHOT</version>
 	<name>maestrano-java</name>
 	<description>Java bindings for the Maestrano API</description>
 	<url>https://github.com/maestrano/maestrano-java</url>
@@ -37,8 +37,8 @@
 		<connection>scm:git:git@github.com:maestrano/maestrano-java.git</connection>
 		<developerConnection>scm:git:git@github.com:maestrano/maestrano-java.git</developerConnection>
 		<url>git@github.com:maestrano/maestrano-java.git</url>
-		<tag>maestrano-java-0.9.1</tag>
-	</scm>
+	  <tag>HEAD</tag>
+  </scm>
 	<developers>
 		<developer>
 			<name>Arnaud Lachaume</name>
@@ -123,9 +123,6 @@
 						<goals>
 							<goal>jar</goal>
 						</goals>
-						<configuration>
-							<additionalparam>-Xdoclint:none</additionalparam>
-						</configuration>
 					</execution>
 				</executions>
 			</plugin>
