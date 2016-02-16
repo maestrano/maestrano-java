@@ -1,4 +1,4 @@
-https://codeship.com/projects/b206abd0-b0f4-0133-7057-3674ea8aa855/status?branch=master
+[ ![Codeship Status for maestrano/maestrano-java](https://codeship.com/projects/b206abd0-b0f4-0133-7057-3674ea8aa855/status?branch=master)](https://codeship.com/projects/132856)
 
 <p align="center">
 <img src="https://raw.github.com/maestrano/maestrano-java/master/maestrano.png" alt="Maestrano Logo">
@@ -7,7 +7,6 @@ https://codeship.com/projects/b206abd0-b0f4-0133-7057-3674ea8aa855/status?branch
 </p>
 
 Maestrano Cloud Integration is currently in closed beta. Want to know more? Send us an email to <contact@maestrano.com>.
-  
   
   
 - - -
@@ -140,6 +139,13 @@ sso.initPath=/maestrano/auth/saml/init
 #This is your application path to the SAML endpoint that allows users to finalize SSO authentication. 
 # During the 'consume' action your application sets users (and associated group) up and/or log them in.
 sso.consumePath=/maestrano/auth/saml/consume
+
+# => x509 SSL Certificate
+# During the SSO handshake, the SSL certificate is validated and must match the IDP provider.
+# For multi-tenant integration, the certificates may change per environment.
+#
+# sso.x509Fingerprint=2f:57:71:e4:40:19:57:37:a6:2c:f0:c5:82:52:2f:2e:41:b7:9d:7e
+# sso.x509Certificate=-----BEGIN CERTIFICATE-----\nCERTIFICATE CONTENT==\n-----END CERTIFICATE-----
 
 # => creationMode
 # !IMPORTANT
