@@ -188,7 +188,7 @@ public class SsoService {
 	 * @return String certificate fingerprint
 	 */
 	private static String getX509Certificate(AppService appService, Properties properties) {
-		String x509Certificate = properties.getProperty("sso.x509Fingerprint");
+		String x509Certificate = properties.getProperty("sso.x509Certificate");
 		if (!MnoPropertiesHelper.isNullOrEmpty(x509Certificate)) {
 			return x509Certificate;
 		} else {
