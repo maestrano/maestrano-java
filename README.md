@@ -846,7 +846,7 @@ Entities sent via notifications follow the same data structure as the one descri
 
 ## Migrating from previous version
 
-Before the 0.9.0 version, the methods were static and directly made on the classes. Starting from 1.0.0, you need to get instances of Maestrano configuration or MnoObject connection client to do the calls.
+Before the 0.9.0 version, the methods were static and directly made on the classes. Starting from 0.9.0, you need to get instances of Maestrano configuration or MnoObject connection client to do the calls.
 
 ### Migrating Maestrano methods calls
 
