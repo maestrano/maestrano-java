@@ -56,7 +56,7 @@ To install maestrano-java using Maven, add this dependency to your project's POM
 <dependency>
   <groupId>com.maestrano</groupId>
   <artifactId>maestrano-java</artifactId>
-  <version>0.8.0</version>
+  <version>0.9.1</version>
 </dependency>
 ```
 
@@ -846,11 +846,11 @@ Entities sent via notifications follow the same data structure as the one descri
 
 ## Migrating from previous version
 
-Before the 1.0.0 version, the methods were static and directly made on the classes. Starting from 1.0.0, you need to get instances of Maestrano configuration or MnoObject connection client to do the calls.
+Before the 0.9.0 version, the methods were static and directly made on the classes. Starting from 1.0.0, you need to get instances of Maestrano configuration or MnoObject connection client to do the calls.
 
 ### Migrating Maestrano methods calls
 
-Before 1.0.0:
+Before 0.9.0:
 ```java
 Maestrano.configure();
 Maestrano.configure("myPreset", myPresetProperties);
@@ -860,7 +860,7 @@ Maestrano.toMetadata("myPreset");
 Maestrano.ssoService().getLogoutUrl()
 Maestrano.ssoService().getLogoutUrl("myPreset")
 ```
-After 1.0.0:
+After 0.9.0:
 ```java
 Maetrano defaultInstance = Maestrano.configure();
 Maetrano presetInstance = Maestrano.configure("myPreset", myPresetProperties);
@@ -877,12 +877,12 @@ Maestrano.get("myPreset").ssoService().getLogoutUrl();
 ### Migrating Connec!™ API calls
 
 For API calls, you need now to retrieve an instance of a client (MnoBillClient, MnoUserClient etc..) to make the calls.
-Before 1.0.0:
+Before 0.9.0:
 ```java
 List<MnoBill> bills = MnoBill.all();
 MnoBill bill = MnoBill.retrieve("rbill-f1d2s54");
 ```
-After 1.0.0:
+After 0.9.0:
 ```java
 List<MnoBill> bills = MnoBill.client().all();
 MnoBill bill = MnoBill.client().retrieve("rbill-f1d2s54");
@@ -895,12 +895,12 @@ MnoBill bill = client.retrieve("rbill-f1d2s54");
 ### Migrating Connec!™ Data Sharing API calls
 
 Before you could directly make the static call on ConnecClient. Now you need to retrieve the default instance or the one configured for a given preset.
-Before 1.0.0:
+Before 0.9.0:
 ```java
 Map<String, Object> organizations = ConnecClient.all("organizations", groupId);
 organization = (Map<String, Object>) ConnecClient.create("organizations", groupId, newOrganization).get("organizations");
 ```
-After 1.0.0:
+After 0.9.0:
 ```java
 ConnecClient connecClient = ConnecClient.defaultClient();
 Map<String, Object> organizations = connecClient.all("organizations", groupId);
