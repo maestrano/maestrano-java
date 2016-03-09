@@ -344,6 +344,7 @@ Based on your application requirements the consume action might look like this:
     
     // Set Maestrano session (for Single Logout)
     MnoSession mnoSession = new MnoSession(request.getSession(),mnoUser);
+    // or MnoSession mnoSession = new MnoSession("preset", request.getSession(),mnoUser);
     mnoSession.save();
     
     // Redirect to you application home page
@@ -374,9 +375,17 @@ If you want your users to benefit from single logout then you should define the 
 
 ```java
 MnoSession mnoSession = new MnoSession(request.getSession());
-
 if (!mnoSession.isValid()) {
   response.sendRedirect(Maestrano.getDefault().ssoService().getInitUrl());
+}
+```
+
+Or when you use a preset:
+
+```java
+MnoSession mnoSession = new MnoSession("preset", request.getSession());
+if (!mnoSession.isValid()) {
+  response.sendRedirect(Maestrano.get("preset").ssoService().getInitUrl());
 }
 ```
 
