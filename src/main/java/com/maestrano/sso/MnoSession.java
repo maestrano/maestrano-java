@@ -23,14 +23,14 @@ public class MnoSession {
 
 	private final SsoService ssoService;
 	private final HttpSession httpSession;
-	
+
 	private String uid;
 	private String groupUid;
 	private Date recheck;
 	private String sessionToken;
 
 	/**
-	 * Constructor
+	 * Constructor retrieving Maestrano session from httpSession for a given preset
 	 * 
 	 * @param preset
 	 *            configuration preset
@@ -43,7 +43,7 @@ public class MnoSession {
 	}
 
 	/**
-	 * Constructor
+	 * Constructor retrieving Maestrano session from httpSession
 	 * 
 	 * @param HttpSession
 	 *            httpSession
@@ -51,12 +51,7 @@ public class MnoSession {
 	public MnoSession(HttpSession httpSession) {
 		this(Maestrano.getDefault().ssoService(), httpSession);
 	}
-	/**
-	 * Constructor
-	 * 
-	 * @param HttpSession
-	 *            httpSession
-	 */
+
 	private MnoSession(SsoService ssoService, HttpSession httpSession) {
 		this.ssoService = ssoService;
 		this.httpSession = httpSession;
@@ -90,9 +85,9 @@ public class MnoSession {
 			}
 		}
 	}
-	
+
 	/**
-	 * Constructor retrieving Maestrano session from user
+	 * Constructor retrieving Maestrano session from user for a given preset
 	 * 
 	 * @param preset
 	 *            configuration preset
@@ -105,6 +100,7 @@ public class MnoSession {
 	public MnoSession(String preset, HttpSession httpSession, MnoUser user) throws MnoConfigurationException {
 		this(Maestrano.get(preset).ssoService(), httpSession, user);
 	}
+
 	/**
 	 * Constructor retrieving Maestrano session from user
 	 * 
@@ -137,8 +133,9 @@ public class MnoSession {
 	public boolean isRemoteCheckRequired() {
 		if (uid != null && sessionToken != null && recheck != null) {
 			return recheck.before(new Date());
+		} else {
+			return true;
 		}
-		return true;
 	}
 
 	/**
@@ -200,7 +197,6 @@ public class MnoSession {
 		return false;
 	}
 
-
 	/**
 	 * Return whether the session is valid or not. Perform remote check to maestrano if recheck is overdue.
 	 * 
@@ -235,17 +231,20 @@ public class MnoSession {
 	 */
 	public boolean isValid(boolean ifSession, MnoHttpClient httpClient) {
 		// Return true automatically if SLO is disabled
-		if (!ssoService.getSloEnabled())
+		if (!ssoService.getSloEnabled()) {
 			return true;
+		}
 
 		// Return true if maestrano session not set
 		// and ifSession option enabled
-		if (ifSession && (httpSession == null || httpSession.getAttribute("maestrano") == null))
+		if (ifSession && (httpSession == null || httpSession.getAttribute("maestrano") == null)) {
 			return true;
+		}
 
 		// Return false if HttpSession is nil
-		if (httpSession == null)
+		if (httpSession == null) {
 			return false;
+		}
 
 		if (isRemoteCheckRequired()) {
 			if (this.performRemoteCheck(httpClient)) {
@@ -258,10 +257,9 @@ public class MnoSession {
 		return true;
 	}
 
-	/// <summary>
-	/// Save the Maestrano session in
-	/// HTTP Session
-	/// </summary>
+	/**
+	 * Save the Maestrano session in HTTP Session
+	 */
 	public void save() {
 		Map<String, String> sessObj = new HashMap<String, String>();
 		sessObj.put("uid", this.uid);
