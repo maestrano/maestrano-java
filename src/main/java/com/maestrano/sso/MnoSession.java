@@ -14,25 +14,46 @@ import com.maestrano.Maestrano;
 import com.maestrano.SsoService;
 import com.maestrano.exception.ApiException;
 import com.maestrano.exception.AuthenticationException;
+import com.maestrano.exception.MnoConfigurationException;
 import com.maestrano.exception.MnoException;
 import com.maestrano.helpers.MnoDateHelper;
 import com.maestrano.net.MnoHttpClient;
 
 public class MnoSession {
 
+	private final SsoService ssoService;
+	private final HttpSession httpSession;
+
 	private String uid;
 	private String groupUid;
 	private Date recheck;
 	private String sessionToken;
-	private HttpSession httpSession;
 
 	/**
-	 * Constructor
+	 * Constructor retrieving Maestrano session from httpSession for a given preset
+	 * 
+	 * @param preset
+	 *            configuration preset
+	 * @param HttpSession
+	 *            httpSession
+	 */
+
+	public MnoSession(String preset, HttpSession httpSession) throws MnoConfigurationException {
+		this(Maestrano.get(preset).ssoService(), httpSession);
+	}
+
+	/**
+	 * Constructor retrieving Maestrano session from httpSession
 	 * 
 	 * @param HttpSession
 	 *            httpSession
 	 */
 	public MnoSession(HttpSession httpSession) {
+		this(Maestrano.getDefault().ssoService(), httpSession);
+	}
+
+	private MnoSession(SsoService ssoService, HttpSession httpSession) {
+		this.ssoService = ssoService;
 		this.httpSession = httpSession;
 
 		String mnoSessEntry = (String) httpSession.getAttribute("maestrano");
@@ -66,6 +87,21 @@ public class MnoSession {
 	}
 
 	/**
+	 * Constructor retrieving Maestrano session from user for a given preset
+	 * 
+	 * @param preset
+	 *            configuration preset
+	 * @param HttpSession
+	 *            httpSession
+	 * @param MnoUser
+	 *            user
+	 * @throws MnoConfigurationException
+	 */
+	public MnoSession(String preset, HttpSession httpSession, MnoUser user) throws MnoConfigurationException {
+		this(Maestrano.get(preset).ssoService(), httpSession, user);
+	}
+
+	/**
 	 * Constructor retrieving Maestrano session from user
 	 * 
 	 * @param HttpSession
@@ -74,6 +110,11 @@ public class MnoSession {
 	 *            user
 	 */
 	public MnoSession(HttpSession httpSession, MnoUser user) {
+		this(Maestrano.getDefault().ssoService(), httpSession, user);
+	}
+
+	private MnoSession(SsoService ssoService, HttpSession httpSession, MnoUser user) {
+		this.ssoService = ssoService;
 		this.httpSession = httpSession;
 
 		if (user != null) {
@@ -89,11 +130,12 @@ public class MnoSession {
 	 * 
 	 * @return Boolean remote check required
 	 */
-	public Boolean isRemoteCheckRequired() {
+	public boolean isRemoteCheckRequired() {
 		if (uid != null && sessionToken != null && recheck != null) {
 			return recheck.before(new Date());
+		} else {
+			return true;
 		}
-		return true;
 	}
 
 	/**
@@ -104,7 +146,7 @@ public class MnoSession {
 	 * @return Boolean session valid
 	 * @throws MnoException
 	 */
-	public Boolean performRemoteCheck() throws MnoException {
+	public boolean performRemoteCheck() throws MnoException {
 		return performRemoteCheck(new MnoHttpClient());
 	}
 
@@ -121,7 +163,7 @@ public class MnoSession {
 	public boolean performRemoteCheck(MnoHttpClient httpClient) {
 		if (uid != null && sessionToken != null && !uid.isEmpty() && !sessionToken.isEmpty()) {
 			// Prepare request
-			String url = ssoService().getSessionCheckUrl(this.uid, this.sessionToken);
+			String url = ssoService.getSessionCheckUrl(this.uid, this.sessionToken);
 			String respStr;
 			try {
 				respStr = httpClient.get(url);
@@ -155,10 +197,6 @@ public class MnoSession {
 		return false;
 	}
 
-	private static SsoService ssoService() {
-		return Maestrano.getDefault().ssoService();
-	}
-
 	/**
 	 * Return whether the session is valid or not. Perform remote check to maestrano if recheck is overdue.
 	 * 
@@ -177,7 +215,7 @@ public class MnoSession {
 	 * @return Boolean session valid
 	 * @throws MnoException
 	 */
-	public Boolean isValid(boolean ifSession) {
+	public boolean isValid(boolean ifSession) {
 		return isValid(ifSession, new MnoHttpClient());
 	}
 
@@ -191,19 +229,22 @@ public class MnoSession {
 	 * @return Boolean session valid
 	 * @throws MnoException
 	 */
-	public Boolean isValid(boolean ifSession, MnoHttpClient httpClient) {
+	public boolean isValid(boolean ifSession, MnoHttpClient httpClient) {
 		// Return true automatically if SLO is disabled
-		if (!ssoService().getSloEnabled())
+		if (!ssoService.getSloEnabled()) {
 			return true;
+		}
 
 		// Return true if maestrano session not set
 		// and ifSession option enabled
-		if (ifSession && (httpSession == null || httpSession.getAttribute("maestrano") == null))
+		if (ifSession && (httpSession == null || httpSession.getAttribute("maestrano") == null)) {
 			return true;
+		}
 
 		// Return false if HttpSession is nil
-		if (httpSession == null)
+		if (httpSession == null) {
 			return false;
+		}
 
 		if (isRemoteCheckRequired()) {
 			if (this.performRemoteCheck(httpClient)) {
@@ -216,10 +257,9 @@ public class MnoSession {
 		return true;
 	}
 
-	/// <summary>
-	/// Save the Maestrano session in
-	/// HTTP Session
-	/// </summary>
+	/**
+	 * Save the Maestrano session in HTTP Session
+	 */
 	public void save() {
 		Map<String, String> sessObj = new HashMap<String, String>();
 		sessObj.put("uid", this.uid);
@@ -270,9 +310,5 @@ public class MnoSession {
 
 	public void setSessionToken(String sessionToken) {
 		this.sessionToken = sessionToken;
-	}
-
-	public void setHttpSession(HttpSession httpSession) {
-		this.httpSession = httpSession;
 	}
 }
