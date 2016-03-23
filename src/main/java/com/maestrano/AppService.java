@@ -16,8 +16,8 @@ public class AppService {
 
 	// package private Constructor
 	AppService(Properties props) {
-		this.environment = MnoPropertiesHelper.getProperty("app.environment", props);
-		this.host = MnoPropertiesHelper.getProperty("app.host", props);
+		this.environment = MnoPropertiesHelper.getPropertyOrDefault(props, "environment", "app.environment");
+		this.host = MnoPropertiesHelper.getPropertyOrDefault(props, "app.host");
 	}
 
 	/**

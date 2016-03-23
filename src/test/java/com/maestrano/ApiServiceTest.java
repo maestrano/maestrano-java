@@ -16,7 +16,7 @@ public class ApiServiceTest {
 
 	@Before
 	public void beforeEach() {
-		props.setProperty("app.environment", "production");
+		props.setProperty("environment", "production");
 		props.setProperty("api.id", "someid");
 		props.setProperty("api.key", "somekey");
 		Maestrano maestrano = Maestrano.reloadConfiguration(props);
@@ -53,8 +53,8 @@ public class ApiServiceTest {
 	}
 	
 	@Test
-	public void getAccountHost_itReturnsTheRightProductionValue() {
-		assertEquals("https://maestrano.com", subject.getAccountHost());
+	public void getHost_itReturnsTheRightProductionValue() {
+		assertEquals("https://maestrano.com", subject.getHost());
 	}
 	
 	@Test
@@ -73,12 +73,12 @@ public class ApiServiceTest {
 	}
 	
 	@Test
-	public void getAccountHost_itReturnsTheRightValue() throws MnoException {
+	public void getHost_itReturnsTheRightValue() throws MnoException {
 		String host = "https://mysuperapp.com";
-		props.setProperty("api.accountHost", host);
+		props.setProperty("api.host", host);
 		Maestrano maestrano = Maestrano.reloadConfiguration(props);
 		ApiService apiService = maestrano.apiService();
-		assertEquals(host, apiService.getAccountHost());
+		assertEquals(host, apiService.getHost());
 	}
 	
 	@Test

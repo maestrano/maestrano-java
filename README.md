@@ -94,7 +94,7 @@ The properties file can contain the following values
 # => environment
 # The environment to connect to. If set to 'production' then all Single Sign-On (SSO) and API requests will be made to maestrano.com. If set to 'test' then requests will be made to api-sandbox.maestrano.io. 
 # The api-sandbox allows you to easily test integration scenarios.
-app.environment=test
+environment=test
 
 # => host
 # This is your application host (e.g: my-app.com) which is ultimately used to redirect users to the right SAML url during SSO handshake.
@@ -108,6 +108,9 @@ app.host=http\://localhost:8080
 api.id=prod_or_sandbox_app_id
 api.key=prod_or_sandbox_api_key
 
+# Api Host
+# The platform host
+api.host=https://maestrano.com
 
 # ===> SSO Configuration
 #
@@ -145,6 +148,11 @@ sso.consumePath=/maestrano/auth/saml/consume
 # For multi-tenant integration, the certificates may change per environment.
 sso.x509Fingerprint=2f:57:71:e4:40:19:57:37:a6:2c:f0:c5:82:52:2f:2e:41:b7:9d:7e
 sso.x509Certificate=-----BEGIN CERTIFICATE-----\nCERTIFICATE CONTENT==\n-----END CERTIFICATE-----
+
+# => Connec Host
+# The Connec! endpoint used to fetch data from
+connec.host=https://api-connec.maestrano.com
+connec.base=/api/v2
 
 # => creationMode
 # !IMPORTANT
@@ -230,7 +238,7 @@ You can configure maestrano with the Properties class using the same configurati
 
 ```java
     Properties props = new Properties();
-    props.setProperty("app.environment", "production");
+    props.setProperty("environment", "production");
     Maestrano.configure(props);
 ```
 

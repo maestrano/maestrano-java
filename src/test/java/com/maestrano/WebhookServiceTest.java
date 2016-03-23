@@ -13,7 +13,7 @@ public class WebhookServiceTest {
 	private WebhookService subject;
 	@Before
 	public void beforeEach() {
-		props.setProperty("app.environment", "production");
+		props.setProperty("environment", "production");
 		reloadConfiguration();
 	}
 

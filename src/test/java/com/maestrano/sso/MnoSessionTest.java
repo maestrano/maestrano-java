@@ -30,7 +30,7 @@ public class MnoSessionTest {
 
 	@Before
 	public void beforeEach() throws Exception {
-		props.setProperty("app.environment", "production");
+		props.setProperty("environment", "production");
 		props.setProperty("app.host", "https://mysuperapp.com");
 		props.setProperty("api.id", "someid");
 		props.setProperty("api.key", "somekey");
@@ -38,7 +38,7 @@ public class MnoSessionTest {
 		Maestrano.reloadConfiguration(props);
 
 		Properties otherProps = new Properties();
-		otherProps.setProperty("app.environment", "theotherproduction");
+		otherProps.setProperty("environment", "theotherproduction");
 		otherProps.setProperty("app.host", "https://theothersuperapp.com");
 		otherProps.setProperty("api.id", "anotherId");
 		otherProps.setProperty("api.key", "anotherKey");

@@ -82,7 +82,7 @@ public class MnoAccountClient<T> {
 	 * @return collection url
 	 */
 	public String getCollectionUrl() {
-		return maestraeno.apiService().getAccountHost() + getCollectionEndpoint();
+		return maestraeno.apiService().getHost() + getCollectionEndpoint();
 	}
 
 	/**
@@ -108,7 +108,7 @@ public class MnoAccountClient<T> {
 	 * @return instance url
 	 */
 	public String getInstanceUrl(String id) {
-		return maestraeno.apiService().getAccountHost() + getInstanceEndpoint(id);
+		return maestraeno.apiService().getHost() + getInstanceEndpoint(id);
 	}
 
 	/**

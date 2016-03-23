@@ -26,14 +26,14 @@ public class SsoService {
 	// Package Private Constructor
 	SsoService(ApiService apiService, AppService appService, Properties props) {
 		this.apiService = apiService;
-		this.enabled = MnoPropertiesHelper.getBooleanProperty("sso.enabled", props);
-		this.sloEnabled = MnoPropertiesHelper.getBooleanProperty("sso.sloEnabled", props);
-		this.creationMode = MnoPropertiesHelper.getProperty("sso.creationMode", props);
-		this.initPath = MnoPropertiesHelper.getProperty("sso.initPath", props);
-		this.consumePath = MnoPropertiesHelper.getProperty("sso.consumePath", props);
+		this.enabled = MnoPropertiesHelper.getBooleanProperty(props, "sso.enabled");
+		this.sloEnabled = MnoPropertiesHelper.getBooleanProperty(props, "sso.sloEnabled");
+		this.creationMode = MnoPropertiesHelper.getPropertyOrDefault(props, "sso.creationMode");
+		this.initPath = MnoPropertiesHelper.getPropertyOrDefault(props, "sso.initPath");
+		this.consumePath = MnoPropertiesHelper.getPropertyOrDefault(props, "sso.consumePath");
 		this.idm = getIdm(appService, props);
 		this.idp = getIdp(appService, props);
-		this.nameIdFormat = MnoPropertiesHelper.getProperty("sso.nameIdFormat", props);
+		this.nameIdFormat = MnoPropertiesHelper.getPropertyOrDefault(props, "sso.nameIdFormat");
 		this.x509Fingerprint = getX509Fingerprint(appService, props);
 		this.x509Certificate = getX509Certificate(appService, props);
 

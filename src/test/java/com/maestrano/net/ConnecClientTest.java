@@ -39,18 +39,18 @@ public class ConnecClientTest {
 	
 	@Before
 	public void beforeEach()  {
-	    defaultProps.setProperty("app.environment", "production");
+	    defaultProps.setProperty("environment", "production");
         defaultProps.setProperty("app.host", "https://mysuperapp.com");
         defaultProps.setProperty("api.id", "someid");
         defaultProps.setProperty("api.key", "somekey");
-        defaultProps.setProperty("api.connecHost", "https://api-connec.maestrano.com");
+        defaultProps.setProperty("connec.host", "https://api-connec.maestrano.com");
         Maestrano.reloadConfiguration(defaultProps);
         
-        otherProps.setProperty("app.environment", "production");
+        otherProps.setProperty("environment", "production");
         otherProps.setProperty("app.host", "https://myotherapp.com");
         otherProps.setProperty("api.id", "otherid");
         otherProps.setProperty("api.key", "otherkey");
-        otherProps.setProperty("api.connecHost", "https://api-connec.other.com");
+        otherProps.setProperty("connec.host", "https://api-connec.other.com");
         Maestrano.reloadConfiguration("other", otherProps);
         
         this.connecClient = ConnecClient.defaultClient();
