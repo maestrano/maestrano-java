@@ -4,6 +4,9 @@
 Ask project owners
 
 ## Release
+### Increment version
+Manually update version in Maestrano.java
+
 ### Perform release dry run
 ```
 mvn release:prepare -DdryRun=true
