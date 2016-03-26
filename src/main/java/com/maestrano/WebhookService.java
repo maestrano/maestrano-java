@@ -16,9 +16,9 @@ public class WebhookService {
 	// Package Private Constructor
 	WebhookService(Properties props) {
 
-		this.accountGroupsPath = MnoPropertiesHelper.getProperty("webhook.account.groupsPath", props);
-		this.accountGroupUsersPath = MnoPropertiesHelper.getProperty("webhook.account.groupUsersPath", props);
-		this.notificationspath = MnoPropertiesHelper.getProperty("webhook.connec.notificationsPath", props);
+		this.accountGroupsPath = MnoPropertiesHelper.getPropertyOrDefault(props, "webhook.account.groupsPath");
+		this.accountGroupUsersPath = MnoPropertiesHelper.getPropertyOrDefault(props, "webhook.account.groupUsersPath");
+		this.notificationspath = MnoPropertiesHelper.getPropertyOrDefault(props, "webhook.connec.notificationsPath");
 		this.connecSubscriptions = new HashMap<String, Boolean>();
 		// Map properties under "webhook.connec.subscriptions" as a Map
 		for (String key : props.stringPropertyNames()) {

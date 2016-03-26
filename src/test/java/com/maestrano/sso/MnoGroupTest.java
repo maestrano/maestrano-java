@@ -22,7 +22,7 @@ public class MnoGroupTest {
 
 	@Before
 	public void beforeEach() throws Exception {
-		props.setProperty("app.environment", "production");
+		props.setProperty("environment", "production");
 		props.setProperty("app.host", "https://mysuperapp.com");
 		props.setProperty("api.id", "someid");
 		props.setProperty("api.key", "somekey");

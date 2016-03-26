@@ -17,7 +17,7 @@ public class SsoServiceTest {
 	
 	@Before
 	public void beforeEach() {
-		props.setProperty("app.environment", "production");
+		props.setProperty("environment", "production");
 		props.setProperty("api.id", "someid");
 		props.setProperty("api.key", "somekey");
 		maestrano = Maestrano.reloadConfiguration(props);

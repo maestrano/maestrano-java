@@ -18,6 +18,7 @@ import javax.xml.bind.DatatypeConverter;
 import com.google.gson.Gson;
 import com.maestrano.exception.MnoConfigurationException;
 import com.maestrano.exception.MnoException;
+import com.maestrano.helpers.MnoPropertiesHelper;
 
 /**
  * <p>
@@ -59,10 +60,11 @@ public final class Maestrano {
 
 	// Private constructor
 	private Maestrano(Properties props) {
-		this.appService = new AppService(props);
-		this.apiService = new ApiService(appService, props);
-		this.ssoService = new SsoService(apiService, appService, props);
-		this.webhookService = new WebhookService(props);
+		Properties trimmedProperties = MnoPropertiesHelper.trimProperties(props);
+		this.appService = new AppService(trimmedProperties);
+		this.apiService = new ApiService(appService, trimmedProperties);
+		this.ssoService = new SsoService(apiService, appService, trimmedProperties);
+		this.webhookService = new WebhookService(trimmedProperties);
 	}
 
 	/**
@@ -71,7 +73,7 @@ public final class Maestrano {
 	 * @return String version
 	 */
 	public static String getVersion() {
-		return "1.0.0";
+		return "0.9.2-SNAPSHOT";
 	}
 
 	/**

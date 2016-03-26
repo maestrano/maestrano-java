@@ -14,7 +14,7 @@ public class AppServiceTest {
 
 	@Before
 	public void beforeEach() {
-		props.setProperty("app.environment", "production");
+		props.setProperty("environment", "production");
 		props.setProperty("app.host", "https://mysuperapp.com");
 		
 		Maestrano maestrano = Maestrano.reloadConfiguration(props);

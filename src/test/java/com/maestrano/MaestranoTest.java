@@ -25,13 +25,13 @@ public class MaestranoTest {
 
 	@Before
 	public void beforeEach() {
-		defaultProps.setProperty("app.environment", "production");
+		defaultProps.setProperty("environment", "production");
 		defaultProps.setProperty("app.host", "https://mysuperapp.com");
 		defaultProps.setProperty("api.id", "someid");
 		defaultProps.setProperty("api.key", "somekey");
 		maestrano = Maestrano.reloadConfiguration(defaultProps);
 
-		otherProps.setProperty("app.environment", "production");
+		otherProps.setProperty("environment", "production");
 		otherProps.setProperty("app.host", "https://myotherapp.com");
 		otherProps.setProperty("api.id", "otherid");
 		otherProps.setProperty("api.key", "otherkey");
