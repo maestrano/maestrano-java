@@ -71,7 +71,7 @@ public class MnoAccountClient<T> {
 	 * @return collection endpoint
 	 */
 	public String getCollectionEndpoint() {
-		return maestraeno.apiService().getAccountBase() + "/" + getEntitiesName();
+		return maestraeno.apiService().getBase() + "/" + getEntitiesName();
 	}
 
 	/**

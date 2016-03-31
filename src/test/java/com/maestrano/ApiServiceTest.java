@@ -22,24 +22,22 @@ public class ApiServiceTest {
 		Maestrano maestrano = Maestrano.reloadConfiguration(props);
 		subject = maestrano.apiService();
 	}
-	
+
 	@Test
 	public void getLang_itReturnsTheRightValue() {
-		assertEquals("Java",subject.getLang());
+		assertEquals("Java", subject.getLang());
 	}
-	
+
 	@Test
 	public void getLangVersion_itReturnsTheRightValue() {
-		assertEquals(System.getProperty("java.version"),subject.getLangVersion());
+		assertEquals(System.getProperty("java.version"), subject.getLangVersion());
 	}
-	
+
 	@Test
 	public void getVersion() {
-		assertEquals(Maestrano.getVersion(),subject.getVersion());
+		assertEquals(Maestrano.getVersion(), subject.getVersion());
 	}
-	
-	
-	
+
 	@Test
 	public void apiAuth_itReturnsTheRightCredentials() throws MnoException {
 		String apiId = "someApiId";
@@ -51,27 +49,17 @@ public class ApiServiceTest {
 		assertEquals(apiId, apiService.getId());
 		assertEquals(apiKey, apiService.getKey());
 	}
-	
+
 	@Test
 	public void getHost_itReturnsTheRightProductionValue() {
 		assertEquals("https://maestrano.com", subject.getHost());
 	}
-	
-	@Test
-	public void getConnecHost_itReturnsTheRightProductionValue() {
-		assertEquals("https://api-connec.maestrano.com",subject.getConnecHost());
-	}
-	
+
 	@Test
 	public void getAccountBase_itReturnsTheRightValue() {
-		assertEquals("/api/v1/account", subject.getAccountBase());
+		assertEquals("/api/v1/account", subject.getBase());
 	}
-	
-	@Test
-	public void getConnecBase_itReturnsTheRightValue() {
-		assertEquals("/api/v2", subject.getConnecBase());
-	}
-	
+
 	@Test
 	public void getHost_itReturnsTheRightValue() throws MnoException {
 		String host = "https://mysuperapp.com";
@@ -80,13 +68,15 @@ public class ApiServiceTest {
 		ApiService apiService = maestrano.apiService();
 		assertEquals(host, apiService.getHost());
 	}
-	
+
 	@Test
 	public void toMetadataHash_itReturnsTheRightValue() {
-		Map<String,String> hash = subject.toMetadataHash();
+		Map<String, String> hash = subject.toMetadataHash();
 		assertEquals(props.getProperty("api.id"), hash.get("id"));
 		assertEquals(subject.getLang(), hash.get("lang"));
 		assertEquals(subject.getVersion(), hash.get("version"));
 		assertEquals(subject.getLangVersion(), hash.get("lang_version"));
+		assertEquals(subject.getHost(), hash.get("host"));
+		assertEquals(subject.getBase(), hash.get("base"));
 	}
 }

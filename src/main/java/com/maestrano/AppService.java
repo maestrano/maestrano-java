@@ -1,6 +1,6 @@
 package com.maestrano;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Properties;
 
@@ -46,7 +46,7 @@ public class AppService {
 	}
 
 	public Map<String, String> toMetadataHash() {
-		Map<String, String> hash = new HashMap<String, String>();
+		Map<String, String> hash = new LinkedHashMap<String, String>();
 		hash.put("host", getHost());
 
 		return hash;

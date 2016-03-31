@@ -1,6 +1,6 @@
 package com.maestrano;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Properties;
 
@@ -263,7 +263,7 @@ public class SsoService {
 	}
 
 	public Map<String, String> toMetadataHash() {
-		Map<String, String> hash = new HashMap<String, String>();
+		Map<String, String> hash = new LinkedHashMap<String, String>();
 		hash.put("enabled", Boolean.toString(getEnabled()));
 		hash.put("creation_mode", getCreationMode());
 		hash.put("init_path", getInitPath());
