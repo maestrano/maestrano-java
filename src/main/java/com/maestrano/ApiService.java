@@ -160,6 +160,8 @@ public class ApiService {
 		hash.put("lang", getLang());
 		hash.put("version", getVersion());
 		hash.put("lang_version", getLangVersion());
+		
+		hash.put("connec.host", getConnecHost());
 
 		return hash;
 	}
