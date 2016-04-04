@@ -196,8 +196,14 @@ sso.creationMode="virtual"
 # Even if the routes look restful we issue only issue DELETE requests for the moment
 # to notify you of any service cancellation (group deletion) or any user being
 # removed from a group.
+# "\:group_id" is a placeholder for the user group id
+# "\:id" is a placeholder for the user uid
+# For example, the webhooks calls would be:
+# for a service cancellation: /maestrano/account/groups/cld-3
+# for a user being removed from a group: /maestrano/account/groups/cld-3/users/usr-201
 webhook.account.groupsPath = /maestrano/account/groups/\:id
 webhook.account.groupUsersPath = /maestrano/account/groups/\:group_id/users/\:id
+
 
 # ===> Connec!™ Webhooks
 # == Notification Path
