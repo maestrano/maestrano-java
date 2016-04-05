@@ -1,5 +1,15 @@
 # Maestrano Javs SDK Release Notes
 
+## maestrano-java-0.9.3
+
+* Introduce ConnecService
+* Connec information are being shown in the medatada
+* Replaced property keys:
+    * api.accountBase with api.base
+
+To see all commits for this version, [click here](https://github.com/maestrano/maestrano-java/compare/maestrano-java-0.9.2...maestrano-java-0.9.3).
+
+
 ## maestrano-java-0.9.2
 
 * Add option to choose configuration preset when checking session is valid for auto logout

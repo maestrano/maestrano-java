@@ -1,6 +1,6 @@
 package com.maestrano;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Properties;
 
@@ -15,23 +15,18 @@ public class ApiService {
 
 	private static final String PROD_CONNEC_HOST = "https://api-connec.maestrano.com";
 
-
 	private final String id;
 	private final String key;
 	private final boolean verifySslCerts;
-	private final String accountBase;
+	private final String base;
 	private final String host;
-	private final String connecHost;
-	private final String connecBase;
 
 	// package private Constructor
 	ApiService(AppService appService, Properties props) {
 		this.id = MnoPropertiesHelper.getPropertyOrDefault(props, "api.id");
 		this.key = MnoPropertiesHelper.getPropertyOrDefault(props, "api.key");
-		this.accountBase = MnoPropertiesHelper.getPropertyOrDefault(props, "api.accountBase");
+		this.base = MnoPropertiesHelper.getPropertyOrDefault(props, "api.base", "api.accountBase");
 		this.host = getApiHost(appService, props);
-		this.connecBase = getConnecBase(appService, props);
-		this.connecHost = getConnecHost(appService, props);
 		this.verifySslCerts = MnoPropertiesHelper.getBooleanProperty(props, "api.verifySslCerts");
 	}
 
@@ -80,17 +75,8 @@ public class ApiService {
 	 * 
 	 * @return String base
 	 */
-	public String getAccountBase() {
-		return accountBase;
-	}
-
-	/**
-	 * Return the host used to make API calls on Connec!
-	 * 
-	 * @return String host
-	 */
-	public String getConnecHost() {
-		return connecHost;
+	public String getBase() {
+		return base;
 	}
 
 	private static String getConnecHost(AppService appService, Properties props) {
@@ -102,33 +88,6 @@ public class ApiService {
 				return PROD_CONNEC_HOST;
 			} else {
 				return TEST_API_HOST;
-			}
-		}
-	}
-
-	/**
-	 * Return the base of the API endpoint
-	 * 
-	 * @return String base
-	 */
-	public String getConnecBase() {
-		return connecBase;
-	}
-
-	/**
-	 * Return the base of the API endpoint
-	 * 
-	 * @return String base
-	 */
-	private static String getConnecBase(AppService appService, Properties props) {
-		String connecBase = MnoPropertiesHelper.getProperty(props, "connec.base", "api.connecBase");
-		if (!MnoPropertiesHelper.isNullOrEmpty(connecBase)) {
-			return connecBase;
-		} else {
-			if (appService.isProduction()) {
-				return "/api/v2";
-			} else {
-				return "/connec/api/v2";
 			}
 		}
 	}
@@ -155,12 +114,14 @@ public class ApiService {
 	}
 
 	public Map<String, String> toMetadataHash() {
-		Map<String, String> hash = new HashMap<String, String>();
+		Map<String, String> hash = new LinkedHashMap<String, String>();
 		hash.put("id", getId());
-		hash.put("lang", getLang());
 		hash.put("version", getVersion());
+		hash.put("verify_ssl_certs", Boolean.toString(getVerifySslCerts()));
+		hash.put("lang", getLang());
 		hash.put("lang_version", getLangVersion());
-
+		hash.put("host", getHost());
+		hash.put("base", getBase());
 		return hash;
 	}
 }

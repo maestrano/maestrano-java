@@ -8,6 +8,7 @@ import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
@@ -56,6 +57,7 @@ public final class Maestrano {
 	private final AppService appService;
 	private final ApiService apiService;
 	private final SsoService ssoService;
+	private final ConnecService connecService;
 	private final WebhookService webhookService;
 
 	// Private constructor
@@ -63,6 +65,7 @@ public final class Maestrano {
 		Properties trimmedProperties = MnoPropertiesHelper.trimProperties(props);
 		this.appService = new AppService(trimmedProperties);
 		this.apiService = new ApiService(appService, trimmedProperties);
+		this.connecService = new ConnecService(appService, props);
 		this.ssoService = new SsoService(apiService, appService, trimmedProperties);
 		this.webhookService = new WebhookService(trimmedProperties);
 	}
@@ -300,6 +303,15 @@ public final class Maestrano {
 	}
 
 	/**
+	 * Return the Connec Service
+	 * 
+	 * @return ConnecService
+	 */
+	public ConnecService connecService() {
+		return connecService;
+	}
+
+	/**
 	 * Return the Maestrano Webhook Service
 	 * 
 	 * @return WebhookService
@@ -315,11 +327,12 @@ public final class Maestrano {
 	 * @return metadata hash
 	 */
 	public Map<String, Object> toMetadataHash() {
-		Map<String, Object> hash = new HashMap<String, Object>();
+		Map<String, Object> hash = new LinkedHashMap<String, Object>();
 		hash.put("environment", appService.getEnvironment());
 		hash.put("app", appService.toMetadataHash());
 		hash.put("api", apiService.toMetadataHash());
 		hash.put("sso", ssoService.toMetadataHash());
+		hash.put("connec", connecService.toMetadataHash());
 		hash.put("webhook", webhookService.toMetadataHash());
 
 		return hash;

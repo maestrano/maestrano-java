@@ -291,7 +291,7 @@ public class MnoHttpClient {
 		try {
 			return openConnection(realUrl, header);
 		} catch (IOException e) {
-			throw new ApiException("Something wrong happened while trying establish the connection", e);
+			throw new ApiException("Something wrong happened while trying establish the connection " + realUrl, e);
 		}
 	}
 

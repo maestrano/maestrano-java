@@ -4,17 +4,22 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
 import javax.xml.bind.DatatypeConverter;
 
+import org.apache.commons.io.IOUtils;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.google.gson.Gson;
 import com.maestrano.exception.MnoException;
 import com.maestrano.testhelpers.HttpRequestStub;
 
@@ -90,16 +95,23 @@ public class MaestranoTest {
 	}
 
 	@Test
-	public void toMetadata_itReturnTheRightValue() {
+	public void toMetadataHash_itReturnTheRightValue() {
 		Map<String, Object> hash = new HashMap<String, Object>();
 		hash.put("environment", maestrano.appService().getEnvironment());
 		hash.put("app", maestrano.appService().toMetadataHash());
 		hash.put("api", maestrano.apiService().toMetadataHash());
 		hash.put("sso", maestrano.ssoService().toMetadataHash());
+		hash.put("connec", maestrano.connecService().toMetadataHash());
 		hash.put("webhook", maestrano.webhookService().toMetadataHash());
 
-		Gson gson = new Gson();
-		assertEquals(gson.toJson(hash), maestrano.toMetadata());
+		assertEquals(hash, maestrano.toMetadataHash());
+	}
+
+	@Test
+	public void toMetadata_itReturnTheRightValue() throws IOException {
+		InputStream inputStream = this.getClass().getResourceAsStream("/expected-metadata.json");
+		String expected = IOUtils.toString(inputStream , StandardCharsets.UTF_8); 
+		assertEquals(expected, maestrano.toMetadata());
 	}
 
 	@Test

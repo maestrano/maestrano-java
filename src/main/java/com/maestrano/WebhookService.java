@@ -1,6 +1,7 @@
 package com.maestrano;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Properties;
 
@@ -68,16 +69,16 @@ public class WebhookService {
 	}
 
 	public Map<String, Object> toMetadataHash() {
-		Map<String, Object> hash = new HashMap<String, Object>();
+		Map<String, Object> hash = new LinkedHashMap<String, Object>();
 
 		// Account
-		Map<String, Object> accountHash = new HashMap<String, Object>();
+		Map<String, Object> accountHash = new LinkedHashMap<String, Object>();
 		accountHash.put("groups_path", getAccountGroupsPath());
 		accountHash.put("group_users_path", getAccountGroupUsersPath());
 		hash.put("account", accountHash);
 
 		// Connec
-		Map<String, Object> connecHash = new HashMap<String, Object>();
+		Map<String, Object> connecHash = new LinkedHashMap<String, Object>();
 		hash.put("connec", connecHash);
 
 		// Connec > Notifications

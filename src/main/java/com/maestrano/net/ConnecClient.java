@@ -10,6 +10,7 @@ import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.maestrano.ApiService;
+import com.maestrano.ConnecService;
 import com.maestrano.Maestrano;
 import com.maestrano.exception.ApiException;
 import com.maestrano.exception.AuthenticationException;
@@ -28,13 +29,19 @@ public class ConnecClient {
 			.registerTypeAdapter(Date.class, new DateDeserializer()).registerTypeAdapter(TimeZone.class, new TimeZoneSerializer()).registerTypeAdapter(TimeZone.class, new TimeZoneDeserializer())
 			.create();
 	private final ApiService apiService;
+	private final ConnecService connecService;
 
 	private ConnecClient(String preset) throws MnoConfigurationException {
-		this.apiService = Maestrano.get(preset).apiService();
+		Maestrano maestrano = Maestrano.get(preset);
+		this.connecService = maestrano.connecService();
+		this.apiService = maestrano.apiService();
+		
 	}
 
 	private ConnecClient() {
-		this.apiService = Maestrano.getDefault().apiService();
+		Maestrano maestrano = Maestrano.getDefault();
+		this.connecService = maestrano.connecService();
+		this.apiService = maestrano.apiService();
 	}
 
 	/**
@@ -67,7 +74,7 @@ public class ConnecClient {
 	 * @return collection endpoint
 	 */
 	public String getCollectionEndpoint(String entityName, String groupId) {
-		return apiService.getConnecBase() + "/" + groupId + "/" + entityName;
+		return connecService.getBase() + "/" + groupId + "/" + entityName;
 	}
 
 	/**
@@ -75,12 +82,12 @@ public class ConnecClient {
 	 * 
 	 * @param entity
 	 *            name
-	 * @param customer
+	 * @param customerW
 	 *            group id
 	 * @return collection url
 	 */
 	public String getCollectionUrl(String entityName, String groupId) {
-		return apiService.getConnecHost() + getCollectionEndpoint(entityName, groupId);
+		return connecService.getHost() + getCollectionEndpoint(entityName, groupId);
 	}
 
 	/**
@@ -116,7 +123,7 @@ public class ConnecClient {
 	 * @return instance url
 	 */
 	public String getInstanceUrl(String entityName, String groupId, String id) {
-		return apiService.getConnecHost() + getInstanceEndpoint(entityName, groupId, id);
+		return connecService.getHost() + getInstanceEndpoint(entityName, groupId, id);
 	}
 
 	/**
