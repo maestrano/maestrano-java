@@ -13,13 +13,12 @@ public class ApiService {
 	private static final String PROD_API_HOST = "https://maestrano.com";
 	private static final String TEST_API_HOST = "http://api-sandbox.maestrano.io";
 
-	private static final String PROD_CONNEC_HOST = "https://api-connec.maestrano.com";
-
 	private final String id;
 	private final String key;
 	private final boolean verifySslCerts;
 	private final String base;
 	private final String host;
+	private String langVersion;
 
 	// package private Constructor
 	ApiService(AppService appService, Properties props) {
@@ -28,6 +27,7 @@ public class ApiService {
 		this.base = MnoPropertiesHelper.getPropertyOrDefault(props, "api.base", "api.accountBase");
 		this.host = getApiHost(appService, props);
 		this.verifySslCerts = MnoPropertiesHelper.getBooleanProperty(props, "api.verifySslCerts");
+		this.langVersion = System.getProperty("java.version");
 	}
 
 	/**
@@ -79,19 +79,6 @@ public class ApiService {
 		return base;
 	}
 
-	private static String getConnecHost(AppService appService, Properties props) {
-		String connecHost = MnoPropertiesHelper.getProperty(props, "connec.host", "api.connecHost");
-		if (!MnoPropertiesHelper.isNullOrEmpty(connecHost)) {
-			return connecHost;
-		} else {
-			if (appService.isProduction()) {
-				return PROD_CONNEC_HOST;
-			} else {
-				return TEST_API_HOST;
-			}
-		}
-	}
-
 	/**
 	 * Check whether to verify the SSL certificate or not during API calls. False by default.
 	 * 
@@ -106,7 +93,16 @@ public class ApiService {
 	}
 
 	public String getLangVersion() {
-		return System.getProperty("java.version");
+		return this.langVersion;
+	}
+
+	
+	/**
+	 * only for test
+	 * @param langVersion
+	 */
+	public void setLangVersion(String langVersion) {
+		this.langVersion = langVersion;
 	}
 
 	public String getVersion() {

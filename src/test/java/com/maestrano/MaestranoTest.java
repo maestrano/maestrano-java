@@ -109,6 +109,7 @@ public class MaestranoTest {
 
 	@Test
 	public void toMetadata_itReturnTheRightValue() throws IOException {
+		maestrano.apiService().setLangVersion("JAVA_VERSION");
 		InputStream inputStream = this.getClass().getResourceAsStream("/expected-metadata.json");
 		String expected = IOUtils.toString(inputStream , StandardCharsets.UTF_8); 
 		assertEquals(expected, maestrano.toMetadata());
