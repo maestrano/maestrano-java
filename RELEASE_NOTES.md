@@ -1,5 +1,10 @@
 # Maestrano Javs SDK Release Notes
 
+## maestrano-java-0.9.4
+
+To see all commits for this version, [click here](https://github.com/maestrano/maestrano-java/compare/maestrano-java-0.9.3...maestrano-java-0.9.4).
+
+
 ## maestrano-java-0.9.3
 
 * Introduce ConnecService
