@@ -18,7 +18,7 @@ public class ApiService {
 	private final boolean verifySslCerts;
 	private final String base;
 	private final String host;
-	private String langVersion;
+	private final String langVersion;
 
 	// package private Constructor
 	ApiService(AppService appService, Properties props) {
@@ -94,15 +94,6 @@ public class ApiService {
 
 	public String getLangVersion() {
 		return this.langVersion;
-	}
-
-	
-	/**
-	 * only for test
-	 * @param langVersion
-	 */
-	public void setLangVersion(String langVersion) {
-		this.langVersion = langVersion;
 	}
 
 	public String getVersion() {
