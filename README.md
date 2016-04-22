@@ -60,6 +60,8 @@ To install maestrano-java using Maven, add this dependency to your project's POM
 </dependency>
 ```
 
+Or download the Jars directly from Maven: http://search.maven.org/#search%7Cga%7C1%7Ca%3A%22maestrano-java%22
+
 ### Configuration
 #### Via config file
 
