@@ -33,7 +33,7 @@ public class AppService {
 	 * @return true if environment is production
 	 */
 	public boolean isProduction() {
-		return "production".equals(this.environment);
+		return "production".equals(this.environment) || "uat".equals(this.environment);
 	}
 
 	/**
