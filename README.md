@@ -156,7 +156,7 @@ sso.x509Fingerprint=2f:57:71:e4:40:19:57:37:a6:2c:f0:c5:82:52:2f:2e:41:b7:9d:7e
 sso.x509Certificate=-----BEGIN CERTIFICATE-----\nCERTIFICATE CONTENT==\n-----END CERTIFICATE-----
 
 # => Connec Host
-# The Connec! endpoint used to fetch data from
+# The Connec! endpoint used to fetch data from. If you are integrating with other tenant, you may have to override them, for UAT and Production.
 connec.host=https://api-connec.maestrano.com
 connec.base=/api/v2
 
