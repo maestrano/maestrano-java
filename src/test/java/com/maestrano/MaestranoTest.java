@@ -7,9 +7,7 @@ import static org.junit.Assert.assertTrue;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -125,4 +123,5 @@ public class MaestranoTest {
 		assertEquals("blabla", myConfigMaestrano.apiService().getId());
 		assertEquals("secret", myConfigMaestrano.apiService().getKey());
 	}
+	
 }

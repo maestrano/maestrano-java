@@ -9,6 +9,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
@@ -20,6 +21,7 @@ import com.google.gson.Gson;
 import com.maestrano.exception.MnoConfigurationException;
 import com.maestrano.exception.MnoException;
 import com.maestrano.helpers.MnoPropertiesHelper;
+import com.maestrano.net.DevPlatformClient;
 
 /**
  * <p>
@@ -87,6 +89,44 @@ public final class Maestrano {
 	 */
 	public static Maestrano configure() throws MnoConfigurationException {
 		return configure(DEFAULT, "config.properties");
+	}
+
+	/**
+	 * Method to fetch configuration from the dev-platform, using environment variable.
+	 * 
+	 * The following variable must be set in the environment.
+	 * <ul>
+	 * <li>ENVIRONMENT_NAME</li>
+	 * <li>ENVIRONMENT_KEY</li>
+	 * <li>ENVIRONMENT_SECRET</li>
+	 * </ul>
+	 * 
+	 * @throws MnoConfigurationException
+	 */
+	public static void autoConfigure() throws MnoConfigurationException {
+		Properties properties = new Properties();
+		autoConfigure(properties);
+	}
+
+	
+	/**
+	 * Method to fetch configuration from the dev-platform, using a properties file.
+	 * 
+	 * @throws MnoConfigurationException
+	 */
+	public static void autoConfigure(String devPlatformPropertiesFile) throws MnoConfigurationException {
+		Properties properties = loadProperties(devPlatformPropertiesFile);
+		Properties trimProperties = MnoPropertiesHelper.trimProperties(properties);
+		autoConfigure(trimProperties);
+	}
+
+	private static void autoConfigure(Properties properties) throws MnoConfigurationException {
+		DevPlatformService devPlatformService = new DevPlatformService(properties);
+		DevPlatformClient client = new DevPlatformClient(devPlatformService);
+		List<MarketplaceConfiguration> marketplaceConfigurations = client.getMarketplaceConfigurations();
+		for (MarketplaceConfiguration marketplaceConfiguration : marketplaceConfigurations) {
+			configure(marketplaceConfiguration.getName(), marketplaceConfiguration.getProperties());
+		}
 	}
 
 	/**
