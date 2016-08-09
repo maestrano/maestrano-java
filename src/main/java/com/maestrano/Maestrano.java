@@ -103,9 +103,9 @@ public final class Maestrano {
 	 * 
 	 * @throws MnoConfigurationException
 	 */
-	public static void autoConfigure() throws MnoConfigurationException {
+	public static Map<String, Maestrano> autoConfigure() throws MnoConfigurationException {
 		Properties properties = new Properties();
-		autoConfigure(properties);
+		return autoConfigure(properties);
 	}
 
 	
@@ -114,19 +114,29 @@ public final class Maestrano {
 	 * 
 	 * @throws MnoConfigurationException
 	 */
-	public static void autoConfigure(String devPlatformPropertiesFile) throws MnoConfigurationException {
+	public static Map<String, Maestrano>  autoConfigure(String devPlatformPropertiesFile) throws MnoConfigurationException {
 		Properties properties = loadProperties(devPlatformPropertiesFile);
 		Properties trimProperties = MnoPropertiesHelper.trimProperties(properties);
-		autoConfigure(trimProperties);
+		return autoConfigure(trimProperties);
 	}
 
-	private static void autoConfigure(Properties properties) throws MnoConfigurationException {
+	/**
+	 * Method to fetch configuration from the dev-platform, using a properties.
+	 * 
+	 * @return a Map <Preset, MaestranoConfiguration> the preset being the marketplace name
+	 * @throws MnoConfigurationException
+	 */
+	public static Map<String, Maestrano>  autoConfigure(Properties properties) throws MnoConfigurationException {
 		DevPlatformService devPlatformService = new DevPlatformService(properties);
 		DevPlatformClient client = new DevPlatformClient(devPlatformService);
 		List<MarketplaceConfiguration> marketplaceConfigurations = client.getMarketplaceConfigurations();
+		Map<String, Maestrano> configurations = new LinkedHashMap<String, Maestrano>();
 		for (MarketplaceConfiguration marketplaceConfiguration : marketplaceConfigurations) {
-			configure(marketplaceConfiguration.getName(), marketplaceConfiguration.getProperties());
+			String preset = marketplaceConfiguration.getName();
+			Maestrano maestrano = configure(preset, marketplaceConfiguration.getProperties());
+			configurations.put(preset, maestrano);
 		}
+		return configurations;
 	}
 
 	/**
@@ -418,6 +428,11 @@ public final class Maestrano {
 		} catch (FileNotFoundException e) {
 			throw new MnoConfigurationException("Could not find file: " + filename, e);
 		}
+	}
+
+	@Override
+	public String toString() {
+		return toMetadata();
 	}
 
 }

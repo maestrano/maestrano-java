@@ -135,7 +135,8 @@ public class MnoPropertiesHelper {
 		} else if (!(o instanceof Collection)) {
 			//Convert the a_property_value to aPropertyValue
 			String propertyKey = CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, prefix);
-			properties.setProperty(propertyKey, o.toString());
+			String value = o == null ? "" : o.toString();
+			properties.setProperty(propertyKey, value);
 		}
 	}
 

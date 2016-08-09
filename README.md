@@ -101,7 +101,18 @@ export ENVIRONMENT_NAME=<your environment nid>
 export ENVIRONMENT_KEY=<your environment key>
 export ENVIRONMENT_SECRET=<your environment secret>
 ```
-
+and directly call
+```java
+Maestrano:autoConfigure();
+```
+You may also call autoConfigure using a Properties instance.
+```java
+Properties properties = new Properties();
+properties.setProperty("environment.name", "<your environment nid>");
+properties.setProperty("environment.apiKey", "<your environment key>");
+properties.setProperty("environment.apiSecret", "<your environment secret>");
+Maestrano.autoConfigure(properties);
+```
 
 #### Via config file
 
