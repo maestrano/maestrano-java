@@ -17,9 +17,12 @@ import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.bind.DatatypeConverter;
 
+import org.apache.commons.io.IOUtils;
+
 import com.google.gson.Gson;
 import com.maestrano.exception.MnoConfigurationException;
 import com.maestrano.exception.MnoException;
+import com.maestrano.helpers.BuildInformationHelper;
 import com.maestrano.helpers.MnoPropertiesHelper;
 import com.maestrano.net.DevPlatformClient;
 
@@ -78,7 +81,7 @@ public final class Maestrano {
 	 * @return String version
 	 */
 	public static String getVersion() {
-		return "0.9.4-SNAPSHOT";
+		return BuildInformationHelper.getVersion();
 	}
 
 	/**
@@ -412,6 +415,8 @@ public final class Maestrano {
 			properties.load(input);
 		} catch (IOException e) {
 			throw new MnoConfigurationException("Could not load properties file: " + filePath, e);
+		} finally {
+			IOUtils.closeQuietly(input);
 		}
 		return properties;
 	}
