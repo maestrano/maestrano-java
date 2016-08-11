@@ -77,7 +77,7 @@ The [developer platform](https://dev-platform.maestrano.com) is the easiest way 
 
 A `dev-platform.properties` config file is loaded using:
 ```java
-Maestrano:autoConfigure("/path/to/dev-platform.propertie");
+Maestrano.autoConfigure("/path/to/dev-platform.propertie");
 ```
 The properties file may look like this:
 ```ini
