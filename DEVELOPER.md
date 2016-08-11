@@ -5,7 +5,7 @@ Ask project owners
 
 ## Release
 ### Increment version
-Manually update version in Maestrano.java
+Increment version in pom.xml
 
 ### Perform release dry run
 ```

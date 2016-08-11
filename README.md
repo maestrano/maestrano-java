@@ -67,6 +67,53 @@ You will require the following dependencies:
 * Servlet-api (such as from Apache Tomcat)
 
 ### Configuration
+
+
+There is several ways to configure Maestrano. You can either use our developer platform, load a properties files or at runtime using a Properties instance variable. Maestrano configuration is flexible and you can combine any of those methods to configure the app.
+
+#### Via the developer platform
+
+The [developer platform](https://dev-platform.maestrano.com) is the easiest way to configure Maestrano. The only actions needed from your part is to create your application and environments on the developer platform and to create a config file. The framework will then contact the developer platform and retrieve the marketplaces configuration for your app environment.
+
+A `dev-platform.properties` config file is loaded using:
+```java
+Maestrano.autoConfigure("/path/to/dev-platform.propertie");
+```
+The properties file may look like this:
+```ini
+# ===> Developer Platform Configuration
+# This is the host and base path that should be used by your environment to retrieve its marketplaces configuration.
+# The api-sandbox allows you to easily test integration scenarios.
+dev-platform.host=https://dev-platform.maestrano.com
+dev-platform.v1Path=/api/config/v1/marketplaces
+# => Environment credentials
+# These are your environment credentials, you can get them by connecting on the developer platform, then go on your app, they will be display under the technical view on each environment.
+environment.name=<your environment nid>
+environment.apiKey="<your environment key>
+environment.apiSecret=<your environment secret>
+```
+
+You can also use environment variables as follow to configure your app environment:
+```
+export DEVPL_HOST=<developer platform host>
+export DEVPL_V1_PATH=<developer platform host>
+export ENVIRONMENT_NAME=<your environment nid>
+export ENVIRONMENT_KEY=<your environment key>
+export ENVIRONMENT_SECRET=<your environment secret>
+```
+and directly call
+```java
+Maestrano:autoConfigure();
+```
+You may also call autoConfigure using a Properties instance.
+```java
+Properties properties = new Properties();
+properties.setProperty("environment.name", "<your environment nid>");
+properties.setProperty("environment.apiKey", "<your environment key>");
+properties.setProperty("environment.apiSecret", "<your environment secret>");
+Maestrano.autoConfigure(properties);
+```
+
 #### Via config file
 
 You can configure maestrano using a properties file from the classpath or with an absolute path.

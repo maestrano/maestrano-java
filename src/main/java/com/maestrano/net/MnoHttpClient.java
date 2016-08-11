@@ -37,7 +37,7 @@ public class MnoHttpClient {
 		this.defaultAccept = "application/vnd.api+json";
 	}
 
-	public MnoHttpClient(String contentType) {
+	private MnoHttpClient(String contentType) {
 		this.defaultUserAgent = "maestrano-java/" + System.getProperty("java.version");
 		this.defaultContentType = contentType;
 		this.defaultAccept = contentType;
@@ -51,7 +51,11 @@ public class MnoHttpClient {
 	 * @throws MnoException
 	 */
 	public static MnoHttpClient getAuthenticatedClient(ApiService apiService) {
-		return getAuthenticatedClient(apiService, "application/vnd.api+json");
+		return getAuthenticatedClient(apiService.getId(), apiService.getKey(), "application/vnd.api+json");
+	}
+
+	public static MnoHttpClient getAuthenticatedClient(ApiService apiService, String contentType) {
+		return getAuthenticatedClient(apiService.getId(), apiService.getKey(), contentType);
 	}
 
 	/**
@@ -62,9 +66,9 @@ public class MnoHttpClient {
 	 * @return
 	 * @throws MnoException
 	 */
-	public static MnoHttpClient getAuthenticatedClient(ApiService apiService, String contentType) {
+	public static MnoHttpClient getAuthenticatedClient(String key, String secret, String contentType) {
 		MnoHttpClient client = new MnoHttpClient(contentType);
-		String authStr = apiService.getId() + ":" + apiService.getKey();
+		String authStr = key + ":" + secret;
 		client.basicAuthHash = "Basic " + DatatypeConverter.printBase64Binary(authStr.getBytes());
 
 		return client;
