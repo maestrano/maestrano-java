@@ -5,7 +5,7 @@
 	<groupId>com.maestrano</groupId>
 	<artifactId>maestrano-java</artifactId>
 	<packaging>jar</packaging>
-	<version>0.9.4-SNAPSHOT</version>
+	<version>#1.0.0-RC1</version>
 	<name>maestrano-java</name>
 	<description>Java bindings for the Maestrano API</description>
 	<url>https://github.com/maestrano/maestrano-java</url>
@@ -37,7 +37,7 @@
 		<connection>scm:git:git@github.com:maestrano/maestrano-java.git</connection>
 		<developerConnection>scm:git:git@github.com:maestrano/maestrano-java.git</developerConnection>
 		<url>git@github.com:maestrano/maestrano-java.git</url>
-		<tag>HEAD</tag>
+		<tag>v1.0.0-RC1</tag>
 	</scm>
 	<developers>
 		<developer>
