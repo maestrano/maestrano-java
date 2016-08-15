@@ -1,18 +1,20 @@
 package com.maestrano.helpers;
 
 public class MnoStringHelper {
-	
+
 	/**
 	 * Convert a string to snake_case
+	 * 
 	 * @param str
 	 * @return
 	 */
 	public static String toSnakeCase(String str) {
-		return str.replaceAll("([a-z])([A-Z])","$1_$2").toLowerCase();
+		return str.replaceAll("([a-z])([A-Z])", "$1_$2").toLowerCase();
 	}
-	
+
 	/**
 	 * Convert a string to CamelCase
+	 * 
 	 * @param str
 	 * @return
 	 */
@@ -24,9 +26,9 @@ public class MnoStringHelper {
 		}
 		return finalStr;
 	}
-	
-	public static String capitalize(String line)
-	{
-	  return Character.toUpperCase(line.charAt(0)) + line.substring(1);
+
+	public static String capitalize(String line) {
+		return Character.toUpperCase(line.charAt(0)) + line.substring(1);
 	}
+
 }

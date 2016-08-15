@@ -9,6 +9,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
@@ -16,10 +17,14 @@ import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.bind.DatatypeConverter;
 
+import org.apache.commons.io.IOUtils;
+
 import com.google.gson.Gson;
 import com.maestrano.exception.MnoConfigurationException;
 import com.maestrano.exception.MnoException;
+import com.maestrano.helpers.BuildInformationHelper;
 import com.maestrano.helpers.MnoPropertiesHelper;
+import com.maestrano.net.DevPlatformClient;
 
 /**
  * <p>
@@ -76,7 +81,7 @@ public final class Maestrano {
 	 * @return String version
 	 */
 	public static String getVersion() {
-		return "0.9.4-SNAPSHOT";
+		return BuildInformationHelper.getVersion();
 	}
 
 	/**
@@ -87,6 +92,54 @@ public final class Maestrano {
 	 */
 	public static Maestrano configure() throws MnoConfigurationException {
 		return configure(DEFAULT, "config.properties");
+	}
+
+	/**
+	 * Method to fetch configuration from the dev-platform, using environment variable.
+	 * 
+	 * The following variable must be set in the environment.
+	 * <ul>
+	 * <li>ENVIRONMENT_NAME</li>
+	 * <li>ENVIRONMENT_KEY</li>
+	 * <li>ENVIRONMENT_SECRET</li>
+	 * </ul>
+	 * 
+	 * @throws MnoConfigurationException
+	 */
+	public static Map<String, Maestrano> autoConfigure() throws MnoConfigurationException {
+		Properties properties = new Properties();
+		return autoConfigure(properties);
+	}
+
+	
+	/**
+	 * Method to fetch configuration from the dev-platform, using a properties file.
+	 * 
+	 * @throws MnoConfigurationException
+	 */
+	public static Map<String, Maestrano>  autoConfigure(String devPlatformPropertiesFile) throws MnoConfigurationException {
+		Properties properties = loadProperties(devPlatformPropertiesFile);
+		Properties trimProperties = MnoPropertiesHelper.trimProperties(properties);
+		return autoConfigure(trimProperties);
+	}
+
+	/**
+	 * Method to fetch configuration from the dev-platform, using a properties.
+	 * 
+	 * @return a Map <Preset, MaestranoConfiguration> the preset being the marketplace name
+	 * @throws MnoConfigurationException
+	 */
+	public static Map<String, Maestrano>  autoConfigure(Properties properties) throws MnoConfigurationException {
+		DevPlatformService devPlatformService = new DevPlatformService(properties);
+		DevPlatformClient client = new DevPlatformClient(devPlatformService);
+		List<MarketplaceConfiguration> marketplaceConfigurations = client.getMarketplaceConfigurations();
+		Map<String, Maestrano> configurations = new LinkedHashMap<String, Maestrano>();
+		for (MarketplaceConfiguration marketplaceConfiguration : marketplaceConfigurations) {
+			String preset = marketplaceConfiguration.getName();
+			Maestrano maestrano = configure(preset, marketplaceConfiguration.getProperties());
+			configurations.put(preset, maestrano);
+		}
+		return configurations;
 	}
 
 	/**
@@ -362,6 +415,8 @@ public final class Maestrano {
 			properties.load(input);
 		} catch (IOException e) {
 			throw new MnoConfigurationException("Could not load properties file: " + filePath, e);
+		} finally {
+			IOUtils.closeQuietly(input);
 		}
 		return properties;
 	}
@@ -378,6 +433,11 @@ public final class Maestrano {
 		} catch (FileNotFoundException e) {
 			throw new MnoConfigurationException("Could not find file: " + filename, e);
 		}
+	}
+
+	@Override
+	public String toString() {
+		return toMetadata();
 	}
 
 }

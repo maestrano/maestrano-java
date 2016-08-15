@@ -1,0 +1,21 @@
+{  
+   "marketplaces":[  
+      {  
+         "marketplace":"first_market_place",
+         "environment":"uat",
+         "app":{  
+            "host":"host"
+         },
+         "sso":{
+         	"consume_path": "anotherValue"
+         }
+      },
+      {  
+         "marketplace":"second_market_place",
+         "environment":"prod",
+         "app":{  
+            "host":"host2"
+         }
+      }
+   ]
+}
