@@ -49,3 +49,11 @@ mvn release:prepare -DdryRun=true
 ```
 mvn -Pgpg release:clean release:prepare release:perform
 ```
+## Build Project on Codeship
+```
+jdk_switcher home oraclejdk8
+jdk_switcher use oraclejdk8
+mvn clean package -Dgpg.passphrase=${GPG_PASSPHRASE}
+```
+
+

@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -18,6 +18,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.xml.bind.DatatypeConverter;
 
 import org.apache.commons.io.IOUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.gson.Gson;
 import com.maestrano.exception.MnoConfigurationException;
@@ -55,10 +57,11 @@ import com.maestrano.net.DevPlatformClient;
  * 
  */
 public final class Maestrano {
+	private static final Logger logger = LoggerFactory.getLogger(Maestrano.class);
 	public static final String DEFAULT = "default";
+	private static final Map<String, Maestrano> instances = new LinkedHashMap<String, Maestrano>();
 
-	private static final Map<String, Maestrano> instances = new HashMap<String, Maestrano>();
-
+	private final String preset;
 	private final AppService appService;
 	private final ApiService apiService;
 	private final SsoService ssoService;
@@ -66,8 +69,9 @@ public final class Maestrano {
 	private final WebhookService webhookService;
 
 	// Private constructor
-	private Maestrano(Properties props) {
+	private Maestrano(String preset, Properties props) {
 		Properties trimmedProperties = MnoPropertiesHelper.trimProperties(props);
+		this.preset = preset;
 		this.appService = new AppService(trimmedProperties);
 		this.apiService = new ApiService(appService, trimmedProperties);
 		this.connecService = new ConnecService(appService, props);
@@ -111,13 +115,12 @@ public final class Maestrano {
 		return autoConfigure(properties);
 	}
 
-	
 	/**
 	 * Method to fetch configuration from the dev-platform, using a properties file.
 	 * 
 	 * @throws MnoConfigurationException
 	 */
-	public static Map<String, Maestrano>  autoConfigure(String devPlatformPropertiesFile) throws MnoConfigurationException {
+	public static Map<String, Maestrano> autoConfigure(String devPlatformPropertiesFile) throws MnoConfigurationException {
 		Properties properties = loadProperties(devPlatformPropertiesFile);
 		Properties trimProperties = MnoPropertiesHelper.trimProperties(properties);
 		return autoConfigure(trimProperties);
@@ -129,7 +132,7 @@ public final class Maestrano {
 	 * @return a Map <Preset, MaestranoConfiguration> the preset being the marketplace name
 	 * @throws MnoConfigurationException
 	 */
-	public static Map<String, Maestrano>  autoConfigure(Properties properties) throws MnoConfigurationException {
+	public static Map<String, Maestrano> autoConfigure(Properties properties) throws MnoConfigurationException {
 		DevPlatformService devPlatformService = new DevPlatformService(properties);
 		DevPlatformClient client = new DevPlatformClient(devPlatformService);
 		List<MarketplaceConfiguration> marketplaceConfigurations = client.getMarketplaceConfigurations();
@@ -139,6 +142,7 @@ public final class Maestrano {
 			Maestrano maestrano = configure(preset, marketplaceConfiguration.getProperties());
 			configurations.put(preset, maestrano);
 		}
+		logger.debug("autoConfigure() found {}", configurations.keySet());
 		return configurations;
 	}
 
@@ -192,7 +196,7 @@ public final class Maestrano {
 	 *             if an instance was already configured for this preset
 	 */
 	public static Maestrano configure(String preset, Properties props) throws MnoConfigurationException {
-		Maestrano maestrano = new Maestrano(props);
+		Maestrano maestrano = new Maestrano(preset, props);
 		Maestrano previous = instances.put(preset, maestrano);
 		if (previous != null) {
 			throw new MnoConfigurationException("An instance was already configured for preset: " + preset);
@@ -204,7 +208,7 @@ public final class Maestrano {
 	 * reload the configuration for the given preset and overload the existing one if any
 	 */
 	public static Maestrano reloadConfiguration(String preset, Properties props) {
-		Maestrano maestrano = new Maestrano(props);
+		Maestrano maestrano = new Maestrano(preset, props);
 		instances.put(preset, maestrano);
 		return maestrano;
 	}
@@ -252,15 +256,11 @@ public final class Maestrano {
 	}
 
 	/**
-	 * Authenticate a Maestrano request using the appId and apiKey
 	 * 
-	 * @param appId
-	 * @param apiKey
-	 * @return authenticated or not
-	 * @throws MnoException
+	 * @return a unmodifiableMap of the Maestrano configuration indexed by preset Id.
 	 */
-	public static boolean authenticate(String appId, String apiKey) throws MnoConfigurationException {
-		return authenticate(DEFAULT, appId, apiKey);
+	public static Map<String, Maestrano> getConfigurations() {
+		return Collections.unmodifiableMap(instances);
 	}
 
 	/**
@@ -276,34 +276,20 @@ public final class Maestrano {
 	 * 
 	 * @throws MnoException
 	 */
-	public static boolean authenticate(String preset, String appId, String apiKey) throws MnoConfigurationException {
-		Maestrano maestrano = get(preset);
-		ApiService apiService = maestrano.apiService();
+	public boolean authenticate(String appId, String apiKey) throws MnoConfigurationException {
 		return appId != null && apiKey != null && appId.equals(apiService.getId()) && apiKey.equals(apiService.getKey());
 	}
 
 	/**
 	 * Authenticate a Maestrano request by reading the Authorization header
 	 * 
-	 * @param appId
-	 * @return authenticated or not
-	 * @throws MnoException
-	 * @throws UnsupportedEncodingException
-	 */
-	public static boolean authenticate(HttpServletRequest request) throws MnoException {
-		return authenticate(DEFAULT, request);
-	}
-
-	/**
-	 * Authenticate a Maestrano request by reading the Authorization header
-	 * 
 	 * @param preset
 	 * @param appId
 	 * @return authenticated or not
 	 * @throws UnsupportedEncodingException
 	 * @throws MnoException
 	 */
-	public static boolean authenticate(String preset, HttpServletRequest request) throws MnoException {
+	public boolean authenticate(HttpServletRequest request) throws MnoException {
 		String authHeader = request.getHeader("Authorization");
 		if (authHeader == null || authHeader.isEmpty()) {
 			return false;
@@ -318,11 +304,11 @@ public final class Maestrano {
 		try {
 			creds = (new String(decodedStr, "UTF-8")).split(":");
 		} catch (UnsupportedEncodingException e) {
-			throw new MnoException("Could not decode basic authentication" + Arrays.toString(auth));
+			throw new MnoException("Could not decode basic authentication" + Arrays.toString(auth), e);
 		}
 
 		if (creds.length == 2) {
-			return authenticate(preset, creds[0], creds[1]);
+			return authenticate(creds[0], creds[1]);
 		} else {
 			return false;
 		}
@@ -371,6 +357,15 @@ public final class Maestrano {
 	 */
 	public WebhookService webhookService() {
 		return webhookService;
+	}
+
+	/**
+	 * Return the preset of the Maestrano Configuration, or the marketplace if it is coming from autoconfiguration
+	 * 
+	 * @return
+	 */
+	public String getPreset() {
+		return preset;
 	}
 
 	/**
