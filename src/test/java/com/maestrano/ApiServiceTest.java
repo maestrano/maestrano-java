@@ -57,7 +57,7 @@ public class ApiServiceTest {
 
 	@Test
 	public void getAccountBase_itReturnsTheRightValue() {
-		assertEquals("/api/v1/account", subject.getBase());
+		assertEquals("/api/v1/", subject.getBase());
 	}
 
 	@Test

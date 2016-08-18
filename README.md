@@ -36,7 +36,7 @@ Maestrano Cloud Integration is currently in closed beta. Want to know more? Send
   * [Migrating Maestrano methods calls](#migrating-maestrano-methods-calls)
   * [Migrating Connec!™ API calls](#migrating-connec-api-calls)
   * [Migrating Connec!™ Data Sharing API calls](#migrating-connec-data-sharing-api-calls)
-- - -
+8. [Logging](#logging)
 
 ## Getting Setup
 Before integrating with us you will need an App ID and API Key. Maestrano Cloud Integration being still in closed beta you will need to contact us beforehand to gain production access.
@@ -328,9 +328,9 @@ So here is an example of page to adapt depending on the framework you're using:
 
 <%
   java.io.PrintWriter writer = response.getWriter();
-
-  if (Maestrano.authenticate(request)) {
-    writer.write(Maestrano.getDefault().toMetadata());
+  Maestrano maestrano = Maestrano.getDefault();
+  if (maestrano.authenticate(request)) {
+    writer.write(maestrano.toMetadata());
   } else {
     writer.write("Failed");
   }
@@ -487,7 +487,7 @@ The controller example below reimplements the authenticate_maestrano! method see
 The example below needs to be adapted depending on your application:
 
 ```java
-if (Maestrano.authenticate(request)) {
+if (Maestrano.getDefault().authenticate(request)) {
   MyGroupModel someGroup = MyGroupModel.findByMnoId(restfulIdFromUrl);
   someGroup.disableAccess();
 }
@@ -503,7 +503,7 @@ The controller example below reimplements the authenticate_maestrano! method see
 The example below needs to be adapted depending on your application:
 
 ```java
-if (Maestrano.authenticate(request)) {
+if (Maestrano.getDefault().authenticate(request)) {
   MyGroupModel someGroup = MyGroupModel.findByMnoId(restfulGroupIdFromUrl);
   someGroup.removeUserById(restfulIdFromUrl);
 }
@@ -512,7 +512,8 @@ if (Maestrano.authenticate(request)) {
 ### Authenticating with presets
 The same operations can be used with presets:
 ```java
-if (Maestrano.authenticate("mypreset", request)) {
+
+if (Maestrano.get("mypreset").authenticate(request)) {
   MyGroupModel someGroup = MyGroupModel.findByMnoId(restfulGroupIdFromUrl);
   ...
 }
@@ -981,6 +982,22 @@ After 0.9.0:
 ConnecClient connecClient = ConnecClient.defaultClient();
 Map<String, Object> organizations = connecClient.all("organizations", groupId);
 organization = (Map<String, Object>) connecClient.create("organizations", groupId, newOrganization).get("organizations");
+```
+
+## Logging
+
+Maestrano Java SDK uses the Simple Logging Facade for Java ([SLF4J](http://www.slf4j.org/)), allowing to plug in the desired logging framework at deployment time.
+
+For example, if you use [Log4j](http://logging.apache.org/log4j/2.x/), all you need to do is add the slf4j-log4j12 dependency in your pom file.
+
+```
+<dependency>
+	<groupId>org.slf4j</groupId>
+	<artifactId>slf4j-log4j12</artifactId>
+	<version>1.7.21</version>
+</dependency>
+```
+
 
 ## Support
 This README is still in the process of being written and improved. As such it might not cover some of the questions you might have.

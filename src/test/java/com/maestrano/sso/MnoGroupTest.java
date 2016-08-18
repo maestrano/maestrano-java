@@ -28,7 +28,7 @@ public class MnoGroupTest {
 		props.setProperty("api.key", "somekey");
 		Maestrano.reloadConfiguration(props);
 
-		samlResp = (Response) new SamlMnoRespStub();
+		samlResp =  new SamlMnoRespStub();
 		subject = new MnoGroup(samlResp);
 	}
 

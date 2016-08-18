@@ -9,7 +9,7 @@ import com.maestrano.helpers.MnoPropertiesHelper;
 /**
  * Maestrano API Service, related to all Maestrano API
  */
-public class ApiService  {
+public class ApiService {
 	private static final String PROD_API_HOST = "https://maestrano.com";
 	private static final String TEST_API_HOST = "http://api-sandbox.maestrano.io";
 

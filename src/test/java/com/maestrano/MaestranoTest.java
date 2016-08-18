@@ -25,6 +25,7 @@ public class MaestranoTest {
 	private Properties defaultProps = new Properties();
 	private Properties otherProps = new Properties();
 	private Maestrano maestrano;
+	private Maestrano other;
 
 	@Before
 	public void beforeEach() {
@@ -38,18 +39,18 @@ public class MaestranoTest {
 		otherProps.setProperty("app.host", "https://myotherapp.com");
 		otherProps.setProperty("api.id", "otherid");
 		otherProps.setProperty("api.key", "otherkey");
-		Maestrano.reloadConfiguration("other", otherProps);
+		other = Maestrano.reloadConfiguration("other", otherProps);
 	}
 
 	@Test
 	public void authenticate_withCredentials_itReturnsTrueWithRightCredentials() throws MnoException {
-		assertTrue(Maestrano.authenticate(defaultProps.getProperty("api.id"), defaultProps.getProperty("api.key")));
+		assertTrue(maestrano.authenticate(defaultProps.getProperty("api.id"), defaultProps.getProperty("api.key")));
 	}
 
 	@Test
 	public void authenticate_withCredentials_itReturnsFalseWithWrongCredentials() throws MnoException {
-		assertFalse(Maestrano.authenticate(defaultProps.getProperty("api.id"), defaultProps.getProperty("api.key") + "aa"));
-		assertFalse(Maestrano.authenticate(defaultProps.getProperty("api.id") + "aa", defaultProps.getProperty("api.key")));
+		assertFalse(maestrano.authenticate(defaultProps.getProperty("api.id"), defaultProps.getProperty("api.key") + "aa"));
+		assertFalse(maestrano.authenticate(defaultProps.getProperty("api.id") + "aa", defaultProps.getProperty("api.key")));
 	}
 
 	@Test
@@ -59,7 +60,7 @@ public class MaestranoTest {
 		authStr = "Basic " + DatatypeConverter.printBase64Binary(authStr.getBytes());
 		request.setHeader("Authorization", authStr);
 
-		assertTrue(Maestrano.authenticate(request));
+		assertTrue(maestrano.authenticate(request));
 	}
 
 	@Test
@@ -69,7 +70,7 @@ public class MaestranoTest {
 		authStr = "Basic " + DatatypeConverter.printBase64Binary(authStr.getBytes());
 		request.setHeader("Authorization", authStr);
 
-		assertFalse(Maestrano.authenticate(request));
+		assertFalse(maestrano.authenticate(request));
 	}
 
 	@Test
@@ -79,7 +80,7 @@ public class MaestranoTest {
 		authStr = "Basic " + DatatypeConverter.printBase64Binary(authStr.getBytes());
 		request.setHeader("Authorization", authStr);
 
-		assertTrue(Maestrano.authenticate("other", request));
+		assertTrue(other.authenticate(request));
 	}
 
 	@Test
@@ -89,7 +90,7 @@ public class MaestranoTest {
 		authStr = "Basic " + DatatypeConverter.printBase64Binary(authStr.getBytes());
 		request.setHeader("Authorization", authStr);
 
-		assertFalse(Maestrano.authenticate("other", request));
+		assertFalse(other.authenticate(request));
 	}
 
 	@Test

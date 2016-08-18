@@ -115,6 +115,7 @@ public class HttpRequestStub implements HttpServletRequest {
 		return null;
 	}
 
+	@SuppressWarnings("deprecation")
 	public String getRealPath(String arg0) {
 		// TODO Auto-generated method stub
 		return null;
@@ -281,6 +282,7 @@ public class HttpRequestStub implements HttpServletRequest {
 		return false;
 	}
 
+	@SuppressWarnings("deprecation")
 	public boolean isRequestedSessionIdFromUrl() {
 		// TODO Auto-generated method stub
 		return false;
