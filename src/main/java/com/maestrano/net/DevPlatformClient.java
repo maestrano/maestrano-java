@@ -42,7 +42,7 @@ public class DevPlatformClient {
 	public List<MarketplaceConfiguration> getMarketplaceConfigurations(MnoHttpClient client) throws MnoConfigurationException {
 		String string;
 		try {
-			string = client.get(getInstanceUrl());
+			string = client.get(getInstanceUrl() + "/marketplaces");
 		} catch (MnoException e) {
 			throw new MnoConfigurationException("Could not retrieve the list of the marketplace: " + e.getMessage(), e);
 		}
@@ -83,6 +83,6 @@ public class DevPlatformClient {
 	}
 
 	public String getInstanceUrl() {
-		return devPlatformService.getHost() + devPlatformService.getV1Path();
+		return devPlatformService.getHost() + devPlatformService.getApiPath();
 	}
 }

@@ -35,7 +35,7 @@ public class DevPlatformClientTest {
 
 	@Test
 	public void getInstanceUrl_ItReturnsTheRightInstanceUrl() {
-		assertEquals("https://dev-platform.maestrano.com/api/config/v1/marketplaces", subject.getInstanceUrl());
+		assertEquals("https://dev-platform.maestrano.com/api/config/v1", subject.getInstanceUrl());
 	}
 
 	@Test

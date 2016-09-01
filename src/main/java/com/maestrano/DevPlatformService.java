@@ -10,17 +10,17 @@ import com.maestrano.helpers.MnoPropertiesHelper;
  */
 public class DevPlatformService {
 	private final String host;
-	private final String v1Path;
+	private final String apiPath;
 	private final String environmentName;
 	private final String apiKey;
 	private final String apiSecret;
 
 	public DevPlatformService(Properties properties) throws MnoConfigurationException {
-		host = MnoPropertiesHelper.getPropertyOrEnvironment(properties, "dev-platform.host", "DEVPL_HOST", "https://dev-platform.maestrano.com");
-		v1Path = MnoPropertiesHelper.getPropertyOrEnvironment(properties, "dev-platform.v1Path", "DEVPL_V1_PATH", "/api/config/v1/marketplaces");
-		environmentName = MnoPropertiesHelper.getPropertyOrEnvironment(properties, "environment.name", "ENVIRONMENT_NAME");
-		apiKey = MnoPropertiesHelper.getPropertyOrEnvironment(properties, "environment.apiKey", "ENVIRONMENT_KEY");
-		apiSecret = MnoPropertiesHelper.getPropertyOrEnvironment(properties, "environment.apiSecret", "ENVIRONMENT_SECRET");
+		host = MnoPropertiesHelper.getPropertyOrEnvironment(properties, "dev-platform.host", "MNO_DEVPL_HOST", "https://dev-platform.maestrano.com");
+		apiPath = MnoPropertiesHelper.getPropertyOrEnvironment(properties, "dev-platform.apiPath", "MNO_DEVPL_API_PATH", "/api/config/v1");
+		environmentName = MnoPropertiesHelper.getPropertyOrEnvironment(properties, "environment.name", "MNO_DEVPL_ENV_NAME");
+		apiKey = MnoPropertiesHelper.getPropertyOrEnvironment(properties, "environment.apiKey", "MNO_DEVPL_ENV_KEY");
+		apiSecret = MnoPropertiesHelper.getPropertyOrEnvironment(properties, "environment.apiSecret", "MNO_DEVPL_ENV_SECRET");
 	}
 
 	/**
@@ -31,10 +31,10 @@ public class DevPlatformService {
 	}
 
 	/**
-	 * @return The path of the V1 API
+	 * @return The path of the API
 	 */
-	public String getV1Path() {
-		return v1Path;
+	public String getApiPath() {
+		return apiPath;
 	}
 
 	/**
