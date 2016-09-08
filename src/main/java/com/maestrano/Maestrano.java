@@ -139,7 +139,7 @@ public final class Maestrano {
 		Map<String, Maestrano> configurations = new LinkedHashMap<String, Maestrano>();
 		for (MarketplaceConfiguration marketplaceConfiguration : marketplaceConfigurations) {
 			String preset = marketplaceConfiguration.getName();
-			Maestrano maestrano = configure(preset, marketplaceConfiguration.getProperties());
+			Maestrano maestrano = reloadConfiguration(preset, marketplaceConfiguration.getProperties());
 			configurations.put(preset, maestrano);
 		}
 		logger.debug("autoConfigure() found {}", configurations.keySet());
@@ -186,7 +186,7 @@ public final class Maestrano {
 	}
 
 	/**
-	 * Configure Maestrano API using a Properties o for the given preset
+	 * Configure Maestrano API using a Properties for the given preset
 	 * 
 	 * @param String
 	 *            preset

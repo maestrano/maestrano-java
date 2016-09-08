@@ -85,7 +85,7 @@ The properties file may look like this:
 # This is the host and base path that should be used by your environment to retrieve its marketplaces configuration.
 # The api-sandbox allows you to easily test integration scenarios.
 dev-platform.host=https://dev-platform.maestrano.com
-dev-platform.v1Path=/api/config/v1/marketplaces
+dev-platform.api_path=/api/config/v1
 # => Environment credentials
 # These are your environment credentials, you can get them by connecting on the developer platform, then go on your app, they will be display under the technical view on each environment.
 environment.name=<your environment nid>
@@ -95,11 +95,11 @@ environment.apiSecret=<your environment secret>
 
 You can also use environment variables as follow to configure your app environment:
 ```
-export DEVPL_HOST=<developer platform host>
-export DEVPL_V1_PATH=<developer platform host>
-export ENVIRONMENT_NAME=<your environment nid>
-export ENVIRONMENT_KEY=<your environment key>
-export ENVIRONMENT_SECRET=<your environment secret>
+export MNO_DEVPL_HOST=<developer platform host>
+export MNO_DEVPL_API_PATH=<developer platform host>
+export MNO_DEVPL_ENV_NAME=<your environment nid>
+export MNO_DEVPL_ENV_KEY=<your environment key>
+export MNO_DEVPL_ENV_SECRET=<your environment secret>
 ```
 and directly call
 ```java
@@ -108,6 +108,8 @@ Maestrano:autoConfigure();
 You may also call autoConfigure using a Properties instance.
 ```java
 Properties properties = new Properties();
+properties.setProperty("dev-platform.host", "https://dev-platform.maestrano.com");
+properties.setProperty("dev-platform.api_path", "/api/config/v1");
 properties.setProperty("environment.name", "<your environment nid>");
 properties.setProperty("environment.apiKey", "<your environment key>");
 properties.setProperty("environment.apiSecret", "<your environment secret>");
@@ -132,11 +134,16 @@ More information about multi-tenant integration can be found on [Our Multi-Tenan
 ```java
     // Load configuration
     Maestrano config1 = Maestrano.configure("config1", "config1.properties");
-    Maestrano config" = Maestrano.configure("config2", "config2.properties");
+    Maestrano config = Maestrano.configure("config2", "config2.properties");
     
     // Access configuration with presets
     config1.toMetadata();
     config2.toMetadata();
+    
+    //...
+    
+    // Access configuration with presets elsewhere
+    Maestrano.get("config1").toMetadata();
 ```
 
 The properties file can contain the following values
