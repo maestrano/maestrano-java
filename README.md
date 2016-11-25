@@ -68,10 +68,9 @@ You will require the following dependencies:
 
 ### Configuration
 
-
 There is several ways to configure Maestrano. You can either use our developer platform, load a properties files or at runtime using a Properties instance variable. Maestrano configuration is flexible and you can combine any of those methods to configure the app.
 
-#### Via the developer platform
+#### Via the developer platform (Recommended)
 
 The [developer platform](https://dev-platform.maestrano.com) is the easiest way to configure Maestrano. The only actions needed from your part is to create your application and environments on the developer platform and to create a config file. The framework will then contact the developer platform and retrieve the marketplaces configuration for your app environment.
 
@@ -116,7 +115,7 @@ properties.setProperty("environment.apiSecret", "<your environment secret>");
 Maestrano.autoConfigure(properties);
 ```
 
-#### Via config file
+#### Via config file (Deprecated)
 
 You can configure maestrano using a properties file from the classpath or with an absolute path.
 
@@ -298,7 +297,7 @@ webhook.connec.subscriptions.venues = false
 webhook.connec.subscriptions.work_locations = false
 ```
 
-#### At runtime
+#### At runtime (Deprecated)
 
 You can configure maestrano with the Properties class using the same configuration parameters as described above:
 
@@ -316,7 +315,8 @@ Or using preset configurations to support multiple marketplaces
     Maestrano.configure("myconfig2", myconfig2);
 ```
 
-### Metadata Endpoint
+### Metadata Endpoint (Deprecated)
+
 Your configuration initializer is now all setup and shiny. Great! But need to know about it. Of course
 we could propose a long and boring form on maestrano.com for you to fill all these details (especially the webhooks) but we thought it would be more convenient to fetch that automatically.
 
