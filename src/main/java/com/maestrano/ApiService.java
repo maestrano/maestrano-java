@@ -10,8 +10,6 @@ import com.maestrano.helpers.MnoPropertiesHelper;
  * Maestrano API Service, related to all Maestrano API
  */
 public class ApiService {
-	private static final String PROD_API_HOST = "https://maestrano.com";
-	private static final String TEST_API_HOST = "http://api-sandbox.maestrano.io";
 
 	private final String id;
 	private final String key;
@@ -21,11 +19,11 @@ public class ApiService {
 	private final String langVersion;
 
 	// package private Constructor
-	ApiService(AppService appService, Properties props) {
+	ApiService(Properties props) {
 		this.id = MnoPropertiesHelper.getPropertyOrDefault(props, "api.id");
 		this.key = MnoPropertiesHelper.getPropertyOrDefault(props, "api.key");
 		this.base = MnoPropertiesHelper.getPropertyOrDefault(props, "api.base", "api.accountBase");
-		this.host = getApiHost(appService, props);
+		this.host = MnoPropertiesHelper.getPropertyOrDefault(props, "api.host");
 		this.verifySslCerts = MnoPropertiesHelper.getBooleanProperty(props, "api.verifySslCerts");
 		this.langVersion = System.getProperty("java.version");
 	}
@@ -57,18 +55,6 @@ public class ApiService {
 		return host;
 	}
 
-	private static String getApiHost(AppService appService, Properties props) {
-		String apiHost = MnoPropertiesHelper.getProperty(props, "api.host", "api.accountHost");
-		if (!MnoPropertiesHelper.isNullOrEmpty(apiHost)) {
-			return apiHost;
-		} else {
-			if (appService.isProduction()) {
-				return PROD_API_HOST;
-			} else {
-				return TEST_API_HOST;
-			}
-		}
-	}
 
 	/**
 	 * Return the base of the API endpoint

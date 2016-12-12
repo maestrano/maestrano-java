@@ -35,7 +35,7 @@ public class DevPlatformClientTest {
 
 	@Test
 	public void getInstanceUrl_ItReturnsTheRightInstanceUrl() {
-		assertEquals("https://dev-platform.maestrano.com/api/config/v1", subject.getInstanceUrl());
+		assertEquals("https://developer.maestrano.com/api/config/v1", subject.getInstanceUrl());
 	}
 
 	@Test
@@ -45,7 +45,7 @@ public class DevPlatformClientTest {
 		httpClient = new MnoHttpClientStub();
 		String json = IOUtils.toString(this.getClass().getResourceAsStream("dev-platform-marketplaces.json"));
 
-		httpClient.setResponseStub(json, "https://dev-platform.maestrano.com/api/config/v1/marketplaces");
+		httpClient.setResponseStub(json, "https://developer.maestrano.com/api/config/v1/marketplaces");
 
 		List<MarketplaceConfiguration> marketplaceConfigurations = subject.getMarketplaceConfigurations(httpClient);
 
@@ -73,7 +73,7 @@ public class DevPlatformClientTest {
 		// Prepare response
 		httpClient = new MnoHttpClientStub();
 		String json = "{'error': 'error'}";
-		httpClient.setResponseStub(json, "https://dev-platform.maestrano.com/api/config/v1/marketplaces");
+		httpClient.setResponseStub(json, "https://developer.maestrano.com/api/config/v1/marketplaces");
 		subject.getMarketplaceConfigurations(httpClient);
 	}
 
@@ -82,7 +82,7 @@ public class DevPlatformClientTest {
 		// Prepare response
 		httpClient = new MnoHttpClientStub();
 		String json = "INVALID";
-		httpClient.setResponseStub(json, "https://dev-platform.maestrano.com/api/config/v1/marketplaces");
+		httpClient.setResponseStub(json, "https://developer.maestrano.com/api/config/v1/marketplaces");
 		subject.getMarketplaceConfigurations(httpClient);
 
 	}
@@ -91,7 +91,7 @@ public class DevPlatformClientTest {
 	public void getMarketplaceConfigurations_whenApiExceptionIsRaised_throwsAnError() throws Exception {
 		// Prepare response
 		httpClient = new MnoHttpClientStub();
-		httpClient.setExceptionStub(new ApiException("Error"), "https://dev-platform.maestrano.com/api/config/v1/marketplaces");
+		httpClient.setExceptionStub(new ApiException("Error"), "https://developer.maestrano.com/api/config/v1/marketplaces");
 		subject.getMarketplaceConfigurations(httpClient);
 
 	}

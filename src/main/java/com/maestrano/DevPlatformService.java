@@ -16,7 +16,8 @@ public class DevPlatformService {
 	private final String apiSecret;
 
 	public DevPlatformService(Properties properties) throws MnoConfigurationException {
-		host = MnoPropertiesHelper.getPropertyOrEnvironment(properties, "dev-platform.host", "MNO_DEVPL_HOST", "https://dev-platform.maestrano.com");
+
+		host = MnoPropertiesHelper.getPropertyOrEnvironment(properties, "dev-platform.host", "MNO_DEVPL_HOST", "https://developer.maestrano.com");
 		apiPath = MnoPropertiesHelper.getPropertyOrEnvironment(properties, "dev-platform.apiPath", "MNO_DEVPL_API_PATH", "/api/config/v1");
 		environmentName = MnoPropertiesHelper.getPropertyOrEnvironment(properties, "environment.name", "MNO_DEVPL_ENV_NAME");
 		apiKey = MnoPropertiesHelper.getPropertyOrEnvironment(properties, "environment.apiKey", "MNO_DEVPL_ENV_KEY");

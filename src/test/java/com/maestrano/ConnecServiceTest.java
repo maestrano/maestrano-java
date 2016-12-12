@@ -22,7 +22,7 @@ public class ConnecServiceTest {
 
 	@Test
 	public void getBase_itReturnsTheRightValue() {
-		assertEquals("/api/v2", subject.getBase());
+		assertEquals("/api/v2", subject.getBasePath());
 	}
 
 	@Test

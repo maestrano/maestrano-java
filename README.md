@@ -72,7 +72,7 @@ There is several ways to configure Maestrano. You can either use our developer p
 
 #### Via the developer platform (Recommended)
 
-The [developer platform](https://dev-platform.maestrano.com) is the easiest way to configure Maestrano. The only actions needed from your part is to create your application and environments on the developer platform and to create a config file. The framework will then contact the developer platform and retrieve the marketplaces configuration for your app environment.
+The [developer platform](https://developer.maestrano.com) is the easiest way to configure Maestrano. The only actions needed from your part is to create your application and environments on the developer platform and to create a config file. The framework will then contact the developer platform and retrieve the marketplaces configuration for your app environment.
 
 A `dev-platform.properties` config file is loaded using:
 ```java
@@ -83,7 +83,7 @@ The properties file may look like this:
 # ===> Developer Platform Configuration
 # This is the host and base path that should be used by your environment to retrieve its marketplaces configuration.
 # The api-sandbox allows you to easily test integration scenarios.
-dev-platform.host=https://dev-platform.maestrano.com
+dev-platform.host=https://developer.maestrano.com
 dev-platform.api_path=/api/config/v1
 # => Environment credentials
 # These are your environment credentials, you can get them by connecting on the developer platform, then go on your app, they will be display under the technical view on each environment.
@@ -107,7 +107,7 @@ Maestrano:autoConfigure();
 You may also call autoConfigure using a Properties instance.
 ```java
 Properties properties = new Properties();
-properties.setProperty("dev-platform.host", "https://dev-platform.maestrano.com");
+properties.setProperty("dev-platform.host", "https://developer.maestrano.com");
 properties.setProperty("dev-platform.api_path", "/api/config/v1");
 properties.setProperty("environment.name", "<your environment nid>");
 properties.setProperty("environment.apiKey", "<your environment key>");

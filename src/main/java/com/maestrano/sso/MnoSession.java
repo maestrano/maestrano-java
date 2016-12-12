@@ -52,7 +52,7 @@ public class MnoSession {
 		this(Maestrano.getDefault().ssoService(), httpSession);
 	}
 
-	private MnoSession(SsoService ssoService, HttpSession httpSession) {
+	public MnoSession(SsoService ssoService, HttpSession httpSession) {
 		this.ssoService = ssoService;
 		this.httpSession = httpSession;
 
@@ -113,7 +113,13 @@ public class MnoSession {
 		this(Maestrano.getDefault().ssoService(), httpSession, user);
 	}
 
-	private MnoSession(SsoService ssoService, HttpSession httpSession, MnoUser user) {
+	/**
+	 * Constructor retrieving Maestrano session from user for a given ssoService
+	 * @param ssoService
+	 * @param httpSession
+	 * @param user
+	 */
+	public MnoSession(SsoService ssoService, HttpSession httpSession, MnoUser user) {
 		this.ssoService = ssoService;
 		this.httpSession = httpSession;
 

@@ -21,7 +21,7 @@ public class DevPlatformServiceTest {
 		properties.setProperty("environment.apiSecret", "apiSecret");
 
 		DevPlatformService subject = new DevPlatformService(properties);
-		Assert.assertEquals("https://dev-platform.maestrano.com", subject.getHost());
+		Assert.assertEquals("https://developer.maestrano.com", subject.getHost());
 		Assert.assertEquals("/api/config/v1", subject.getApiPath());
 		Assert.assertEquals("name", subject.getEnvironmentName());
 		Assert.assertEquals("apiKey", subject.getApiKey());
@@ -41,7 +41,7 @@ public class DevPlatformServiceTest {
 		});
 
 		DevPlatformService subject = new DevPlatformService(properties);
-		Assert.assertEquals("https://dev-platform.maestrano.com", subject.getHost());
+		Assert.assertEquals("https://developer.maestrano.com", subject.getHost());
 		Assert.assertEquals("/api/config/v1", subject.getApiPath());
 		Assert.assertEquals("theHost", subject.getEnvironmentName());
 		Assert.assertEquals("theKey", subject.getApiKey());

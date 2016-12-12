@@ -73,7 +73,7 @@ public final class Maestrano {
 		Properties trimmedProperties = MnoPropertiesHelper.trimProperties(props);
 		this.preset = preset;
 		this.appService = new AppService(trimmedProperties);
-		this.apiService = new ApiService(appService, trimmedProperties);
+		this.apiService = new ApiService(trimmedProperties);
 		this.connecService = new ConnecService(appService, props);
 		this.ssoService = new SsoService(apiService, appService, trimmedProperties);
 		this.webhookService = new WebhookService(trimmedProperties);

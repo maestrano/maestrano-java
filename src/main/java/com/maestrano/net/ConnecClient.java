@@ -74,7 +74,7 @@ public class ConnecClient {
 	 * @return collection endpoint
 	 */
 	public String getCollectionEndpoint(String entityName, String groupId) {
-		return connecService.getBase() + "/" + groupId + "/" + entityName;
+		return connecService.getBasePath() + "/" + groupId + "/" + entityName;
 	}
 
 	/**
@@ -141,6 +141,33 @@ public class ConnecClient {
 	}
 
 	/**
+	 * Return the entities in a typed class. The typed class should contain a field "entityName" with the list of entity class. For example:
+	 * 
+	 * <pre>
+	* {@code
+	* class Organizations{
+	*   private List<Organization> organizations;
+	*   public List<Organization> getOrganizations(){
+	*       return organizations;
+	*  }
+	* }
+	* class Organization{
+	* 	public String getId(); 
+	*	//etc...
+	* }
+	 * </pre>
+	 * 
+	 * @param entityName
+	 * @param groupId
+	 * @param clazz
+	 * @return
+	 * @throws MnoException
+	 */
+	public <T> T all(String entityName, String groupId, Class<T> clazz) throws MnoException {
+		return all(entityName, groupId, null, getAuthenticatedClient(), clazz);
+	}
+	
+	/**
 	 * Return all the entities matching the parameters
 	 * 
 	 * @param <V>
@@ -159,7 +186,6 @@ public class ConnecClient {
 
 	/**
 	 * Return all the entities matching the parameters and using the provided client
-	 * 
 	 * @param entity
 	 *            name
 	 * @param groupId
@@ -179,6 +205,27 @@ public class ConnecClient {
 		return GSON.fromJson(jsonBody, typeOfHashMap);
 	}
 
+	/**
+	 * Return all the entities matching the parameters and using the provided client
+	 * 
+	 * @param entity
+	 *            name
+	 * @param groupId
+	 *            customer group id
+	 * @param params
+	 *            criteria
+	 * @param httpClient
+	 *            MnoHttpClient to use
+	 * @return list of entities
+	 * @throws AuthenticationException
+	 * @throws ApiException
+	 * @throws InvalidRequestException
+	 */
+	public <T> T all(String entityName, String groupId, Map<String, ?> params, MnoHttpClient httpClient, Class<T> clazz) throws AuthenticationException, ApiException, InvalidRequestException {
+		String jsonBody = httpClient.get(getCollectionUrl(entityName, groupId), MnoMapHelper.toUnderscoreHash(params));
+		return GSON.fromJson(jsonBody, clazz);
+	}
+	
 	/**
 	 * Create an entity remotely
 	 * 
