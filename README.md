@@ -56,7 +56,7 @@ To install maestrano-java using Maven, add this dependency to your project's POM
 <dependency>
   <groupId>com.maestrano</groupId>
   <artifactId>maestrano-java</artifactId>
-  <version>0.9.3</version>
+  <version>1.0.0</version>
 </dependency>
 ```
 

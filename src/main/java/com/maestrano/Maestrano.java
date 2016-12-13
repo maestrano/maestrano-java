@@ -103,9 +103,9 @@ public final class Maestrano {
 	 * 
 	 * The following variable must be set in the environment.
 	 * <ul>
-	 * <li>ENVIRONMENT_NAME</li>
-	 * <li>ENVIRONMENT_KEY</li>
-	 * <li>ENVIRONMENT_SECRET</li>
+	 * <li>MNO_DEVPL_ENV_NAME</li>
+	 * <li>MNO_DEVPL_ENV_KEY</li>
+	 * <li>MNO_DEVPL_ENV_SECRET</li>
 	 * </ul>
 	 * 
 	 * @throws MnoConfigurationException
