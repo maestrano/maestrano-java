@@ -15,7 +15,7 @@ Maestrano Cloud Integration is currently in closed beta. Want to know more? Send
 2. [Getting Started](#getting-started)
   * [Installation](#installation)
   * [Configuration](#configuration)
-  * [Metadata Endpoint](#metadata-endpoint)
+  * [Metadata Endpoint](#metadata-endpoint-deprecated)
 3. [Single Sign-On Setup](#single-sign-on-setup)
   * [User Setup](#user-setup)
   * [Group Setup](#group-setup)
@@ -169,7 +169,7 @@ api.key=prod_or_sandbox_api_key
 
 # Api Host
 # The platform host
-api.host=https://maestrano.com
+api.host=https://api-hub.maestrano.com
 
 # ===> SSO Configuration
 #
@@ -188,7 +188,7 @@ sso.sloEnabled=true
 sso.idm=https\://idp.myapp.com
 
 # => idp (optional)
-# This is the URL of the identity provider to use when triggering a SSO handshake. With a multi-tenant integration, each tenant would have its own URL. Defaults to https://maestrano.com
+# This is the URL of the identity provider to use when triggering a SSO handshake. With a multi-tenant integration, each tenant would have its own URL. Defaults to https://api-hub.maestrano.com
 sso.idm=https\://maestrano.com
 
 # => initPath
@@ -489,7 +489,7 @@ Sad as it is a business might decide to stop using your service at some point. O
 
 Maestrano only uses this controller for service cancellation so there is no need to implement any other type of action - ie: GET, PUT/PATCH or POST. The use of other http verbs might come in the future to improve the communication between Maestrano and your service but as of now it is not required.
 
-The controller example below reimplements the authenticate_maestrano! method seen in the [metadata section](#metadata-endpoint) for completeness. Utimately you should move this method to a helper if you can.
+The controller example below reimplements the authenticate_maestrano! method seen in the [metadata section](#metadata-endpoint-deprecated) for completeness. Utimately you should move this method to a helper if you can.
 
 The example below needs to be adapted depending on your application:
 
@@ -505,7 +505,7 @@ A business might decide at some point to revoke access to your services for one 
 
 Maestrano only uses this controller for user membership cancellation so there is no need to implement any other type of action - ie: GET, PUT/PATCH or POST. The use of other http verbs might come in the future to improve the communication between Maestrano and your service but as of now it is not required.
 
-The controller example below reimplements the authenticate_maestrano! method seen in the [metadata section](#metadata-endpoint) for completeness. Utimately you should move this method to a helper if you can.
+The controller example below reimplements the authenticate_maestrano! method seen in the [metadata section](#metadata-endpoint-deprecated) for completeness. Utimately you should move this method to a helper if you can.
 
 The example below needs to be adapted depending on your application:
 

@@ -29,7 +29,7 @@ public class MnoUserTest {
 		
 		Maestrano.reloadConfiguration(props);
 
-		samlResp = (Response) new SamlMnoRespStub();
+		samlResp = new SamlMnoRespStub();
 		subject = new MnoUser(samlResp);
 	}
 

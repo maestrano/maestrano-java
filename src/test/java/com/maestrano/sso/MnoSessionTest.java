@@ -285,4 +285,10 @@ public class MnoSessionTest {
 		// test 1 - validity
 		assertFalse(subject.isValid(false, httpClient));
 	}
+
+	@Test
+	public void getLogoutUrl() {
+		subject = new MnoSession(httpSession);
+		assertEquals("https://api-hub.maestrano.com/app_logout?user_uid=usr-1", subject.getLogoutUrl());
+	}
 }

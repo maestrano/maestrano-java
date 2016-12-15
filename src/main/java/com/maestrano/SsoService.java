@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.Properties;
 
 import com.maestrano.helpers.MnoPropertiesHelper;
+import com.maestrano.sso.MnoUser;
 
 /**
  * Maestrano SSO Service, related to all SSO interaction
@@ -32,7 +33,7 @@ public class SsoService {
 		this.initPath = MnoPropertiesHelper.getPropertyOrDefault(props, "sso.initPath");
 		this.consumePath = MnoPropertiesHelper.getPropertyOrDefault(props, "sso.consumePath");
 		this.idm = getIdm(appService, props);
-		this.idp = getIdp(appService, props);
+		this.idp = MnoPropertiesHelper.getPropertyOrDefault(props, "sso.idp");
 		this.nameIdFormat = MnoPropertiesHelper.getPropertyOrDefault(props, "sso.nameIdFormat");
 		this.x509Fingerprint = getX509Fingerprint(appService, props);
 		this.x509Certificate = getX509Certificate(appService, props);
@@ -126,19 +127,6 @@ public class SsoService {
 		return idp;
 	}
 
-	private static String getIdp(AppService appService, Properties properties) {
-		String idp = properties.getProperty("sso.idp");
-		if (!MnoPropertiesHelper.isNullOrEmpty(idp)) {
-			return idp;
-		} else {
-			if (appService.isProduction()) {
-				return "https://maestrano.com";
-			} else {
-				return "http://api-sandbox.maestrano.io";
-			}
-		}
-	}
-
 	/**
 	 * Return the SAML Name ID Format. Currently nameid-format:persistent
 	 * 
@@ -228,12 +216,29 @@ public class SsoService {
 	}
 
 	/**
-	 * Return the Idp logout url where users should be redirected to upon logging out
-	 * 
-	 * @return String Idp logout url
+	 * @deprecated Use {@linkplain #getLogoutUrl(MnoUser)} instead
+	 * @return the Idp logout url where users should be redirected to upon logging out
 	 */
 	public String getLogoutUrl() {
 		return this.getIdp() + "/app_logout";
+	}
+
+	/**
+	 * @param user
+	 *            the user currently logged id
+	 * @return the Idp logout url where users should be redirected to upon logging out
+	 */
+	public String getLogoutUrl(MnoUser user) {
+		return getLogoutUrl(user.getUid());
+	}
+	
+	/**
+	 * @param userUid
+	 *            the user currently logged id UID
+	 * @return the Idp logout url where users should be redirected to upon logging out
+	 */
+	public String getLogoutUrl(String userUid) {
+		return this.getIdp() + "/app_logout?user_uid=" + userUid;
 	}
 
 	/**

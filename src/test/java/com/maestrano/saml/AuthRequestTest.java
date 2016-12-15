@@ -60,7 +60,7 @@ public class AuthRequestTest {
 
 	@Test
 	public void getRedirectUrl_itGeneratesTheRightBaseUrl() throws Exception {
-		String expected = "https://maestrano.com/api/v1/auth/saml?SAMLRequest=";
+		String expected = "https://api-hub.maestrano.com/api/v1/auth/saml?SAMLRequest=";
 		expected += URLEncoder.encode(subject.getXmlBase64Request(), "UTF-8");
 
 		assertEquals(expected, subject.getRedirectUrl());
@@ -73,7 +73,7 @@ public class AuthRequestTest {
 		params.put("other", "value with spaces");
 		subject = new AuthRequest(maestrano, params);
 
-		String expected = "https://maestrano.com/api/v1/auth/saml?SAMLRequest=";
+		String expected = "https://api-hub.maestrano.com/api/v1/auth/saml?SAMLRequest=";
 		expected += URLEncoder.encode(subject.getXmlBase64Request(), "UTF-8");
 		expected += "&other=value+with+spaces";
 		expected += "&group_id=cld-9";

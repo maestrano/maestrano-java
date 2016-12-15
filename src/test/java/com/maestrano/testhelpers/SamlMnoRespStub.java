@@ -15,7 +15,7 @@ public class SamlMnoRespStub extends Response {
 		return attributes;
 	}
 
-	public SamlMnoRespStub() throws Exception {
+	public SamlMnoRespStub() {
 		super();
 		SimpleDateFormat simpleDf = new SimpleDateFormat("yyyy-MM-dd'T'H:mm:ssZ");
 		this.attributes = new HashMap<String, String>();
