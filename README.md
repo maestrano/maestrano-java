@@ -189,7 +189,7 @@ sso.idm=https\://idp.myapp.com
 
 # => idp (optional)
 # This is the URL of the identity provider to use when triggering a SSO handshake. With a multi-tenant integration, each tenant would have its own URL. Defaults to https://api-hub.maestrano.com
-sso.idm=https\://maestrano.com
+sso.idm=https\://api-hub.maestrano.com
 
 # => initPath
 # This is your application path to the SAML endpoint that allows users to initialize SSO authentication. 
