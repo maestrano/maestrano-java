@@ -33,35 +33,50 @@ import com.maestrano.net.DevPlatformClient;
  * Entry point for Maestrano API SDK Configuration.
  * </p>
  * 
- * You can configure maestrano using a properties file from the classpath or with an absolute path:</br>
+ * You can autoconfigure using the developer platform.</br>
+ * 
+ * Either by using environment variable:
  * 
  * <pre>
- * Maestrano.configure("myconfig.properties");
+ * {@code
+ * MNO_DEVPL_ENV_NAME=<your environment nid>
+ * MNO_DEVPL_ENV_KEY=<your environment key>
+ * MNO_DEVPL_ENV_SECRET=<your environment secret>
+ * Maestrano.autoconfigure();
+ * }
  * </pre>
  * 
- * <p>
+ * Or using a properties files
  * 
- * This will configure Maestrano with the properties defined in the myconfig.properties file for the default configuration.
+ * <pre>
+ * {code
+ * 	Properties properties = new Properties();
+ * 	properties.setProperty("dev-platform.host", "https://developer.maestrano.com");
+ * 	properties.setProperty("dev-platform.api_path", "/api/config/v1");
+ * 	properties.setProperty("environment.name", "<your environment nid>");
+ * 	properties.setProperty("environment.apiKey", "<your environment key>");
+ * 	properties.setProperty("environment.apiSecret", "<your environment secret>");
+ * 	Maestrano.autoConfigure(properties);
+ * }
+ * </pre>
  * 
- * You can add configuration presets programmatically by adding sets of properties in your Maestrano configuration. These additional presets can then be specified when doing particular action, such as
- * initializing a Connec!™ client or triggering a SSO handshake. These presets are particularly useful if you are dealing with multiple Maestrano-style marketplaces (multi-enterprise integration).
- * </p>
+ * This class contains the different configurations of the services used by the SDK to interact with Maestrano API
+ * 
  * <p>
  * If this is the first time you integrate with Maestrano, we recommend adopting a multi-tenant approach. All code samples in this documentation provide examples on how to handle multi-tenancy by
- * scoping method calls to a specific configuration preset. </br>
+ * scoping method calls to a specific configuration marketplace. </br>
  * More information about multi-tenant integration can be found on our <a href="https://maestrano.atlassian.net/wiki/display/CONNECAPIV2/Multi-Tenant+Integration">Our Multi-Tenant Integration
  * Guide</a>
  * <p>
- * The {@link #configure()} methods needs to be called only once per preset. A {@link MnoConfigurationException} will be thrown if Maestrano was previously configured. If you need to reload the
- * configuration for a given preset, you may use the {@linkplain Maestrano#reloadConfiguration(Properties)} method.
  * 
  */
 public final class Maestrano {
 	private static final Logger logger = LoggerFactory.getLogger(Maestrano.class);
+	@Deprecated
 	public static final String DEFAULT = "default";
 	private static final Map<String, Maestrano> instances = new LinkedHashMap<String, Maestrano>();
 
-	private final String preset;
+	private final String marketplace;
 	private final AppService appService;
 	private final ApiService apiService;
 	private final SsoService ssoService;
@@ -69,9 +84,9 @@ public final class Maestrano {
 	private final WebhookService webhookService;
 
 	// Private constructor
-	private Maestrano(String preset, Properties props) {
+	private Maestrano(String marketplace, Properties props) {
 		Properties trimmedProperties = MnoPropertiesHelper.trimProperties(props);
-		this.preset = preset;
+		this.marketplace = marketplace;
 		this.appService = new AppService(trimmedProperties);
 		this.apiService = new ApiService(trimmedProperties);
 		this.connecService = new ConnecService(appService, props);
@@ -91,6 +106,7 @@ public final class Maestrano {
 	/**
 	 * Configure Maestrano API using a "config.properties" file
 	 * 
+	 * @deprecated use {@link #autoConfigure()} instead
 	 * @throws MnoConfigurationException
 	 *             if an instance was already configured
 	 */
@@ -129,7 +145,7 @@ public final class Maestrano {
 	/**
 	 * Method to fetch configuration from the dev-platform, using a properties.
 	 * 
-	 * @return a Map <Preset, MaestranoConfiguration> the preset being the marketplace name
+	 * @return a Map <String, Maestrano> the different Maestrano configuration indexed by marketplace name
 	 * @throws MnoConfigurationException
 	 */
 	public static Map<String, Maestrano> autoConfigure(Properties properties) throws MnoConfigurationException {
@@ -138,9 +154,9 @@ public final class Maestrano {
 		List<MarketplaceConfiguration> marketplaceConfigurations = client.getMarketplaceConfigurations();
 		Map<String, Maestrano> configurations = new LinkedHashMap<String, Maestrano>();
 		for (MarketplaceConfiguration marketplaceConfiguration : marketplaceConfigurations) {
-			String preset = marketplaceConfiguration.getName();
-			Maestrano maestrano = reloadConfiguration(preset, marketplaceConfiguration.getProperties());
-			configurations.put(preset, maestrano);
+			String marketplace = marketplaceConfiguration.getName();
+			Maestrano maestrano = reloadConfiguration(marketplace, marketplaceConfiguration.getProperties());
+			configurations.put(marketplace, maestrano);
 		}
 		logger.debug("autoConfigure() found {}", configurations.keySet());
 		return configurations;
@@ -149,6 +165,7 @@ public final class Maestrano {
 	/**
 	 * Configure Maestrano API using a Properties file
 	 * 
+	 * @deprecated use {@link #autoConfigure()} instead
 	 * @param String
 	 *            filePath properties file path. In the classPath or absolute
 	 * @throws MnoConfigurationException
@@ -160,6 +177,8 @@ public final class Maestrano {
 
 	/**
 	 * Configure Maestrano API using a Properties object
+	 * 
+	 * * @deprecated use {@link #autoConfigure()} instead
 	 * 
 	 * @param Properties
 	 *            props
@@ -173,6 +192,7 @@ public final class Maestrano {
 	/**
 	 * Configure Maestrano API using a Properties file for the given preset
 	 * 
+	 * @deprecated use {@link #autoConfigure()} instead
 	 * @param String
 	 *            preset
 	 * @param String
@@ -188,6 +208,7 @@ public final class Maestrano {
 	/**
 	 * Configure Maestrano API using a Properties for the given preset
 	 * 
+	 * @deprecated use {@link #autoConfigure()} instead
 	 * @param String
 	 *            preset
 	 * @param Properties
@@ -226,19 +247,23 @@ public final class Maestrano {
 	/**
 	 * return the Maestrano Instance for the given preset
 	 * 
-	 * @param preset
+	 * @param marketplace
 	 * @return
 	 * @throws MnoConfigurationException
 	 *             if no instance was not configured
 	 */
-	public static Maestrano get(String preset) throws MnoConfigurationException {
-		Maestrano maestrano = instances.get(preset);
+	public static Maestrano get(String marketplace) throws MnoConfigurationException {
+		Maestrano maestrano = instances.get(marketplace);
 		if (maestrano == null) {
-			throw new MnoConfigurationException("Mastrano was not configured for preset: " + preset + ". Maetrano.configure(" + preset + ") needs to have been called once.");
+			throw new MnoConfigurationException("Mastrano was not configured for marketplace: " + marketplace + ". Maetrano.configure(" + marketplace + ") needs to have been called once.");
 		}
 		return maestrano;
 	}
 
+	/**
+	 * @deprecated you should always use a {@linkplain #get(String)} for a given preset/marketplace
+	 * @return
+	 */
 	public static Maestrano getDefault() {
 		Maestrano maestrano = instances.get(DEFAULT);
 		if (maestrano == null) {
@@ -250,11 +275,20 @@ public final class Maestrano {
 	/**
 	 * 
 	 * @return the configured presets id
+	 * @deprecated use {@link #marketplaces()} instead
 	 */
 	public static Set<String> presets() {
 		return instances.keySet();
 	}
 
+	/**
+	 * 
+	 * @return the configured marketplaces id
+	 */
+	public static Set<String> marketplaces() {
+		return instances.keySet();
+	}
+	
 	/**
 	 * 
 	 * @return a unmodifiableMap of the Maestrano configuration indexed by preset Id.
@@ -266,7 +300,7 @@ public final class Maestrano {
 	/**
 	 * Authenticate a Maestrano request using the appId and apiKey
 	 * 
-	 * @param preset
+	 * @param marketplace
 	 * 
 	 * @param appId
 	 * 
@@ -283,7 +317,7 @@ public final class Maestrano {
 	/**
 	 * Authenticate a Maestrano request by reading the Authorization header
 	 * 
-	 * @param preset
+	 * @param marketplace
 	 * @param appId
 	 * @return authenticated or not
 	 * @throws UnsupportedEncodingException
@@ -360,18 +394,26 @@ public final class Maestrano {
 	}
 
 	/**
-	 * Return the preset of the Maestrano Configuration, or the marketplace if it is coming from autoconfiguration
+	 * the preset of the Maestrano Configuration, or the marketplace if it is coming from autoconfiguration
 	 * 
-	 * @return
+	 * @deprecated use {@linkplain Maestrano#getMarketplace()}
+	 * @return the preset of the Maestrano Configuration, or the marketplace if it is coming from autoconfiguration
 	 */
 	public String getPreset() {
-		return preset;
+		return marketplace;
+	}
+
+	/**
+	 * @return the marketplace name of this Maestrano configuration
+	 */
+	public String getMarketplace() {
+		return marketplace;
 	}
 
 	/**
 	 * Return the Maestrano API configuration as a hash
 	 * 
-	 * @param preset
+	 * @param marketplace
 	 * @return metadata hash
 	 */
 	public Map<String, Object> toMetadataHash() {

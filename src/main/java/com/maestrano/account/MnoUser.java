@@ -2,6 +2,7 @@ package com.maestrano.account;
 
 import java.util.Date;
 
+import com.maestrano.Maestrano;
 import com.maestrano.exception.MnoConfigurationException;
 import com.maestrano.net.MnoAccountClient;
 
@@ -16,17 +17,29 @@ public class MnoUser extends MnoObject {
 	private Date createdAt;
 	private Date updatedAt;
 
+	/**
+	 * @deprecated use {@link #client(Maestrano)} instead
+	 * @return
+	 */
 	public static MnoUserClient client() {
 		return new MnoUserClient();
 	}
 
-	public static MnoUserClient client(String presetId) throws MnoConfigurationException {
-		return new MnoUserClient(presetId);
+	public static MnoUserClient client(String marketplace) throws MnoConfigurationException {
+		return new MnoUserClient(marketplace);
+	}
+
+	public static MnoUserClient client(Maestrano maestrano) {
+		return new MnoUserClient(maestrano);
 	}
 
 	public static class MnoUserClient extends MnoAccountClient<MnoUser> {
-		public MnoUserClient(String preset) throws MnoConfigurationException {
-			super(MnoUser.class, preset);
+		public MnoUserClient(Maestrano maestrano) {
+			super(MnoUser.class, maestrano);
+		}
+
+		public MnoUserClient(String marketplace) throws MnoConfigurationException {
+			super(MnoUser.class, Maestrano.get(marketplace));
 		}
 
 		public MnoUserClient() {

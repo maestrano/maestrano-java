@@ -2,6 +2,7 @@ package com.maestrano.account;
 
 import java.util.Date;
 
+import com.maestrano.Maestrano;
 import com.maestrano.exception.ApiException;
 import com.maestrano.exception.AuthenticationException;
 import com.maestrano.exception.MnoConfigurationException;
@@ -25,17 +26,28 @@ public class MnoRecurringBill extends MnoObject {
 	public String currency;
 	public String description;
 
+	/**
+	 * @deprecated use {@link #client(Maestrano)} instead
+	 */
 	public static MnoRecurringBillClient client() {
 		return new MnoRecurringBillClient();
 	}
 
-	public static MnoRecurringBillClient client(String presetId) throws MnoConfigurationException {
-		return new MnoRecurringBillClient(presetId);
+	public static MnoRecurringBillClient client(String marketplace) throws MnoConfigurationException {
+		return new MnoRecurringBillClient(marketplace);
+	}
+
+	public static MnoRecurringBillClient client(Maestrano maestrano) {
+		return new MnoRecurringBillClient(maestrano);
 	}
 
 	public static class MnoRecurringBillClient extends MnoAccountClient<MnoRecurringBill> {
-		public MnoRecurringBillClient(String preset) throws MnoConfigurationException {
-			super(MnoRecurringBill.class, preset);
+		public MnoRecurringBillClient(Maestrano maestrano) {
+			super(MnoRecurringBill.class, maestrano);
+		}
+
+		public MnoRecurringBillClient(String marketplace) throws MnoConfigurationException {
+			super(MnoRecurringBill.class, Maestrano.get(marketplace));
 		}
 
 		public MnoRecurringBillClient() {
