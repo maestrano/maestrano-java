@@ -115,6 +115,7 @@ public class MnoSession {
 
 	/**
 	 * Constructor retrieving Maestrano session from user for a given ssoService
+	 * 
 	 * @param ssoService
 	 * @param httpSession
 	 * @param user
@@ -280,6 +281,13 @@ public class MnoSession {
 
 		// Finally store the maestrano session
 		httpSession.setAttribute("maestrano", sessStr);
+	}
+
+	/**
+	 * @return the Idp logout url where users should be redirected to upon logging out
+	 */
+	public String getLogoutUrl() {
+		return ssoService.getLogoutUrl(this.uid);
 	}
 
 	public String getUid() {

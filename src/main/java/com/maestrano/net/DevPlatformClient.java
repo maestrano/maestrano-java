@@ -37,24 +37,22 @@ public class DevPlatformClient {
 		return getMarketplaceConfigurations(getAuthenticatedClient());
 	}
 
-	
-	
 	public List<MarketplaceConfiguration> getMarketplaceConfigurations(MnoHttpClient client) throws MnoConfigurationException {
 		String string;
 		try {
 			string = client.get(getInstanceUrl() + "/marketplaces");
 		} catch (MnoException e) {
-			throw new MnoConfigurationException("Could not retrieve the list of the marketplace: " + e.getMessage(), e);
+			throw new MnoConfigurationException("Could not retrieve the list of the marketplace: " + e.getMessage() + ", Config: " + devPlatformService, e);
 		}
 		Map<String, Object> fromJson = fromJson(string);
 
 		if (fromJson.get("error") != null) {
-			throw new MnoConfigurationException("An error occurred while retrieving the marketplaces. Body content: " + fromJson.get("error"));
+			throw new MnoConfigurationException("An error occurred while retrieving the marketplaces. Body content: " + fromJson.get("error") + ", Config: " + devPlatformService);
 		}
 		@SuppressWarnings("unchecked")
 		Collection<Object> marketplaces = (Collection<Object>) fromJson.get("marketplaces");
 		if (marketplaces == null) {
-			throw new MnoConfigurationException("An error occurred while retrieving the marketplaces. No marketplaces in the json answer");
+			throw new MnoConfigurationException("An error occurred while retrieving the marketplaces. No marketplaces in the json answer" + ", Config: " + devPlatformService);
 		}
 
 		List<MarketplaceConfiguration> result = new ArrayList<MarketplaceConfiguration>();

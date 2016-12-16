@@ -42,7 +42,19 @@
 	<developers>
 		<developer>
 			<name>Arnaud Lachaume</name>
-			<email>arnaud.lachaume@maestrano.com.com</email>
+			<email>arnaud.lachaume@maestrano.com</email>
+			<organization>Maestrano</organization>
+			<organizationUrl>https://maestrano.com</organizationUrl>
+		</developer>
+		<developer>
+			<name>Bruno Lachaume</name>
+			<email>bruno.lachaume@maestrano.com</email>
+			<organization>Maestrano</organization>
+			<organizationUrl>https://maestrano.com</organizationUrl>
+		</developer>
+		<developer>
+			<name>Xavier Delamotte</name>
+			<email>xavier.delamotte@maestrano.com</email>
 			<organization>Maestrano</organization>
 			<organizationUrl>https://maestrano.com</organizationUrl>
 		</developer>

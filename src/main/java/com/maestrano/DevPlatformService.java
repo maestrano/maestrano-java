@@ -60,4 +60,9 @@ public class DevPlatformService {
 		return apiSecret;
 	}
 
+	@Override
+	public String toString() {
+		return "[host=" + host + ", apiPath=" + apiPath + ", environmentName=" + environmentName + ", apiKey=" + apiKey + ", apiSecret=" + apiSecret + "]";
+	}
+
 }
