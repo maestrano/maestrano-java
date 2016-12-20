@@ -947,7 +947,7 @@ MnoBill bill = client.retrieve("rbill-f1d2s54");
 
 ### Migrating Connec!™ Data Sharing API calls
 
-Before you could directly make the static call on ConnecClient. Now you need to use the contructor
+Before you could directly make the static call on ConnecClient. Now you need to use the constructor
 Before 0.9.0:
 ```java
 Map<String, Object> organizations = ConnecClient.all("organizations", groupId);
