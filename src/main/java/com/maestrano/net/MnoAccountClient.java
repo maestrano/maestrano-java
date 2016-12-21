@@ -21,7 +21,7 @@ import com.maestrano.reflect.ListParameterizedType;
 import com.maestrano.reflect.MnoAccountResponseParameterizedType;
 
 /**
- * service to retrieve Maestrano Business Objects using Maestraeno API
+ * service to retrieve Maestrano Business Objects using maestrano API
  */
 public class MnoAccountClient<T> {
 
@@ -29,21 +29,25 @@ public class MnoAccountClient<T> {
 			.registerTypeAdapter(Date.class, new DateDeserializer()).create();
 
 	public final static String CTYPE = "application/json";
-	private final Maestrano maestraeno;
+	private final Maestrano maestrano;
 	private final Class<T> entitityClass;
 
+	/**
+	 * @deprecated
+	 * @param entitityClass
+	 */
 	protected MnoAccountClient(Class<T> entitityClass) {
 		this.entitityClass = entitityClass;
-		this.maestraeno = Maestrano.getDefault();
+		this.maestrano = Maestrano.getDefault();
 	}
 
-	protected MnoAccountClient(Class<T> entitityClass, String preset) throws MnoConfigurationException {
+	protected MnoAccountClient(Class<T> entitityClass, Maestrano maestrano){
 		this.entitityClass = entitityClass;
-		this.maestraeno = Maestrano.get(preset);
+		this.maestrano = maestrano;
 	}
 
 	/**
-	 * Return the entity name as expected by maestraeno
+	 * Return the entity name as expected by maestrano
 	 * 
 	 * @param entitityClass
 	 * @return entity name
@@ -71,7 +75,7 @@ public class MnoAccountClient<T> {
 	 * @return collection endpoint
 	 */
 	public String getCollectionEndpoint() {
-		return maestraeno.apiService().getBase() + "account/" + getEntitiesName();
+		return maestrano.apiService().getBase() + "account/" + getEntitiesName();
 	}
 
 	/**
@@ -82,7 +86,7 @@ public class MnoAccountClient<T> {
 	 * @return collection url
 	 */
 	public String getCollectionUrl() {
-		return maestraeno.apiService().getHost() + getCollectionEndpoint();
+		return maestrano.apiService().getHost() + getCollectionEndpoint();
 	}
 
 	/**
@@ -108,7 +112,7 @@ public class MnoAccountClient<T> {
 	 * @return instance url
 	 */
 	public String getInstanceUrl(String id) {
-		return maestraeno.apiService().getHost() + getInstanceEndpoint(id);
+		return maestrano.apiService().getHost() + getInstanceEndpoint(id);
 	}
 
 	/**
@@ -325,6 +329,6 @@ public class MnoAccountClient<T> {
 	}
 
 	private MnoHttpClient getAuthenticatedClient() {
-		return MnoHttpClient.getAuthenticatedClient(maestraeno.apiService(), CTYPE);
+		return MnoHttpClient.getAuthenticatedClient(maestrano.apiService(), CTYPE);
 	}
 }

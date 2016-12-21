@@ -30,8 +30,8 @@ public class AuthRequest {
 	/**
 	 * Constructor
 	 * 
-	 * @param String
-	 *            preset
+	 * @param Maestrano
+	 *            maestrano configuration
 	 * @param Map<String,String>
 	 *            request parameters
 	 * @throws MnoException
@@ -47,8 +47,8 @@ public class AuthRequest {
 	/**
 	 * Constructor
 	 * 
-	 * @param String
-	 *            preset
+	 * @param Maestrano
+	 *            maestrano configuration
 	 * @param request
 	 * @throws MnoException
 	 */

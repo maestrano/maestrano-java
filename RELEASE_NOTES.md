@@ -2,10 +2,15 @@
 
 ## maestrano-java-1.0.0
 
-* Introduce Maestrano.autoConfigure() (See README.md)
-* com.maestrano.saml.Response constructor is now private. Use com.maestrano.saml.Response.loadFromXML or loadFromBase64XML
+* Introduce `Maestrano.autoConfigure()` (See README.md)
+* Lot of methods have been deprecated:
+ * `ConnecClient.defaultClient()` and `ConnecClient.withPreset` should be replaced by the call to the `ConnecClient(Maestrano)` constructor
+ * All `Maestrano.configure` methods are deprecated and should be replaced by a call to autoconfigure. (See https://maestrano.atlassian.net/wiki/display/DEV/How+to+migrate+to+the+developer+platform)
+ * All `.client()` methods of the Mno Objects (MnoBill, MnoGroup, MnoRecurringBill, MnoUser) should be replaced by `.client(Maestrano)` or `.client(marketplace)`
+ * `com.maestrano.saml.Response` constructor is now private. Use `com.maestrano.saml.Response.loadFromXML` or `loadFromBase64XML`
 * Maestrano.authenticate methods are no longer static. Use instance methods instead. For example, Maestrano.authenticate(preset, request) should be replaced by Maestrano.get(request).authenticate(request)
 * Introduction of SLF4j (http://www.slf4j.org/) for logging.
+
 
 To see all commits for this version, [click here](https://github.com/maestrano/maestrano-java/compare/maestrano-java-0.9.4...maestrano-java-1.0.0).
 

@@ -20,10 +20,9 @@ import com.google.gson.GsonBuilder;
 import com.maestrano.ApiService;
 import com.maestrano.exception.ApiException;
 import com.maestrano.exception.AuthenticationException;
-import com.maestrano.exception.MnoException;
 import com.maestrano.json.DateSerializer;
 
-public class MnoHttpClient {
+public class MnoHttpClient {	
 	public static final Gson GSON = new GsonBuilder().registerTypeAdapter(Date.class, new DateSerializer()).create();
 
 	private String defaultUserAgent;
@@ -45,10 +44,6 @@ public class MnoHttpClient {
 
 	/**
 	 * Return a client with HTTP Basic Authentication setup
-	 * 
-	 * @param preset
-	 * @return
-	 * @throws MnoException
 	 */
 	public static MnoHttpClient getAuthenticatedClient(ApiService apiService) {
 		return getAuthenticatedClient(apiService.getId(), apiService.getKey(), "application/vnd.api+json");
@@ -60,11 +55,6 @@ public class MnoHttpClient {
 
 	/**
 	 * Return a client with HTTP Basic Authentication setup
-	 * 
-	 * @param preset
-	 * @param contentType
-	 * @return
-	 * @throws MnoException
 	 */
 	public static MnoHttpClient getAuthenticatedClient(String key, String secret, String contentType) {
 		MnoHttpClient client = new MnoHttpClient(contentType);

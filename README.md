@@ -7,8 +7,7 @@
 </p>
 
 Maestrano Cloud Integration is currently in closed beta. Want to know more? Send us an email to <contact@maestrano.com>.
-  
-  
+
 - - -
 
 1.  [Getting Setup](#getting-setup)
@@ -372,21 +371,15 @@ The group setup is similar to the user one. The mapping is a little easier thoug
 You will need two controller action init and consume. The init action will initiate the single sign-on request and redirect the user to Maestrano. The consume action will receive the single sign-on response, process it and match/create the user and the group.
 
 The init action is all handled via Maestrano methods and should look like this:
-```jsp
-<%@ page import="com.maestrano.saml.AuthRequest" %>
-<%
-  AuthRequest authReq = new AuthRequest(Maestrano.getDefault(), request);
-  String ssoUrl = authReq.getRedirectUrl();
-  
-  response.sendRedirect(ssoUrl);
-%>
-```
 
-With presets:
 ```jsp
 <%@ page import="com.maestrano.saml.AuthRequest" %>
 <%
-  AuthRequest authReq = new AuthRequest(Maestrano.get("mypreset"), request);
+  //You should have a different url per marketplace
+  // For example /mno-enterprise/saml/init?marketplace={marketplace_key}
+  //See https://maestrano.atlassian.net/wiki/display/DEV/Multi-Marketplace+Integration for more information
+  String marketplace = readMarketplaceFromParameter();
+  AuthRequest authReq = new AuthRequest(Maestrano.get(marketplace), request);
   String ssoUrl = authReq.getRedirectUrl();
   
   response.sendRedirect(ssoUrl);
@@ -397,15 +390,14 @@ Based on your application requirements the consume action might look like this:
 ```jsp
 <%@ page import="com.maestrano.saml.Response,com.maestrano.sso.*" %>
 <%
-  Response authResp = new Response();
-  authResp.loadXmlFromBase64(request.getParameter("SAMLResponse"));
+    String marketplace = readMarketplaceFromParameter();
+    Maestrano maestrano = Maestrano.get(marketplace);
+    Response authResp = new Response(maestrano);
+
+   authResp.loadXmlFromBase64(request.getParameter("SAMLResponse"));
   
   if (authResp.isValid()) {
-    
-    // Build maestrano user and group objects
-    MnoUser mnoUser = new MnoUser(authResp);
-    MnoGroup mnoGroup = new MnoGroup(authResp);
-    
+
     // Build/Map local entities
     MyGroup localGroup = MyGroup.findOrCreateForMaestrano(mnoGroup);
     MyUser localUser = MyUser.findOrCreateForMaestrano(mnoUser);
@@ -417,8 +409,7 @@ Based on your application requirements the consume action might look like this:
     }
     
     // Set Maestrano session (for Single Logout)
-    MnoSession mnoSession = new MnoSession(request.getSession(),mnoUser);
-    // or MnoSession mnoSession = new MnoSession("preset", request.getSession(),mnoUser);
+    MnoSession mnoSession = new MnoSession(marketplace, request.getSession(),mnoUser);
     mnoSession.save();
     
     // Redirect to you application home page
@@ -432,34 +423,16 @@ Based on your application requirements the consume action might look like this:
 %>
 ```
 
-With presets:
-Based on your application requirements the consume action might look like this:
-```jsp
-<%@ page import="com.maestrano.saml.Response,com.maestrano.sso.*" %>
-<%
-  Response authResp = new Response(Maestrano.get("mypreset"));
-  ...
-%>
-```
-
 Note that for the consume action you should disable CSRF authenticity if your framework is using it by default. If CSRF authenticity is enabled then your app will complain on the fact that it is receiving a form without CSRF token.
 
 ### Other Controllers
 If you want your users to benefit from single logout then you should define the following filter in a module and include it in all your controllers except the one handling single sign-on authentication.
 
-```java
-MnoSession mnoSession = new MnoSession(request.getSession());
-if (!mnoSession.isValid()) {
-  response.sendRedirect(Maestrano.getDefault().ssoService().getInitUrl());
-}
-```
-
-Or when you use a preset:
 
 ```java
-MnoSession mnoSession = new MnoSession("preset", request.getSession());
+MnoSession mnoSession = new MnoSession(marketplace, request.getSession());
 if (!mnoSession.isValid()) {
-  response.sendRedirect(Maestrano.get("preset").ssoService().getInitUrl());
+  response.sendRedirect(Maestrano.get(marketplace).ssoService().getInitUrl());
 }
 ```
 
@@ -471,14 +444,16 @@ If you start seing session check requests on every page load it means something 
 When Maestrano users sign out of your application you can redirect them to the Maestrano logout page. You can get the url of this page by calling:
 
 ```java
-Maestrano.getDefault().ssoService().getLogoutUrl()
+  //Retrieve current user uid
+  String userUid = getUserUid();
+  Maestrano.get(marketplace).ssoService().getLogoutUrl(Retrieve)
 ```
 
 ### Redirecting on error
 If any error happens during the SSO handshake, you can redirect users to the following URL:
 
 ```java
-Maestrano.getDefault().ssoService().getUnauthorizedUrl()
+Maestrano.get(marketplace).ssoService().getUnauthorizedUrl()
 ```
 
 ## Account Webhooks
@@ -510,7 +485,7 @@ The controller example below reimplements the authenticate_maestrano! method see
 The example below needs to be adapted depending on your application:
 
 ```java
-if (Maestrano.getDefault().authenticate(request)) {
+if (Maestrano.get(marketplace).authenticate(request)) {
   MyGroupModel someGroup = MyGroupModel.findByMnoId(restfulGroupIdFromUrl);
   someGroup.removeUserById(restfulIdFromUrl);
 }
@@ -520,7 +495,7 @@ if (Maestrano.getDefault().authenticate(request)) {
 The same operations can be used with presets:
 ```java
 
-if (Maestrano.get("mypreset").authenticate(request)) {
+if (Maestrano.get(marketplace).authenticate(request)) {
   MyGroupModel someGroup = MyGroupModel.findByMnoId(restfulGroupIdFromUrl);
   ...
 }
@@ -654,18 +629,16 @@ com.maestrano.account.MnoBill
 ##### Actions
 
 List all bills you have created and iterate through the list
-```java
-List<MnoBill> bills = MnoBill.client().all();
-```
-and if you need to precise a preset
-```java
-List<MnoBill> bills = MnoBill.client("mypreset").all();
-```
 
+and if you need to precise a preset
+
+```java
+List<MnoBill> bills = MnoBill.client(marketplace).all();
+```
 
 Access a single bill by id
 ```java
-MnoBill bill = MnoBill.client().retrieve("bill-f1d2s54");
+MnoBill bill = MnoBill.client(marketplace).retrieve("bill-f1d2s54");
 ```
 
 Create a new bill
@@ -675,12 +648,12 @@ attrsMap.put("groupId", "cld-3");
 attrsMap.put("priceCents", 2000);
 attrsMap.put("description", "Product purchase");
 
-MnoBill bill = MnoBill.client().create(attrsMap);
+MnoBill bill = MnoBill.client(marketplace).create(attrsMap);
 ```
 
 Cancel a bill
 ```java
-MnoBillClient client = MnoBill.client();
+MnoBillClient client = MnoBill.client(marketplace);
 MnoBill bill = client.retrieve("bill-f1d2s54");
 client.cancel(bill);
 ```
@@ -827,17 +800,13 @@ com.maestrano.account.MnoRecurringBill
 
 List all recurring bills you have created and iterate through the list
 ```java
-List<MnoRecurringBill> bills = MnoRecurringBill.client().all();
-```
-If you need to create the call for a given preset
-```java
-List<MnoRecurringBill> bills = MnoRecurringBill.client("mypreset").all();
+List<MnoRecurringBill> bills = MnoRecurringBill.client(marketplace).all();
 ```
 
 
 Access a single recurring bill by id
 ```java
-MnoRecurringBill bill = MnoRecurringBill.client().retrieve("rbill-f1d2s54");
+MnoRecurringBill bill = MnoRecurringBill.client(marketplace).retrieve("rbill-f1d2s54");
 ```
 
 Create a new recurring bill
@@ -849,12 +818,12 @@ attrsMap.put("description", "Product purchase");
 attrsMap.put("period", "Month");
 attrsMap.put("startDate", new Date());
 
-MnoRecurringBill bill = MnoRecurringBill.client()..create(attrsMap);
+MnoRecurringBill bill = MnoRecurringBill.client(marketplace).create(attrsMap);
 ```
 
 Cancel a recurring bill
 ```java
-MnoRecurringBillClient client = MnoRecurringBill.client();
+MnoRecurringBillClient client = MnoRecurringBill.client(marketplace);
 MnoRecurringBill bill = client.retrieve("rbill-f1d2s54");
 client.cancel(bill);
 ```
@@ -877,8 +846,8 @@ The Maestrano API provides a built-in client - for connecting to Connec!™. Thi
 
 ```java
 String groupId = "cld-3";
-// Retrieve default Connect client, if you need to get ConnecClient for a given preset, call ConnecClient.withPreset("myPreset");
-ConnecClient connecClient = ConnecClient.defaultClient();
+// Retrieve default Connect client
+ConnecClient connecClient = new ConnecClient(marketplace);
 
 // Fetch all organizations
 Map<String, Object> organizations = connecClient.all("organizations", groupId);
@@ -978,7 +947,7 @@ MnoBill bill = client.retrieve("rbill-f1d2s54");
 
 ### Migrating Connec!™ Data Sharing API calls
 
-Before you could directly make the static call on ConnecClient. Now you need to retrieve the default instance or the one configured for a given preset.
+Before you could directly make the static call on ConnecClient. Now you need to use the constructor
 Before 0.9.0:
 ```java
 Map<String, Object> organizations = ConnecClient.all("organizations", groupId);
@@ -986,7 +955,7 @@ organization = (Map<String, Object>) ConnecClient.create("organizations", groupI
 ```
 After 0.9.0:
 ```java
-ConnecClient connecClient = ConnecClient.defaultClient();
+ConnecClient connecClient = new ConnecClient(marketplace);
 Map<String, Object> organizations = connecClient.all("organizations", groupId);
 organization = (Map<String, Object>) connecClient.create("organizations", groupId, newOrganization).get("organizations");
 ```
@@ -1009,11 +978,11 @@ For example, if you use [Log4j](http://logging.apache.org/log4j/2.x/), all you n
 ## Support
 This README is still in the process of being written and improved. As such it might not cover some of the questions you might have.
 
-So if you have any question or need help integrating with us just let us know at support@maestrano.com
+So if you have any question or need help integrating with us please contact us on our Support Desk: https://maestrano.atlassian.net/servicedesk/customer/portal/2
 
 ## License
 
-MIT License. Copyright 2014 Maestrano Pty Ltd. https://maestrano.com
+MIT License. Copyright 2016 Maestrano Pty Ltd. https://maestrano.com
 
 You are not granted rights or licenses to the trademarks of Maestrano.
 
