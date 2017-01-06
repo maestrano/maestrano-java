@@ -42,7 +42,7 @@ Before integrating with us you will need an to create your app on the developer 
 
 We provide a Sandbox environment where you can freely launch your app to test your integration. The sandbox is great to test single sign-on and API integration (e.g: Connec! API). This Sandbox is available on the developer platform on your app technical page.
 
-To get started just go to: https://developer.maestrano.com. You will find the developer platform documentation here: Documentation.
+To get started just go to: https://developer.maestrano.com. You will find the developer platform documentation here: [Documentation](https://maestrano.atlassian.net/wiki/display/DEV/Integrate+your+app+on+partner%27s+marketplaces).
 
 A **java demo application** is also available: https://github.com/maestrano/demoapp-java
 
