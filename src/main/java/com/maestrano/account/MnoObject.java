@@ -9,7 +9,7 @@ import com.maestrano.net.MnoAccountClient;
 class MnoObject {
 
 	/**
-	 * This value has to be lazy loaded, necause it is possible to use the application without a default preset
+	 * This value has to be lazy loaded, because it is possible to use the application without a default marketplace
 	 */
 	public Map<String, Object> changedAttributes;
 	public Map<String, Object> orginalAttributes;
@@ -42,7 +42,7 @@ class MnoObject {
 			}
 
 		} catch (Exception wontHappen) {
-			//TODO: we should log this
+			// TODO: we should log this
 		}
 	}
 
@@ -53,7 +53,7 @@ class MnoObject {
 			try {
 				f.set(this, f.get(obj));
 			} catch (Exception wontHappen) {
-				//TODO: we should log this
+				// TODO: we should log this
 			}
 		}
 	}

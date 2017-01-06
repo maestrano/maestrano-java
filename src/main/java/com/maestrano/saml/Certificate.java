@@ -44,6 +44,7 @@ public class Certificate {
 		cleanCert = cleanCert.replaceAll("(\n)*-----END CERTIFICATE-----(\n)*", "");
 
 		CertificateFactory fty = CertificateFactory.getInstance("X.509");
+
 		ByteArrayInputStream bais = new ByteArrayInputStream(DatatypeConverter.parseBase64Binary(cleanCert));
 
 		return (X509Certificate) fty.generateCertificate(bais);

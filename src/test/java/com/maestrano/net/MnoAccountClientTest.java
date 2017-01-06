@@ -61,12 +61,12 @@ public class MnoAccountClientTest {
 
 	@Test
 	public void class_getCollectionUrl_itReturnsTheRightEntityApiUrl() {
-		assertEquals("https://maestrano.com/api/v1/account/some_models",mnoAccountClient.getCollectionUrl());
+		assertEquals("https://api-hub.maestrano.com/api/v1/account/some_models",mnoAccountClient.getCollectionUrl());
 	}
 
 	@Test
 	public void getInstanceUrl_itReturnsTheRightEntityInstanceApiUrl() {
-		assertEquals("https://maestrano.com/api/v1/account/some_models/1",mnoAccountClient.getInstanceUrl("1"));
+		assertEquals("https://api-hub.maestrano.com/api/v1/account/some_models/1",mnoAccountClient.getInstanceUrl("1"));
 	}
 
 	@Test

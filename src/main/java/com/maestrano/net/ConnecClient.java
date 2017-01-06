@@ -31,15 +31,23 @@ public class ConnecClient {
 	private final ApiService apiService;
 	private final ConnecService connecService;
 
-	private ConnecClient(String preset) throws MnoConfigurationException {
-		Maestrano maestrano = Maestrano.get(preset);
-		this.connecService = maestrano.connecService();
-		this.apiService = maestrano.apiService();
-		
+	/**
+	 * Instantiate a ConnecClient for the given marketplace
+	 * 
+	 * @param marketplace
+	 * @throws MnoConfigurationException
+	 */
+	public ConnecClient(String marketplace) throws MnoConfigurationException {
+		this(Maestrano.get(marketplace));
 	}
 
-	private ConnecClient() {
-		Maestrano maestrano = Maestrano.getDefault();
+	/**
+	 * Instantiate a ConnecClient for the given Maestrano configuration
+	 * 
+	 * @param marketplace
+	 * @throws MnoConfigurationException
+	 */
+	public ConnecClient(Maestrano maestrano) {
 		this.connecService = maestrano.connecService();
 		this.apiService = maestrano.apiService();
 	}
@@ -47,21 +55,24 @@ public class ConnecClient {
 	/**
 	 * Instantiate a ConnecClient with the given Preset
 	 * 
-	 * @param preset
+	 * @deprecated use {@link #ConnecClient(String)} constructor directly
+	 * @param marketplace
 	 * @return
 	 * @throws MnoException
 	 */
-	public static ConnecClient withPreset(String preset) throws MnoConfigurationException {
-		return new ConnecClient(preset);
+	public static ConnecClient withPreset(String marketplace) throws MnoConfigurationException {
+		return new ConnecClient(marketplace);
 	}
 
 	/**
 	 * Instantiate a ConnecClient with the default preset
 	 * 
+	 * @deprecated use {@link #ConnecClient(Maestrano)} constructor directly
+	 * @deprecated use
 	 * @throws MnoException
 	 */
 	public static ConnecClient defaultClient() {
-		return new ConnecClient();
+		return new ConnecClient(Maestrano.getDefault());
 	}
 
 	/**
@@ -74,7 +85,7 @@ public class ConnecClient {
 	 * @return collection endpoint
 	 */
 	public String getCollectionEndpoint(String entityName, String groupId) {
-		return connecService.getBase() + "/" + groupId + "/" + entityName;
+		return connecService.getBasePath() + "/" + groupId + "/" + entityName;
 	}
 
 	/**
@@ -141,6 +152,33 @@ public class ConnecClient {
 	}
 
 	/**
+	 * Return the entities in a typed class. The typed class should contain a field "entityName" with the list of entity class. For example:
+	 * 
+	 * <pre>
+	* {@code
+	* class Organizations{
+	*   private List<Organization> organizations;
+	*   public List<Organization> getOrganizations(){
+	*       return organizations;
+	*  }
+	* }
+	* class Organization{
+	* 	public String getId(); 
+	*	//etc...
+	* }
+	 * </pre>
+	 * 
+	 * @param entityName
+	 * @param groupId
+	 * @param clazz
+	 * @return
+	 * @throws MnoException
+	 */
+	public <T> T all(String entityName, String groupId, Class<T> clazz) throws MnoException {
+		return all(entityName, groupId, null, getAuthenticatedClient(), clazz);
+	}
+
+	/**
 	 * Return all the entities matching the parameters
 	 * 
 	 * @param <V>
@@ -177,6 +215,27 @@ public class ConnecClient {
 		String jsonBody = httpClient.get(getCollectionUrl(entityName, groupId), MnoMapHelper.toUnderscoreHash(params));
 		Type typeOfHashMap = HashMap.class;
 		return GSON.fromJson(jsonBody, typeOfHashMap);
+	}
+
+	/**
+	 * Return all the entities matching the parameters and using the provided client
+	 * 
+	 * @param entity
+	 *            name
+	 * @param groupId
+	 *            customer group id
+	 * @param params
+	 *            criteria
+	 * @param httpClient
+	 *            MnoHttpClient to use
+	 * @return list of entities
+	 * @throws AuthenticationException
+	 * @throws ApiException
+	 * @throws InvalidRequestException
+	 */
+	public <T> T all(String entityName, String groupId, Map<String, ?> params, MnoHttpClient httpClient, Class<T> clazz) throws AuthenticationException, ApiException, InvalidRequestException {
+		String jsonBody = httpClient.get(getCollectionUrl(entityName, groupId), MnoMapHelper.toUnderscoreHash(params));
+		return GSON.fromJson(jsonBody, clazz);
 	}
 
 	/**

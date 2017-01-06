@@ -11,6 +11,7 @@ import javax.xml.bind.DatatypeConverter;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.maestrano.Maestrano;
+import com.maestrano.MarketplaceConfiguration;
 import com.maestrano.SsoService;
 import com.maestrano.exception.ApiException;
 import com.maestrano.exception.AuthenticationException;
@@ -30,21 +31,35 @@ public class MnoSession {
 	private String sessionToken;
 
 	/**
-	 * Constructor retrieving Maestrano session from httpSession for a given preset
+	 * Constructor retrieving Maestrano session from httpSession for a given maestrano configuration
 	 * 
-	 * @param preset
-	 *            configuration preset
+	 * @param maestrano
+	 *            Maestrano configuration for a given marketplace
 	 * @param HttpSession
 	 *            httpSession
 	 */
 
-	public MnoSession(String preset, HttpSession httpSession) throws MnoConfigurationException {
-		this(Maestrano.get(preset).ssoService(), httpSession);
+	public MnoSession(Maestrano maestrano, HttpSession httpSession) {
+		this(maestrano.ssoService(), httpSession);
+	}
+
+	/**
+	 * Constructor retrieving Maestrano session from httpSession for a given marketplace
+	 * 
+	 * @param marketplace
+	 *            marketplace previously configured
+	 * @param HttpSession
+	 *            httpSession
+	 */
+
+	public MnoSession(String marketplace, HttpSession httpSession) throws MnoConfigurationException {
+		this(Maestrano.get(marketplace), httpSession);
 	}
 
 	/**
 	 * Constructor retrieving Maestrano session from httpSession
 	 * 
+	 * @deprecated use {@link #MnoSession(Maestrano, HttpSession)} instead
 	 * @param HttpSession
 	 *            httpSession
 	 */
@@ -52,7 +67,7 @@ public class MnoSession {
 		this(Maestrano.getDefault().ssoService(), httpSession);
 	}
 
-	private MnoSession(SsoService ssoService, HttpSession httpSession) {
+	public MnoSession(SsoService ssoService, HttpSession httpSession) {
 		this.ssoService = ssoService;
 		this.httpSession = httpSession;
 
@@ -87,23 +102,39 @@ public class MnoSession {
 	}
 
 	/**
-	 * Constructor retrieving Maestrano session from user for a given preset
+	 * Constructor retrieving Maestrano session from user for a given maestrano configuration
 	 * 
-	 * @param preset
-	 *            configuration preset
+	 * @param maestrano
+	 *            Maestrano configuration for a given marketplace
 	 * @param HttpSession
 	 *            httpSession
 	 * @param MnoUser
 	 *            user
 	 * @throws MnoConfigurationException
 	 */
-	public MnoSession(String preset, HttpSession httpSession, MnoUser user) throws MnoConfigurationException {
-		this(Maestrano.get(preset).ssoService(), httpSession, user);
+	public MnoSession(Maestrano maestrano, HttpSession httpSession, MnoUser user) {
+		this(maestrano.ssoService(), httpSession, user);
+	}
+
+	/**
+	 * Constructor retrieving Maestrano session from user for a given maestrano configuration
+	 * 
+	 * @param marketplace
+	 *            configuration marketplace
+	 * @param HttpSession
+	 *            httpSession
+	 * @param MnoUser
+	 *            user
+	 * @throws MnoConfigurationException
+	 */
+	public MnoSession(String marketplace, HttpSession httpSession, MnoUser user) throws MnoConfigurationException {
+		this(Maestrano.get(marketplace), httpSession, user);
 	}
 
 	/**
 	 * Constructor retrieving Maestrano session from user
 	 * 
+	 * @deprecated use {@link #MnoSession(Maestrano, HttpSession, MnoUser)} instead
 	 * @param HttpSession
 	 *            httpSession
 	 * @param MnoUser
@@ -113,7 +144,14 @@ public class MnoSession {
 		this(Maestrano.getDefault().ssoService(), httpSession, user);
 	}
 
-	private MnoSession(SsoService ssoService, HttpSession httpSession, MnoUser user) {
+	/**
+	 * Constructor retrieving Maestrano session from user for a given ssoService
+	 * 
+	 * @param ssoService
+	 * @param httpSession
+	 * @param user
+	 */
+	public MnoSession(SsoService ssoService, HttpSession httpSession, MnoUser user) {
 		this.ssoService = ssoService;
 		this.httpSession = httpSession;
 
@@ -274,6 +312,13 @@ public class MnoSession {
 
 		// Finally store the maestrano session
 		httpSession.setAttribute("maestrano", sessStr);
+	}
+
+	/**
+	 * @return the Idp logout url where users should be redirected to upon logging out
+	 */
+	public String getLogoutUrl() {
+		return ssoService.getLogoutUrl(this.uid);
 	}
 
 	public String getUid() {

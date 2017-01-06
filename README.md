@@ -7,15 +7,13 @@
 </p>
 
 Maestrano Cloud Integration is currently in closed beta. Want to know more? Send us an email to <contact@maestrano.com>.
-  
-  
+
 - - -
 
 1.  [Getting Setup](#getting-setup)
 2. [Getting Started](#getting-started)
   * [Installation](#installation)
   * [Configuration](#configuration)
-  * [Metadata Endpoint](#metadata-endpoint)
 3. [Single Sign-On Setup](#single-sign-on-setup)
   * [User Setup](#user-setup)
   * [Group Setup](#group-setup)
@@ -36,16 +34,20 @@ Maestrano Cloud Integration is currently in closed beta. Want to know more? Send
   * [Migrating Maestrano methods calls](#migrating-maestrano-methods-calls)
   * [Migrating Connec!™ API calls](#migrating-connec-api-calls)
   * [Migrating Connec!™ Data Sharing API calls](#migrating-connec-data-sharing-api-calls)
-- - -
+8. [Logging](#logging)
 
 ## Getting Setup
-Before integrating with us you will need an App ID and API Key. Maestrano Cloud Integration being still in closed beta you will need to contact us beforehand to gain production access.
 
-For testing purpose we provide an API Sandbox where you can freely obtain an App ID and API Key. The sandbox is great to test single sign-on and API integration (e.g: billing API).
+Before integrating with us you will need an to create your app on the developer platform and link it to a marketplace. Maestrano Cloud Integration being still in closed beta you will need to contact us beforehand to gain production access.
 
-To get started just go to: http://api-sandbox.maestrano.io
+We provide a Sandbox environment where you can freely launch your app to test your integration. The sandbox is great to test single sign-on and API integration (e.g: Connec! API). This Sandbox is available on the developer platform on your app technical page.
+
+To get started just go to: https://developer.maestrano.com. You will find the developer platform documentation here: Documentation.
 
 A **java demo application** is also available: https://github.com/maestrano/demoapp-java
+
+Do not hesitate to go to our Service Desk (https://maestrano.atlassian.net/servicedesk/customer/portal/2) if you have any question.
+
 
 ## Getting Started
 
@@ -56,7 +58,7 @@ To install maestrano-java using Maven, add this dependency to your project's POM
 <dependency>
   <groupId>com.maestrano</groupId>
   <artifactId>maestrano-java</artifactId>
-  <version>0.9.3</version>
+  <version>1.0.0</version>
 </dependency>
 ```
 
@@ -67,246 +69,57 @@ You will require the following dependencies:
 * Servlet-api (such as from Apache Tomcat)
 
 ### Configuration
-#### Via config file
 
-You can configure maestrano using a properties file from the classpath or with an absolute path.
+The [developer platform](https://developer.maestrano.com) is the easiest way to configure Maestrano. The only actions needed from your part is to create your application and environments on the developer platform and to create a config file. The framework will then contact the developer platform and retrieve the marketplaces configuration for your app environment.
 
+A `dev-platform.properties` config file is loaded using:
 ```java
-    Maestrano.configure("myconfig.properties");
+Maestrano.autoConfigure("/path/to/dev-platform.propertie");
 ```
-
-You can add configuration presets programmatically by adding sets of properties in your Maestrano configuration. These additional presets can then be specified when doing particular action, such as initializing a Connec!™ client or triggering a SSO handshake. These presets are particularly useful if you are dealing with multiple Maestrano-style marketplaces (multi-enterprise integration).
-
-If this is the first time you integrate with Maestrano, we recommend adopting a multi-tenant approach. All code samples in this documentation provide examples on how to handle multi-tenancy by scoping method calls to a specific configuration preset.
-
-More information about multi-tenant integration can be found on [Our Multi-Tenant Integration Guide](https://maestrano.atlassian.net/wiki/display/CONNECAPIV2/Multi-Tenant+Integration)
-
-
-```java
-    // Load configuration
-    Maestrano config1 = Maestrano.configure("config1", "config1.properties");
-    Maestrano config" = Maestrano.configure("config2", "config2.properties");
-    
-    // Access configuration with presets
-    config1.toMetadata();
-    config2.toMetadata();
-```
-
-The properties file can contain the following values
-
+The properties file may look like this:
 ```ini
-# ===> App Configuration
-#
-# => environment
-# The environment to connect to. If set to 'production' then all Single Sign-On (SSO) and API requests will be made to maestrano.com. If set to 'test' then requests will be made to api-sandbox.maestrano.io. 
+# ===> Developer Platform Configuration
+# This is the host and base path that should be used by your environment to retrieve its marketplaces configuration.
 # The api-sandbox allows you to easily test integration scenarios.
-environment=test
-
-# => host
-# This is your application host (e.g: my-app.com) which is ultimately used to redirect users to the right SAML url during SSO handshake.
-app.host=http\://localhost:8080
-
-# ===> Api Configuration
-#
-# => id and key
-# Your application App ID and API key which you can retrieve on http://maestrano.com via your cloud partner dashboard. 
-# For testing you can retrieve/generate an api.id and api.key from the API Sandbox directly on http://api-sandbox.maestrano.io
-api.id=prod_or_sandbox_app_id
-api.key=prod_or_sandbox_api_key
-
-# Api Host
-# The platform host
-api.host=https://maestrano.com
-
-# ===> SSO Configuration
-#
-# => enabled
-# Enable/Disable single sign-on. When troubleshooting authentication issues you might want to disable SSO temporarily
-sso.enabled=true
-
-# => sloEnabled
-# Enable/Disable single logout. When troubleshooting authentication issues you might want to disable SLO temporarily. 
-# If set to false then MnoSession#isValid - which should be used in a controller action filter to check user session - always return true
-sso.sloEnabled=true
-
-# => idm
-# By default we consider that the domain managing user identification is the same as your application host (see above config.app.host parameter).
-# If you have a dedicated domain managing user identification and therefore responsible for the single sign-on handshake (e.g: https://idp.my-app.com) then you can specify it below
-sso.idm=https\://idp.myapp.com
-
-# => idp (optional)
-# This is the URL of the identity provider to use when triggering a SSO handshake. With a multi-tenant integration, each tenant would have its own URL. Defaults to https://maestrano.com
-sso.idm=https\://maestrano.com
-
-# => initPath
-# This is your application path to the SAML endpoint that allows users to initialize SSO authentication. 
-# Upon reaching this endpoint users your application will automatically create a SAML request and redirect the user to Maestrano. Maestrano will then authenticate and authorize the user. 
-# Upon authorization the user gets redirected to your application consumer endpoint (see below) for initial setup and/or login.
-sso.initPath=/maestrano/auth/saml/init
-
-# => consumePath
-#This is your application path to the SAML endpoint that allows users to finalize SSO authentication. 
-# During the 'consume' action your application sets users (and associated group) up and/or log them in.
-sso.consumePath=/maestrano/auth/saml/consume
-
-# => x509 SSL Certificate
-# During the SSO handshake, the SSL certificate is validated and must match the IDP provider.
-# For multi-tenant integration, the certificates may change per environment.
-sso.x509Fingerprint=2f:57:71:e4:40:19:57:37:a6:2c:f0:c5:82:52:2f:2e:41:b7:9d:7e
-sso.x509Certificate=-----BEGIN CERTIFICATE-----\nCERTIFICATE CONTENT==\n-----END CERTIFICATE-----
-
-# => Connec Host
-# The Connec! endpoint used to fetch data from. If you are integrating with other tenant, you may have to override them, for UAT and Production.
-connec.host=https://api-connec.maestrano.com
-connec.base=/api/v2
-
-# => creationMode
-# !IMPORTANT
-# On Maestrano users can take several "instances" of your service. You can consider
-# each "instance" as 1) a billing entity and 2) a collaboration group (this is
-# equivalent to a 'customer account' in a commercial world). When users login to
-# your application via single sign-on they actually login via a specific group which
-# is then supposed to determine which data they have access to inside your application.
-# 
-# E.g: John and Jack are part of group 1. They should see the same data when they login to
-# your application (employee info, analytics, sales etc..). John is also part of group 2 
-# but not Jack. Therefore only John should be able to see the data belonging to group 2.
-# 
-# In most application this is done via collaboration/sharing/permission groups which is
-# why a group is required to be created when a new user logs in via a new group (and 
-# also for billing purpose - you charge a group, not a user directly). 
-# 
-# - mode: 'real'
-# In an ideal world a user should be able to belong to several groups in your application.
-# In this case you would set the 'sso.creation_mode' to 'real' which means that the uid
-# and email we pass to you are the actual user email and maestrano universal id.
-# 
-# - mode: 'virtual'
-# Now let's say that due to technical constraints your application cannot authorize a user
-# to belong to several groups. Well next time John logs in via a different group there will
-# be a problem: the user already exists (based on uid or email) and cannot be assigned 
-# to a second group. To fix this you can set the 'sso.creation_mode' to 'virtual'. In this
-# mode users get assigned a truly unique uid and email across groups. So next time John logs
-# in a whole new user account can be created for him without any validation problem. In this
-# mode the email we assign to him looks like "usr-sdf54.cld-45aa2@mail.maestrano.com". But don't
-# worry we take care of forwarding any email you would send to this address
-sso.creationMode="virtual"
-      
-# ===> Account Webhooks
-# Single sign on has been setup into your app and Maestrano users are now able
-# to use your service. Great! Wait what happens when a business (group) decides to 
-# stop using your service? Also what happens when a user gets removed from a business?
-# Well the endpoints below are for Maestrano to be able to notify you of such
-# events.
-#
-# Even if the routes look restful we issue only issue DELETE requests for the moment
-# to notify you of any service cancellation (group deletion) or any user being
-# removed from a group.
-# "\:group_id" is a placeholder for the user group id
-# "\:id" is a placeholder for the user uid
-# For example, the webhooks calls would be:
-# for a service cancellation: /maestrano/account/groups/cld-3
-# for a user being removed from a group: /maestrano/account/groups/cld-3/users/usr-201
-webhook.account.groupsPath = /maestrano/account/groups/\:id
-webhook.account.groupUsersPath = /maestrano/account/groups/\:group_id/users/\:id
-
-
-# ===> Connec!™ Webhooks
-# == Notification Path
-# This is the path of your application where notifications (created/updated entities) will be POSTed to.
-# You should have a controller matching this path handling the update of your internal entities
-# based on the Connec!™ entities you receive
-webhook.connec.notificationsPath = /maestrano/connec/notifications
-
-# == Subscriptions
-# This is the list of entities (organizations,people,invoices etc.) for which you want to be
-# notified upon creation/update in Connec!™
-webhook.connec.subscriptions.accounts = true
-webhook.connec.subscriptions.company = true
-webhook.connec.subscriptions.events = false
-webhook.connec.subscriptions.event_orders = false
-webhook.connec.subscriptions.invoices = true
-webhook.connec.subscriptions.items = true
-webhook.connec.subscriptions.journals = false
-webhook.connec.subscriptions.organizations = true
-webhook.connec.subscriptions.payments = false
-webhook.connec.subscriptions.pay_items = false
-webhook.connec.subscriptions.pay_schedules = false
-webhook.connec.subscriptions.pay_stubs = false
-webhook.connec.subscriptions.pay_runs = false
-webhook.connec.subscriptions.people = true
-webhook.connec.subscriptions.projects = false
-webhook.connec.subscriptions.tax_codes = true
-webhook.connec.subscriptions.tax_rates = false
-webhook.connec.subscriptions.time_activities = false
-webhook.connec.subscriptions.time_sheets = false
-webhook.connec.subscriptions.venues = false
-webhook.connec.subscriptions.work_locations = false
+dev-platform.host=https://developer.maestrano.com
+dev-platform.api_path=/api/config/v1
+# => Environment credentials
+# These are your environment credentials, you can get them by connecting on the developer platform, then go on your app, they will be display under the technical view on each environment.
+environment.name=<your environment nid>
+environment.apiKey="<your environment key>
+environment.apiSecret=<your environment secret>
 ```
 
-#### At runtime
-
-You can configure maestrano with the Properties class using the same configuration parameters as described above:
-
+You can also use environment variables as follow to configure your app environment:
+```
+export MNO_DEVPL_HOST=<developer platform host>
+export MNO_DEVPL_API_PATH=<developer platform host>
+export MNO_DEVPL_ENV_NAME=<your environment nid>
+export MNO_DEVPL_ENV_KEY=<your environment key>
+export MNO_DEVPL_ENV_SECRET=<your environment secret>
+```
+and directly call
 ```java
-    Properties props = new Properties();
-    props.setProperty("environment", "production");
-    Maestrano.configure(props);
+Maestrano:autoConfigure();
 ```
-
-Or using preset configurations to support multiple marketplaces
+You may also call autoConfigure using a Properties instance.
 ```java
-    Properties myconfig1 = new Properties();
-    Properties myconfig2 = new Properties();
-    Maestrano.configure("myconfig1", myconfig1);
-    Maestrano.configure("myconfig2", myconfig2);
+Properties properties = new Properties();
+properties.setProperty("dev-platform.host", "https://developer.maestrano.com");
+properties.setProperty("dev-platform.api_path", "/api/config/v1");
+properties.setProperty("environment.name", "<your environment nid>");
+properties.setProperty("environment.apiKey", "<your environment key>");
+properties.setProperty("environment.apiSecret", "<your environment secret>");
+Maestrano.autoConfigure(properties);
 ```
-
-### Metadata Endpoint
-Your configuration initializer is now all setup and shiny. Great! But need to know about it. Of course
-we could propose a long and boring form on maestrano.com for you to fill all these details (especially the webhooks) but we thought it would be more convenient to fetch that automatically.
-
-For that we expect you to create a metadata endpoint that we can fetch regularly (or when you press 'refresh metadata' in your maestrano cloud partner dashboard). By default we assume that it will be located at
-YOUR_WEBSITE/maestrano/metadata(.json)
-
-Of course if you prefer a different url you can always change that endpoint in your maestrano cloud partner dashboard.
-
-What would the controller action look like? First let's talk about authentication. You don't want that endpoint to be visible to anyone. Maestrano always uses http basic authentication to contact your service remotely. The login/password used for this authentication are your actual api.id and api.key.
-
-So here is an example of page to adapt depending on the framework you're using:
-
-```jsp
-<%@ page language="java" contentType="application/json; charset=UTF-8" pageEncoding="UTF-8"%>
-<%@ page import="com.maestrano.Maestrano" %>
-
-<%
-  java.io.PrintWriter writer = response.getWriter();
-
-  if (Maestrano.authenticate(request)) {
-    writer.write(Maestrano.getDefault().toMetadata());
-  } else {
-    writer.write("Failed");
-  }
-  
-  writer.flush();
-%>
-```
-
-It is also possible to specify presets when exposing the metadata
-
-```jsp
-    ...
-    writer.write(Maestrano.get("mypreset").toMetadata());
-```
-
 
 ## Single Sign-On Setup
 
-> **Heads up!** Prefer to use OpenID rather than our SAML implementation? Just look at our [OpenID Guide](https://maestrano.atlassian.net/wiki/display/CONNECAPIV2/SSO+via+OpenID) to get started!
-
-In order to get setup with single sign-on you will need a user model and a group model. It will also require you to write a controller for the init phase and consume phase of the single sign-on handshake.
+It will require you to write a controller for the init phase and consume phase of the single sign-on handshake. You will receive 3 informations when logging in a user: the user, his group and the merketplace he's coming from.
 
 You might wonder why we need a 'group' on top of a user. Well Maestrano works with businesses and as such expects your service to be able to manage groups of users. A group represents 1) a billing entity 2) a collaboration group. During the first single sign-on handshake both a user and a group should be created. Additional users logging in via the same group should then be added to this existing group (see controller setup below)
+
+For more information, please consult [Multi-Marketplace Ingration](https://maestrano.atlassian.net/wiki/display/DEV/Multi-Marketplace+Integration).
 
 ### User Setup
 Let's assume that your user model is called 'User'. The best way to get started with SSO is to define a class method on this model called 'findOrCreateForMaestrano' accepting a Maestrano.Sso.User and aiming at either finding an existing maestrano user in your database or creating a new one. Your user model should also have a 'Provider' property and a 'Uid' property used to identify the source of the user - Maestrano, LinkedIn, AngelList etc..
@@ -318,21 +131,15 @@ The group setup is similar to the user one. The mapping is a little easier thoug
 You will need two controller action init and consume. The init action will initiate the single sign-on request and redirect the user to Maestrano. The consume action will receive the single sign-on response, process it and match/create the user and the group.
 
 The init action is all handled via Maestrano methods and should look like this:
-```jsp
-<%@ page import="com.maestrano.saml.AuthRequest" %>
-<%
-  AuthRequest authReq = new AuthRequest(Maestrano.getDefault(), request);
-  String ssoUrl = authReq.getRedirectUrl();
-  
-  response.sendRedirect(ssoUrl);
-%>
-```
 
-With presets:
 ```jsp
 <%@ page import="com.maestrano.saml.AuthRequest" %>
 <%
-  AuthRequest authReq = new AuthRequest(Maestrano.get("mypreset"), request);
+  //You should have a different url per marketplace
+  // For example /mno-enterprise/saml/init?marketplace={marketplace_key}
+  //See https://maestrano.atlassian.net/wiki/display/DEV/Multi-Marketplace+Integration for more information
+  String marketplace = readMarketplaceFromParameter();
+  AuthRequest authReq = new AuthRequest(Maestrano.get(marketplace), request);
   String ssoUrl = authReq.getRedirectUrl();
   
   response.sendRedirect(ssoUrl);
@@ -343,15 +150,14 @@ Based on your application requirements the consume action might look like this:
 ```jsp
 <%@ page import="com.maestrano.saml.Response,com.maestrano.sso.*" %>
 <%
-  Response authResp = new Response();
-  authResp.loadXmlFromBase64(request.getParameter("SAMLResponse"));
+    String marketplace = readMarketplaceFromParameter();
+    Maestrano maestrano = Maestrano.get(marketplace);
+    Response authResp = new Response(maestrano);
+
+   authResp.loadXmlFromBase64(request.getParameter("SAMLResponse"));
   
   if (authResp.isValid()) {
-    
-    // Build maestrano user and group objects
-    MnoUser mnoUser = new MnoUser(authResp);
-    MnoGroup mnoGroup = new MnoGroup(authResp);
-    
+
     // Build/Map local entities
     MyGroup localGroup = MyGroup.findOrCreateForMaestrano(mnoGroup);
     MyUser localUser = MyUser.findOrCreateForMaestrano(mnoUser);
@@ -363,8 +169,7 @@ Based on your application requirements the consume action might look like this:
     }
     
     // Set Maestrano session (for Single Logout)
-    MnoSession mnoSession = new MnoSession(request.getSession(),mnoUser);
-    // or MnoSession mnoSession = new MnoSession("preset", request.getSession(),mnoUser);
+    MnoSession mnoSession = new MnoSession(marketplace, request.getSession(),mnoUser);
     mnoSession.save();
     
     // Redirect to you application home page
@@ -378,53 +183,43 @@ Based on your application requirements the consume action might look like this:
 %>
 ```
 
-With presets:
-Based on your application requirements the consume action might look like this:
-```jsp
-<%@ page import="com.maestrano.saml.Response,com.maestrano.sso.*" %>
-<%
-  Response authResp = new Response(Maestrano.get("mypreset"));
-  ...
-%>
-```
-
 Note that for the consume action you should disable CSRF authenticity if your framework is using it by default. If CSRF authenticity is enabled then your app will complain on the fact that it is receiving a form without CSRF token.
 
 ### Other Controllers
 If you want your users to benefit from single logout then you should define the following filter in a module and include it in all your controllers except the one handling single sign-on authentication.
 
-```java
-MnoSession mnoSession = new MnoSession(request.getSession());
-if (!mnoSession.isValid()) {
-  response.sendRedirect(Maestrano.getDefault().ssoService().getInitUrl());
-}
-```
-
-Or when you use a preset:
 
 ```java
-MnoSession mnoSession = new MnoSession("preset", request.getSession());
+MnoSession mnoSession = new MnoSession(marketplace, request.getSession());
 if (!mnoSession.isValid()) {
-  response.sendRedirect(Maestrano.get("preset").ssoService().getInitUrl());
+  response.sendRedirect(Maestrano.get(marketplace).ssoService().getInitUrl());
 }
 ```
 
 The above piece of code makes at most one request every 3 minutes (standard session duration) to the Maestrano website to check whether the user is still logged in Maestrano. Therefore it should not impact your application from a performance point of view.
 
-If you start seing session check requests on every page load it means something is going wrong at the http session level. In this case feel free to send us an email and we'll have a look with you.
+If you start seing session check requests on every page load it means something is going wrong at the http session level. In this case feel free to raise an issue on our support platform: https://maestrano.atlassian.net/servicedesk/customer/portal/2
 
 ### Redirecting on logout
 When Maestrano users sign out of your application you can redirect them to the Maestrano logout page. You can get the url of this page by calling:
 
 ```java
-Maestrano.getDefault().ssoService().getLogoutUrl()
+  //Retrieve current user uid
+  String userUid = getUserUid();
+  Maestrano.get(marketplace).ssoService().getLogoutUrl(userUid);
 ```
+or if you have the `MnoSession`
+```java
+MnoSession mnoSession = new MnoSession(marketplace, request.getSession());
+mnoSession.getLogoutUrl();
+```
+
 
 ### Redirecting on error
 If any error happens during the SSO handshake, you can redirect users to the following URL:
 
 ```java
-Maestrano.getDefault().ssoService().getUnauthorizedUrl()
+Maestrano.get(marketplace).ssoService().getUnauthorizedUrl()
 ```
 
 ## Account Webhooks
@@ -435,12 +230,10 @@ Sad as it is a business might decide to stop using your service at some point. O
 
 Maestrano only uses this controller for service cancellation so there is no need to implement any other type of action - ie: GET, PUT/PATCH or POST. The use of other http verbs might come in the future to improve the communication between Maestrano and your service but as of now it is not required.
 
-The controller example below reimplements the authenticate_maestrano! method seen in the [metadata section](#metadata-endpoint) for completeness. Utimately you should move this method to a helper if you can.
-
 The example below needs to be adapted depending on your application:
 
 ```java
-if (Maestrano.authenticate(request)) {
+if (Maestrano.get(marketplace).authenticate(request)) {
   MyGroupModel someGroup = MyGroupModel.findByMnoId(restfulIdFromUrl);
   someGroup.disableAccess();
 }
@@ -451,23 +244,13 @@ A business might decide at some point to revoke access to your services for one 
 
 Maestrano only uses this controller for user membership cancellation so there is no need to implement any other type of action - ie: GET, PUT/PATCH or POST. The use of other http verbs might come in the future to improve the communication between Maestrano and your service but as of now it is not required.
 
-The controller example below reimplements the authenticate_maestrano! method seen in the [metadata section](#metadata-endpoint) for completeness. Utimately you should move this method to a helper if you can.
 
 The example below needs to be adapted depending on your application:
 
 ```java
-if (Maestrano.authenticate(request)) {
+if (Maestrano.get(marketplace).authenticate(request)) {
   MyGroupModel someGroup = MyGroupModel.findByMnoId(restfulGroupIdFromUrl);
   someGroup.removeUserById(restfulIdFromUrl);
-}
-```
-
-### Authenticating with presets
-The same operations can be used with presets:
-```java
-if (Maestrano.authenticate("mypreset", request)) {
-  MyGroupModel someGroup = MyGroupModel.findByMnoId(restfulGroupIdFromUrl);
-  ...
 }
 ```
 
@@ -598,19 +381,15 @@ com.maestrano.account.MnoBill
 
 ##### Actions
 
-List all bills you have created and iterate through the list
-```java
-List<MnoBill> bills = MnoBill.client().all();
-```
-and if you need to precise a preset
-```java
-List<MnoBill> bills = MnoBill.client("mypreset").all();
-```
+List all bills you have created and iterate through the list, you will need to precise the marketplace.
 
+```java
+List<MnoBill> bills = MnoBill.client(marketplace).all();
+```
 
 Access a single bill by id
 ```java
-MnoBill bill = MnoBill.client().retrieve("bill-f1d2s54");
+MnoBill bill = MnoBill.client(marketplace).retrieve("bill-f1d2s54");
 ```
 
 Create a new bill
@@ -620,12 +399,12 @@ attrsMap.put("groupId", "cld-3");
 attrsMap.put("priceCents", 2000);
 attrsMap.put("description", "Product purchase");
 
-MnoBill bill = MnoBill.client().create(attrsMap);
+MnoBill bill = MnoBill.client(marketplace).create(attrsMap);
 ```
 
 Cancel a bill
 ```java
-MnoBillClient client = MnoBill.client();
+MnoBillClient client = MnoBill.client(marketplace);
 MnoBill bill = client.retrieve("bill-f1d2s54");
 client.cancel(bill);
 ```
@@ -772,17 +551,12 @@ com.maestrano.account.MnoRecurringBill
 
 List all recurring bills you have created and iterate through the list
 ```java
-List<MnoRecurringBill> bills = MnoRecurringBill.client().all();
+List<MnoRecurringBill> bills = MnoRecurringBill.client(marketplace).all();
 ```
-If you need to create the call for a given preset
-```java
-List<MnoRecurringBill> bills = MnoRecurringBill.client("mypreset").all();
-```
-
 
 Access a single recurring bill by id
 ```java
-MnoRecurringBill bill = MnoRecurringBill.client().retrieve("rbill-f1d2s54");
+MnoRecurringBill bill = MnoRecurringBill.client(marketplace).retrieve("rbill-f1d2s54");
 ```
 
 Create a new recurring bill
@@ -794,12 +568,12 @@ attrsMap.put("description", "Product purchase");
 attrsMap.put("period", "Month");
 attrsMap.put("startDate", new Date());
 
-MnoRecurringBill bill = MnoRecurringBill.client()..create(attrsMap);
+MnoRecurringBill bill = MnoRecurringBill.client(marketplace).create(attrsMap);
 ```
 
 Cancel a recurring bill
 ```java
-MnoRecurringBillClient client = MnoRecurringBill.client();
+MnoRecurringBillClient client = MnoRecurringBill.client(marketplace);
 MnoRecurringBill bill = client.retrieve("rbill-f1d2s54");
 client.cancel(bill);
 ```
@@ -822,8 +596,8 @@ The Maestrano API provides a built-in client - for connecting to Connec!™. Thi
 
 ```java
 String groupId = "cld-3";
-// Retrieve default Connect client, if you need to get ConnecClient for a given preset, call ConnecClient.withPreset("myPreset");
-ConnecClient connecClient = ConnecClient.defaultClient();
+// Retrieve default Connect client
+ConnecClient connecClient = new ConnecClient(marketplace);
 
 // Fetch all organizations
 Map<String, Object> organizations = connecClient.all("organizations", groupId);
@@ -923,7 +697,7 @@ MnoBill bill = client.retrieve("rbill-f1d2s54");
 
 ### Migrating Connec!™ Data Sharing API calls
 
-Before you could directly make the static call on ConnecClient. Now you need to retrieve the default instance or the one configured for a given preset.
+Before you could directly make the static call on ConnecClient. Now you need to use the constructor
 Before 0.9.0:
 ```java
 Map<String, Object> organizations = ConnecClient.all("organizations", groupId);
@@ -931,18 +705,34 @@ organization = (Map<String, Object>) ConnecClient.create("organizations", groupI
 ```
 After 0.9.0:
 ```java
-ConnecClient connecClient = ConnecClient.defaultClient();
+ConnecClient connecClient = new ConnecClient(marketplace);
 Map<String, Object> organizations = connecClient.all("organizations", groupId);
 organization = (Map<String, Object>) connecClient.create("organizations", groupId, newOrganization).get("organizations");
+```
+
+## Logging
+
+Maestrano Java SDK uses the Simple Logging Facade for Java ([SLF4J](http://www.slf4j.org/)), allowing to plug in the desired logging framework at deployment time.
+
+For example, if you use [Log4j](http://logging.apache.org/log4j/2.x/), all you need to do is add the slf4j-log4j12 dependency in your pom file.
+
+```
+<dependency>
+	<groupId>org.slf4j</groupId>
+	<artifactId>slf4j-log4j12</artifactId>
+	<version>1.7.21</version>
+</dependency>
+```
+
 
 ## Support
 This README is still in the process of being written and improved. As such it might not cover some of the questions you might have.
 
-So if you have any question or need help integrating with us just let us know at support@maestrano.com
+So if you have any question or need help integrating with us please contact us on our Support Desk: https://maestrano.atlassian.net/servicedesk/customer/portal/2
 
 ## License
 
-MIT License. Copyright 2014 Maestrano Pty Ltd. https://maestrano.com
+MIT License. Copyright 2017 Maestrano Pty Ltd. https://maestrano.com
 
 You are not granted rights or licenses to the trademarks of Maestrano.
 

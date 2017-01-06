@@ -30,13 +30,13 @@ public class AuthRequest {
 	/**
 	 * Constructor
 	 * 
-	 * @param String
-	 *            preset
+	 * @param Maestrano
+	 *            maestrano configuration
 	 * @param Map<String,String>
 	 *            request parameters
 	 * @throws MnoException
 	 */
-	public AuthRequest(Maestrano maestrano, Map<String, String> parameters)  {
+	public AuthRequest(Maestrano maestrano, Map<String, String> parameters) {
 		this.settings = maestrano.ssoService().getSamlSettings();
 		id = "_" + UUID.randomUUID().toString();
 		SimpleDateFormat simpleDf = new SimpleDateFormat("yyyy-MM-dd'T'H:mm:ssZ");
@@ -47,12 +47,12 @@ public class AuthRequest {
 	/**
 	 * Constructor
 	 * 
-	 * @param String
-	 *            preset
+	 * @param Maestrano
+	 *            maestrano configuration
 	 * @param request
 	 * @throws MnoException
 	 */
-	public AuthRequest(Maestrano maestrano, ServletRequest request) throws MnoException {
+	public AuthRequest(Maestrano maestrano, ServletRequest request) {
 		this(maestrano, new HashMap<String, String>());
 
 		@SuppressWarnings("unchecked")

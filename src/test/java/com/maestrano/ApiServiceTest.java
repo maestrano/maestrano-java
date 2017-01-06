@@ -52,12 +52,12 @@ public class ApiServiceTest {
 
 	@Test
 	public void getHost_itReturnsTheRightProductionValue() {
-		assertEquals("https://maestrano.com", subject.getHost());
+		assertEquals("https://api-hub.maestrano.com", subject.getHost());
 	}
 
 	@Test
 	public void getAccountBase_itReturnsTheRightValue() {
-		assertEquals("/api/v1/account", subject.getBase());
+		assertEquals("/api/v1/", subject.getBase());
 	}
 
 	@Test

@@ -20,10 +20,9 @@ import com.google.gson.GsonBuilder;
 import com.maestrano.ApiService;
 import com.maestrano.exception.ApiException;
 import com.maestrano.exception.AuthenticationException;
-import com.maestrano.exception.MnoException;
 import com.maestrano.json.DateSerializer;
 
-public class MnoHttpClient {
+public class MnoHttpClient {	
 	public static final Gson GSON = new GsonBuilder().registerTypeAdapter(Date.class, new DateSerializer()).create();
 
 	private String defaultUserAgent;
@@ -37,7 +36,7 @@ public class MnoHttpClient {
 		this.defaultAccept = "application/vnd.api+json";
 	}
 
-	public MnoHttpClient(String contentType) {
+	private MnoHttpClient(String contentType) {
 		this.defaultUserAgent = "maestrano-java/" + System.getProperty("java.version");
 		this.defaultContentType = contentType;
 		this.defaultAccept = contentType;
@@ -45,26 +44,21 @@ public class MnoHttpClient {
 
 	/**
 	 * Return a client with HTTP Basic Authentication setup
-	 * 
-	 * @param preset
-	 * @return
-	 * @throws MnoException
 	 */
 	public static MnoHttpClient getAuthenticatedClient(ApiService apiService) {
-		return getAuthenticatedClient(apiService, "application/vnd.api+json");
+		return getAuthenticatedClient(apiService.getId(), apiService.getKey(), "application/vnd.api+json");
+	}
+
+	public static MnoHttpClient getAuthenticatedClient(ApiService apiService, String contentType) {
+		return getAuthenticatedClient(apiService.getId(), apiService.getKey(), contentType);
 	}
 
 	/**
 	 * Return a client with HTTP Basic Authentication setup
-	 * 
-	 * @param preset
-	 * @param contentType
-	 * @return
-	 * @throws MnoException
 	 */
-	public static MnoHttpClient getAuthenticatedClient(ApiService apiService, String contentType) {
+	public static MnoHttpClient getAuthenticatedClient(String key, String secret, String contentType) {
 		MnoHttpClient client = new MnoHttpClient(contentType);
-		String authStr = apiService.getId() + ":" + apiService.getKey();
+		String authStr = key + ":" + secret;
 		client.basicAuthHash = "Basic " + DatatypeConverter.printBase64Binary(authStr.getBytes());
 
 		return client;
