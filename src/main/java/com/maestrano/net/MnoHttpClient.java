@@ -1,8 +1,7 @@
 package com.maestrano.net;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
@@ -14,6 +13,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.xml.bind.DatatypeConverter;
+
+import org.apache.commons.io.IOUtils;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -223,62 +224,49 @@ public class MnoHttpClient {
 			if (method.equalsIgnoreCase("PUT") || method.equalsIgnoreCase("POST")) {
 				OutputStream output = null;
 				try {
-					output = conn.getOutputStream();
-					output.write(payload.getBytes());
+					OutputStream outputStream = conn.getOutputStream();
+					IOUtils.write(payload, outputStream);
 				} catch (IOException e) {
 					throw new ApiException("Unable to send data to server", e);
 				} finally {
-					if (output != null) {
-						try {
-							output.close();
-						} catch (IOException e) {
-						}
-					}
+					IOUtils.closeQuietly(output);
 				}
 			}
 		}
 
 		// Check Response code
+		int responseCode;
 		try {
-			if (conn.getResponseCode() == HttpURLConnection.HTTP_UNAUTHORIZED) {
-				throw new AuthenticationException("Invalid API credentials");
-			}
+			responseCode = conn.getResponseCode();
 		} catch (IOException e) {
 			throw new ApiException("Unable to read response code", e);
 		}
-
-		// Parse response
-		BufferedReader in;
-		String inputLine;
-		StringBuffer html = new StringBuffer();
-		try {
-			in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-
-			while ((inputLine = in.readLine()) != null) {
-				html.append(inputLine);
-			}
-			in.close();
-
-			return html.toString();
-
-		} catch (IOException e) {
-			try {
-				if (conn.getResponseCode() == HttpURLConnection.HTTP_BAD_REQUEST) {
-					in = new BufferedReader(new InputStreamReader(conn.getErrorStream()));
-
-					while ((inputLine = in.readLine()) != null) {
-						html.append(inputLine);
-					}
-					in.close();
-					return html.toString();
-				} else {
-					throw new ApiException("Unable to read response from server", e);
-
-				}
-			} catch (IOException e1) {
-				throw new ApiException("Unable to read response from server", e);
+		
+		switch (responseCode) {
+		case HttpURLConnection.HTTP_UNAUTHORIZED:
+			throw new AuthenticationException("Invalid API credentials");
+		case HttpURLConnection.HTTP_BAD_REQUEST:
+			InputStream errorStream = conn.getErrorStream();
+			if (errorStream != null){
+				String error = readInputStream(errorStream);
+				throw new ApiException("Connection could not be made. Bad Request: " + error);
+			}else{
+				throw new ApiException("Connection could not be made. Bad Request");
 			}
 		}
+		
+		// Parse response
+		InputStream inputStream = null;
+		try {
+			inputStream = conn.getInputStream();
+			return readInputStream(inputStream);
+		} catch (IOException e) {
+			throw new ApiException("Unable to read response from server", e);
+		}finally{
+			IOUtils.closeQuietly(inputStream);
+		
+		}
+
 	}
 
 	private HttpURLConnection openConnection(Map<String, String> header, String realUrl) throws ApiException {
@@ -289,6 +277,18 @@ public class MnoHttpClient {
 		}
 	}
 
+	private static String readInputStream(InputStream is) throws ApiException{
+		if(is == null){
+			throw new ApiException("Connection InputStream is null");
+		}
+		try {
+			return IOUtils.toString(is);
+		} catch (IOException e) {
+			throw new ApiException("Could not read Input Stream", e);
+		}
+	}
+	
+	
 	/**
 	 * Open a connection and follow the redirect
 	 * 
