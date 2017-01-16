@@ -419,7 +419,9 @@ public class ConnecClient {
 	 * @return deleted/cancelled entity
 	 * @throws AuthenticationException
 	 * @throws ApiException
+	 * @deprecated This method is deprecated. Set Status to INACTIVE to delete a Connec! Entity
 	 */
+	@Deprecated
 	public Map<String, Object> delete(String entityName, String groupId, String entityId) throws AuthenticationException, ApiException {
 		return delete(entityName, groupId, entityId, getAuthenticatedClient());
 	}
@@ -437,7 +439,9 @@ public class ConnecClient {
 	 * @return deleted/cancelled entity
 	 * @throws AuthenticationException
 	 * @throws ApiException
+	 * @deprecated This method is deprecated. Set Status to INACTIVE to delete a Connec! Entity
 	 */
+	@Deprecated
 	public Map<String, Object> delete(String entityName, String groupId, String entityId, MnoHttpClient httpClient) throws AuthenticationException, ApiException {
 		String jsonBody = httpClient.delete(getInstanceUrl(entityName, groupId, entityId));
 		Type typeOfHashMap = HashMap.class;
