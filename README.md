@@ -150,36 +150,34 @@ Based on your application requirements the consume action might look like this:
 ```jsp
 <%@ page import="com.maestrano.saml.Response,com.maestrano.sso.*" %>
 <%
-    String marketplace = readMarketplaceFromParameter();
-    Maestrano maestrano = Maestrano.get(marketplace);
-    Response authResp = new Response(maestrano);
+	String marketplace = readMarketplaceFromParameter();
+	Maestrano maestrano = Maestrano.get(marketplace);
+	String samlResponse = request.getParameter("SAMLResponse");
+	Response authResp = Response.loadFromBase64XML(maestrano.ssoService(), samlResponse);
+	if (authResp.isValid()) {
 
-   authResp.loadXmlFromBase64(request.getParameter("SAMLResponse"));
-  
-  if (authResp.isValid()) {
+		// Build/Map local entities
+		MyGroup localGroup = MyGroup.findOrCreateForMaestrano(mnoGroup);
+		MyUser localUser = MyUser.findOrCreateForMaestrano(mnoUser);
+		
+		// Add localUser to the localGroup if not already part
+		// of it
+		if (!localGroup.hasMember(localUser)){
+		  localGroup.addMember(localUser);
+		}
+		
+		// Set Maestrano session (for Single Logout)
+		MnoSession mnoSession = new MnoSession(marketplace, request.getSession(),mnoUser);
+		mnoSession.save();
+		
+		// Redirect to you application home page
+		response.sendRedirect("/");
 
-    // Build/Map local entities
-    MyGroup localGroup = MyGroup.findOrCreateForMaestrano(mnoGroup);
-    MyUser localUser = MyUser.findOrCreateForMaestrano(mnoUser);
-    
-    // Add localUser to the localGroup if not already part
-    // of it
-    if (!localGroup.hasMember(localUser)){
-      localGroup.addMember(localUser);
-    }
-    
-    // Set Maestrano session (for Single Logout)
-    MnoSession mnoSession = new MnoSession(marketplace, request.getSession(),mnoUser);
-    mnoSession.save();
-    
-    // Redirect to you application home page
-    response.sendRedirect("/");
-    
-  } else {
-    java.io.PrintWriter writer = response.getWriter();
-    writer.write("Failed");
-    writer.flush();
-  }
+	} else {
+		java.io.PrintWriter writer = response.getWriter();
+		writer.write("Failed");
+		writer.flush();
+	}
 %>
 ```
 
