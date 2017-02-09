@@ -76,7 +76,6 @@ public class SsoServiceTest {
 		assertEquals(expected, subject.getLogoutUrl());
 	}
 
-	
 	@Test
 	public void getLogoutUrlWithUser_itReturnsTheRightUrl() throws ParseException {
 		String expected = "https://api-hub.maestrano.com/app_logout?user_uid=usr-458";
@@ -85,13 +84,12 @@ public class SsoServiceTest {
 		MnoUser user = new MnoUser(samlResponse);
 		assertEquals(expected, subject.getLogoutUrl(user));
 	}
-	
+
 	@Test
 	public void getLogoutUrlWithUserId_itReturnsTheRightUrl() throws ParseException {
 		String expected = "https://api-hub.maestrano.com/app_logout?user_uid=usr-458";
 		assertEquals(expected, subject.getLogoutUrl("usr-458"));
 	}
-	
 
 	@Test
 	public void getUnauthorizedUrl_itReturnsTheRightUrl() {
@@ -126,7 +124,6 @@ public class SsoServiceTest {
 	public void toMetadataHash_itReturnsTheRightValue() {
 		Map<String, String> hash = subject.toMetadataHash();
 		assertEquals(Boolean.toString(subject.getEnabled()), hash.get("enabled"));
-		assertEquals(subject.getCreationMode(), hash.get("creation_mode"));
 		assertEquals(subject.getInitPath(), hash.get("init_path"));
 		assertEquals(subject.getConsumePath(), hash.get("consume_path"));
 		assertEquals(subject.getIdm(), hash.get("idm"));

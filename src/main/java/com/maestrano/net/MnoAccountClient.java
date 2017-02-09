@@ -12,7 +12,6 @@ import com.maestrano.Maestrano;
 import com.maestrano.exception.ApiException;
 import com.maestrano.exception.AuthenticationException;
 import com.maestrano.exception.InvalidRequestException;
-import com.maestrano.exception.MnoConfigurationException;
 import com.maestrano.helpers.MnoMapHelper;
 import com.maestrano.helpers.MnoStringHelper;
 import com.maestrano.json.DateDeserializer;

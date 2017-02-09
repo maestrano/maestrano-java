@@ -15,7 +15,6 @@ public class SsoService {
 
 	private final boolean enabled;
 	private final boolean sloEnabled;
-	private final String creationMode;
 	private final String initPath;
 	private final String consumePath;
 	private final String idm;
@@ -29,7 +28,6 @@ public class SsoService {
 		this.apiService = apiService;
 		this.enabled = MnoPropertiesHelper.getBooleanProperty(props, "sso.enabled");
 		this.sloEnabled = MnoPropertiesHelper.getBooleanProperty(props, "sso.sloEnabled");
-		this.creationMode = MnoPropertiesHelper.getPropertyOrDefault(props, "sso.creationMode");
 		this.initPath = MnoPropertiesHelper.getPropertyOrDefault(props, "sso.initPath");
 		this.consumePath = MnoPropertiesHelper.getPropertyOrDefault(props, "sso.consumePath");
 		this.idm = getIdm(appService, props);
@@ -65,15 +63,6 @@ public class SsoService {
 	 */
 	public String getIssuer() {
 		return apiService.getId();
-	}
-
-	/**
-	 * SSO user creation mode
-	 * 
-	 * @return String either 'real' or 'virtual'. Default: 'real'
-	 */
-	public String getCreationMode() {
-		return creationMode;
 	}
 
 	/**
@@ -231,7 +220,7 @@ public class SsoService {
 	public String getLogoutUrl(MnoUser user) {
 		return getLogoutUrl(user.getUid());
 	}
-	
+
 	/**
 	 * @param userUid
 	 *            the user currently logged id UID
@@ -270,7 +259,6 @@ public class SsoService {
 	public Map<String, String> toMetadataHash() {
 		Map<String, String> hash = new LinkedHashMap<String, String>();
 		hash.put("enabled", Boolean.toString(getEnabled()));
-		hash.put("creation_mode", getCreationMode());
 		hash.put("init_path", getInitPath());
 		hash.put("consume_path", getConsumePath());
 		hash.put("idm", getIdm());

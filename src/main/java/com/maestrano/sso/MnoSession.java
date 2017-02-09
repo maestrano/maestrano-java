@@ -11,7 +11,6 @@ import javax.xml.bind.DatatypeConverter;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.maestrano.Maestrano;
-import com.maestrano.MarketplaceConfiguration;
 import com.maestrano.SsoService;
 import com.maestrano.exception.ApiException;
 import com.maestrano.exception.AuthenticationException;

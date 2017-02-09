@@ -11,7 +11,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.maestrano.Maestrano;
-import com.maestrano.exception.MnoException;
 import com.maestrano.saml.Response;
 import com.maestrano.testhelpers.SamlMnoRespStub;
 
@@ -53,46 +52,5 @@ public class MnoUserTest {
 		assertEquals(att.get("country"), subject.getCountry());
 		assertEquals(att.get("company_name"), subject.getCompanyName());
 	}
-
-	@Test
-	public void toUid_whenReal_itReturnsTheRightUid() throws MnoException
-	{
-		props.setProperty("sso.creationMode", "real");
-		
-		Maestrano.reloadConfiguration(props);
-
-		assertEquals(subject.getUid(),subject.toUid());
-	}
-
-	@Test
-	public void toUid_whenVirtual_itReturnsTheRightUid() throws MnoException
-	{
-		props.setProperty("sso.creationMoMaestranode", "virtual");
-		
-		Maestrano.reloadConfiguration(props);
-		
-		assertEquals(subject.getVirtualUid(),subject.toUid());
-	}
-
-	@Test
-	public void toEmail_whenReal_itReturnsTheRightEmail() throws MnoException
-	{
-		props.setProperty("sso.creationMode", "real");
-		
-		Maestrano.reloadConfiguration(props);
-
-		assertEquals(subject.getEmail(),subject.toEmail());
-	}
-
-	@Test
-	public void toEmail_whenVirtual_itReturnsTheRightEmail() throws MnoException
-	{
-		props.setProperty("sso.creationMode", "virtual");
-		
-		Maestrano.reloadConfiguration(props);
-
-		assertEquals(subject.getVirtualEmail(),subject.toEmail());
-	}
-
 
 }

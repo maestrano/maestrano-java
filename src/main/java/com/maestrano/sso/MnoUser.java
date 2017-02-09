@@ -4,9 +4,6 @@ import java.text.ParseException;
 import java.util.Date;
 import java.util.Map;
 
-import com.maestrano.Maestrano;
-import com.maestrano.SsoService;
-import com.maestrano.exception.MnoException;
 import com.maestrano.helpers.MnoDateHelper;
 
 public class MnoUser {
@@ -48,37 +45,6 @@ public class MnoUser {
 		this.companyName = att.get("company_name");
 	}
 
-	private static SsoService ssoService() {
-		return Maestrano.getDefault().ssoService();
-	}
-
-	/**
-	 * Return the real UID if Maestrano Sso Creation Mode is set to "real" and the Virtual UID otherwise ("virtual" mode)
-	 * 
-	 * @return String uid to use in application
-	 * @throws MnoException
-	 */
-	public String toUid() {
-		if (ssoService().getCreationMode().equals("real")) {
-			return this.uid;
-		} else {
-			return this.virtualUid;
-		}
-	}
-
-	/**
-	 * Return the real email if Maestrano Sso Creation Mode is set to "real" and the Virtual email otherwise ("virtual" mode)
-	 * 
-	 * @return
-	 * @throws MnoException
-	 */
-	public String toEmail() {
-		if (ssoService().getCreationMode().equals("real")) {
-			return this.email;
-		} else {
-			return this.virtualEmail;
-		}
-	}
 
 	/**
 	 * Return the current user session token
@@ -144,7 +110,7 @@ public class MnoUser {
 	}
 
 	/**
-	 * Virtual email that can be used instead of regular email fields This email is unique across users and groups All emails sent to this email address are redirected to the real user email
+	 * Virtual email that can be used instead of regular email fields This email is unique across users and groups.
 	 * 
 	 * @return String virtual email
 	 */
