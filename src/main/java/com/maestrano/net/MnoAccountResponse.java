@@ -39,6 +39,6 @@ public class MnoAccountResponse<T> {
 	}
 	
 	public String getErrorsAsString() {
-		return MnoAccountClient.GSON.toJson(this.errors);
+		return AccountClient.GSON.toJson(this.errors);
 	}
 }

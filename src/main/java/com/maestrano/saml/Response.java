@@ -27,9 +27,13 @@ import org.xml.sax.SAXException;
 
 import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
-import com.maestrano.SsoService;
+import com.maestrano.configuration.Sso;
 import com.maestrano.exception.MnoException;
 
+/**
+ * Wrapper of the SAML Response coming from Maestrano.
+ *
+ */
 public class Response {
 
 	private final Certificate certificate;
@@ -47,7 +51,7 @@ public class Response {
 	 * @param String
 	 *            xml response provided by the SAML idp
 	 */
-	public static Response loadFromXML(SsoService ssoService, String xml) throws CertificateException, ParserConfigurationException, SAXException, IOException {
+	public static Response loadFromXML(Sso ssoService, String xml) throws CertificateException, ParserConfigurationException, SAXException, IOException {
 		return new Response(ssoService.getSamlSettings().getIdpCertificate(), xml);
 	}
 
@@ -60,7 +64,7 @@ public class Response {
 	 * @throws SAXException
 	 * @throws IOException
 	 */
-	public static Response loadFromBase64XML(SsoService ssoService, String base64xml) throws CertificateException, ParserConfigurationException, SAXException, IOException {
+	public static Response loadFromBase64XML(Sso ssoService, String base64xml) throws CertificateException, ParserConfigurationException, SAXException, IOException {
 		return loadFromBase64XML(ssoService.getSamlSettings().getIdpCertificate(), base64xml);
 	}
 

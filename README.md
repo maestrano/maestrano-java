@@ -30,10 +30,7 @@ Maestrano Cloud Integration is currently in closed beta. Want to know more? Send
 6. [Connec!™ Data Sharing](#connec-data-sharing)
   * [Making Requests](#making-requests)
   * [Webhook Notifications](#webhook-notifications)
-7. [Migrating from 0.*](#migrating-from-previous-version)
-  * [Migrating Maestrano methods calls](#migrating-maestrano-methods-calls)
-  * [Migrating Connec!™ API calls](#migrating-connec-api-calls)
-  * [Migrating Connec!™ Data Sharing API calls](#migrating-connec-data-sharing-api-calls)
+7. [Migrating](#migrating-from-previous-version)
 8. [Logging](#logging)
 
 ## Getting Setup
@@ -58,16 +55,20 @@ To install maestrano-java using Maven, add this dependency to your project's POM
 <dependency>
   <groupId>com.maestrano</groupId>
   <artifactId>maestrano-java</artifactId>
-  <version>1.0.0</version>
+  <version>2.0.0</version>
 </dependency>
 ```
 
 Or download the Jars directly from Maven: http://search.maven.org/#search%7Cga%7C1%7Ca%3A%22maestrano-java%22
 You will require the following dependencies:
 * Google-gson
+* com.google.guava
 * Apache Commons IO
 * Servlet-api (such as from Apache Tomcat)
-
+* org.slf4j
+* javax.xml.bind
+* javax.xml.crypto
+ 
 ### Configuration
 
 The [developer platform](https://developer.maestrano.com) is the easiest way to configure Maestrano. The only actions needed from your part is to create your application and environments on the developer platform and to create a config file. The framework will then contact the developer platform and retrieve the marketplaces configuration for your app environment.
@@ -85,7 +86,6 @@ dev-platform.host=https://developer.maestrano.com
 dev-platform.api_path=/api/config/v1
 # => Environment credentials
 # These are your environment credentials, you can get them by connecting on the developer platform, then go on your app, they will be display under the technical view on each environment.
-environment.name=<your environment nid>
 environment.apiKey="<your environment key>
 environment.apiSecret=<your environment secret>
 ```
@@ -94,7 +94,6 @@ You can also use environment variables as follow to configure your app environme
 ```
 export MNO_DEVPL_HOST=<developer platform host>
 export MNO_DEVPL_API_PATH=<developer platform host>
-export MNO_DEVPL_ENV_NAME=<your environment nid>
 export MNO_DEVPL_ENV_KEY=<your environment key>
 export MNO_DEVPL_ENV_SECRET=<your environment secret>
 ```
@@ -107,10 +106,19 @@ You may also call autoConfigure using a Properties instance.
 Properties properties = new Properties();
 properties.setProperty("dev-platform.host", "https://developer.maestrano.com");
 properties.setProperty("dev-platform.api_path", "/api/config/v1");
-properties.setProperty("environment.name", "<your environment nid>");
 properties.setProperty("environment.apiKey", "<your environment key>");
 properties.setProperty("environment.apiSecret", "<your environment secret>");
 Maestrano.autoConfigure(properties);
+```
+or with a direct call
+You may also call autoConfigure using a Properties instance.
+```java
+String host = "https://developer.maestrano.com";
+String apiPath = "/api/config/v1";
+String apiKey = "<your environment key>";
+String apiSecret = "<your environment secret>";
+
+Maestrano.autoConfigure(host, apiPath, apiKey, apiSecret);
 ```
 
 ## Single Sign-On Setup
@@ -151,28 +159,26 @@ Based on your application requirements the consume action might look like this:
 <%@ page import="com.maestrano.saml.Response,com.maestrano.sso.*" %>
 <%
 	String marketplace = readMarketplaceFromParameter();
-	Maestrano maestrano = Maestrano.get(marketplace);
+	Preset preset = Maestrano.get(marketplace);
 	String samlResponse = request.getParameter("SAMLResponse");
-	Response authResp = Response.loadFromBase64XML(maestrano.ssoService(), samlResponse);
+	Response authResp = preset.getSso().builResponse(samlResponse);
 	if (authResp.isValid()) {
-
+		// Build maestrano user and group objects
+		User mnoUser = new User(authResp);
+		Group mnoGroup = new Group(authResp);
 		// Build/Map local entities
 		MyGroup localGroup = MyGroup.findOrCreateForMaestrano(mnoGroup);
 		MyUser localUser = MyUser.findOrCreateForMaestrano(mnoUser);
-		
 		// Add localUser to the localGroup if not already part
 		// of it
 		if (!localGroup.hasMember(localUser)){
 		  localGroup.addMember(localUser);
 		}
-		
 		// Set Maestrano session (for Single Logout)
-		MnoSession mnoSession = new MnoSession(marketplace, request.getSession(),mnoUser);
+		Session mnoSession = new Session(marketplace, request.getSession(), mnoUser);
 		mnoSession.save();
-		
 		// Redirect to you application home page
 		response.sendRedirect("/");
-
 	} else {
 		java.io.PrintWriter writer = response.getWriter();
 		writer.write("Failed");
@@ -188,9 +194,10 @@ If you want your users to benefit from single logout then you should define the 
 
 
 ```java
-MnoSession mnoSession = new MnoSession(marketplace, request.getSession());
+Preset preset = Maestrano.get(marketplace);
+Session mnoSession = new Session(preset, request.getSession());
 if (!mnoSession.isValid()) {
-  response.sendRedirect(Maestrano.get(marketplace).ssoService().getInitUrl());
+  response.sendRedirect(preset.getSso().getInitUrl());
 }
 ```
 
@@ -204,11 +211,11 @@ When Maestrano users sign out of your application you can redirect them to the M
 ```java
   //Retrieve current user uid
   String userUid = getUserUid();
-  Maestrano.get(marketplace).ssoService().getLogoutUrl(userUid);
+  Maestrano.get(marketplace).getSso().getLogoutUrl(userUid);
 ```
 or if you have the `MnoSession`
 ```java
-MnoSession mnoSession = new MnoSession(marketplace, request.getSession());
+Session mnoSession = new Session(Maestrano.get(marketplace), request.getSession());
 mnoSession.getLogoutUrl();
 ```
 
@@ -217,7 +224,7 @@ mnoSession.getLogoutUrl();
 If any error happens during the SSO handshake, you can redirect users to the following URL:
 
 ```java
-Maestrano.get(marketplace).ssoService().getUnauthorizedUrl()
+Maestrano.get(marketplace).getSso().getUnauthorizedUrl()
 ```
 
 ## Account Webhooks
@@ -261,7 +268,7 @@ The maestrano package also provides bindings to its REST API allowing you to acc
 A bill represents a single charge on a given group.
 
 ```java
-com.maestrano.account.MnoBill
+com.maestrano.account.Bill
 ```
 
 ##### Attributes
@@ -382,12 +389,19 @@ com.maestrano.account.MnoBill
 List all bills you have created and iterate through the list, you will need to precise the marketplace.
 
 ```java
-List<MnoBill> bills = MnoBill.client(marketplace).all();
+Preset preset = Maestrano.get(marketplace);
+List<Bill> bills = Bill.client(preset).all();
 ```
+or
+```java
+Preset preset = Maestrano.get(marketplace)
+List<Bill> bills = preset.billClient().all();
+```
+
 
 Access a single bill by id
 ```java
-MnoBill bill = MnoBill.client(marketplace).retrieve("bill-f1d2s54");
+Bill bill = preset.billClient().retrieve("bill-f1d2s54");
 ```
 
 Create a new bill
@@ -397,13 +411,13 @@ attrsMap.put("groupId", "cld-3");
 attrsMap.put("priceCents", 2000);
 attrsMap.put("description", "Product purchase");
 
-MnoBill bill = MnoBill.client(marketplace).create(attrsMap);
+Bill bill = preset.billClient().create(attrsMap);
 ```
 
 Cancel a bill
 ```java
-MnoBillClient client = MnoBill.client(marketplace);
-MnoBill bill = client.retrieve("bill-f1d2s54");
+BillClient client = preset.billClient();
+Bill bill = client.retrieve("bill-f1d2s54");
 client.cancel(bill);
 ```
 
@@ -411,7 +425,7 @@ client.cancel(bill);
 A recurring bill charges a given customer at a regular interval without you having to do anything.
 
 ```java
-com.maestrano.account.MnoRecurringBill
+com.maestrano.account.RecurringBill
 ```
 
 ##### Attributes
@@ -549,12 +563,18 @@ com.maestrano.account.MnoRecurringBill
 
 List all recurring bills you have created and iterate through the list
 ```java
-List<MnoRecurringBill> bills = MnoRecurringBill.client(marketplace).all();
+Preset preset = Maestrano.get(marketplace);
+List<RecurringBill> bills = RecurringBill.client(preset).all();
+```
+or
+```java
+Preset preset = Maestrano.get(marketplace);
+List<RecurringBill> bills = preset.recurringBillClient().all();
 ```
 
 Access a single recurring bill by id
 ```java
-MnoRecurringBill bill = MnoRecurringBill.client(marketplace).retrieve("rbill-f1d2s54");
+RecurringBill bill = RecurringBill.client(preset).retrieve("rbill-f1d2s54");
 ```
 
 Create a new recurring bill
@@ -566,13 +586,13 @@ attrsMap.put("description", "Product purchase");
 attrsMap.put("period", "Month");
 attrsMap.put("startDate", new Date());
 
-MnoRecurringBill bill = MnoRecurringBill.client(marketplace).create(attrsMap);
+RecurringBill bill = preset.recurringBillClient().create(attrsMap);
 ```
 
 Cancel a recurring bill
 ```java
-MnoRecurringBillClient client = MnoRecurringBill.client(marketplace);
-MnoRecurringBill bill = client.retrieve("rbill-f1d2s54");
+RecurringBillClient client = preset.recurringBillClient();
+RecurringBill bill = client.retrieve("rbill-f1d2s54");
 client.cancel(bill);
 ```
 
@@ -595,7 +615,9 @@ The Maestrano API provides a built-in client - for connecting to Connec!™. Thi
 ```java
 String groupId = "cld-3";
 // Retrieve default Connect client
-ConnecClient connecClient = new ConnecClient(marketplace);
+ConnecClient connecClient = new ConnecClient(preset);
+// or
+ConnecClient connecClient = preset.connecClient();
 
 // Fetch all organizations
 Map<String, Object> organizations = connecClient.all("organizations", groupId);
@@ -647,66 +669,10 @@ Entities sent via notifications follow the same data structure as the one descri
 
 ## Migrating from previous version
 
-Before the 0.9.0 version, the methods were static and directly made on the classes. Starting from 0.9.0, you need to get instances of Maestrano configuration or MnoObject connection client to do the calls.
+* [to v2.0](MIGRATION_TO_V2.md)
+* [to v0.9](MIGRATION_TO_V0_9.md)
 
-### Migrating Maestrano methods calls
 
-Before 0.9.0:
-```java
-Maestrano.configure();
-Maestrano.configure("myPreset", myPresetProperties);
-Maestrano.toMetadata();
-Maestrano.toMetadata("myPreset");
-//...
-Maestrano.ssoService().getLogoutUrl()
-Maestrano.ssoService().getLogoutUrl("myPreset")
-```
-After 0.9.0:
-```java
-Maetrano defaultInstance = Maestrano.configure();
-Maetrano presetInstance = Maestrano.configure("myPreset", myPresetProperties);
-
-defaultInstance.toMetadata();
-presetInstance.toMetadata();
-// or:
-Maestrano.getDefault().toMetadata();
-Maestrano.get("myPreset").toMetadata();
-//...
-Maestrano.getDefault().ssoService().getLogoutUrl();
-Maestrano.get("myPreset").ssoService().getLogoutUrl();
-```
-### Migrating Connec!™ API calls
-
-For API calls, you need now to retrieve an instance of a client (MnoBillClient, MnoUserClient etc..) to make the calls.
-Before 0.9.0:
-```java
-List<MnoBill> bills = MnoBill.all();
-MnoBill bill = MnoBill.retrieve("rbill-f1d2s54");
-```
-After 0.9.0:
-```java
-List<MnoBill> bills = MnoBill.client().all();
-MnoBill bill = MnoBill.client().retrieve("rbill-f1d2s54");
-// or:
-MnoBillClient client = MnoBill.client();
-List<MnoBill> bills = client.all();
-MnoBill bill = client.retrieve("rbill-f1d2s54");
-```
-
-### Migrating Connec!™ Data Sharing API calls
-
-Before you could directly make the static call on ConnecClient. Now you need to use the constructor
-Before 0.9.0:
-```java
-Map<String, Object> organizations = ConnecClient.all("organizations", groupId);
-organization = (Map<String, Object>) ConnecClient.create("organizations", groupId, newOrganization).get("organizations");
-```
-After 0.9.0:
-```java
-ConnecClient connecClient = new ConnecClient(marketplace);
-Map<String, Object> organizations = connecClient.all("organizations", groupId);
-organization = (Map<String, Object>) connecClient.create("organizations", groupId, newOrganization).get("organizations");
-```
 
 ## Logging
 

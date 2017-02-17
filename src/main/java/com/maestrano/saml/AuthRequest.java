@@ -16,7 +16,7 @@ import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
-import com.maestrano.Maestrano;
+import com.maestrano.configuration.Preset;
 import com.maestrano.exception.MnoException;
 import com.maestrano.helpers.MnoZipHelper;
 
@@ -36,8 +36,8 @@ public class AuthRequest {
 	 *            request parameters
 	 * @throws MnoException
 	 */
-	public AuthRequest(Maestrano maestrano, Map<String, String> parameters) {
-		this.settings = maestrano.ssoService().getSamlSettings();
+	public AuthRequest(Preset preset, Map<String, String> parameters) {
+		this.settings = preset.getSso().getSamlSettings();
 		id = "_" + UUID.randomUUID().toString();
 		SimpleDateFormat simpleDf = new SimpleDateFormat("yyyy-MM-dd'T'H:mm:ssZ");
 		issueInstant = simpleDf.format(new Date());
@@ -52,8 +52,8 @@ public class AuthRequest {
 	 * @param request
 	 * @throws MnoException
 	 */
-	public AuthRequest(Maestrano maestrano, ServletRequest request) {
-		this(maestrano, new HashMap<String, String>());
+	public AuthRequest(Preset preset, ServletRequest request) {
+		this(preset, new HashMap<String, String>());
 
 		@SuppressWarnings("unchecked")
 		Enumeration<String> parameterNames = request.getParameterNames();

@@ -1,4 +1,4 @@
-package com.maestrano;
+package com.maestrano.configuration;
 
 import static org.junit.Assert.assertEquals;
 
@@ -8,19 +8,23 @@ import java.util.Properties;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.maestrano.Maestrano;
+import com.maestrano.exception.MnoConfigurationException;
 import com.maestrano.exception.MnoException;
+import com.maestrano.testhelpers.DefaultPropertiesHelper;
 
-public class ApiServiceTest {
-	private Properties props = new Properties();
-	private ApiService subject;
+public class ApiTest {
+	private Api subject;
+	private Properties properties;
 
 	@Before
-	public void beforeEach() {
-		props.setProperty("environment", "production");
-		props.setProperty("api.id", "someid");
-		props.setProperty("api.key", "somekey");
-		Maestrano maestrano = Maestrano.reloadConfiguration(props);
-		subject = maestrano.apiService();
+	public void beforeEach() throws MnoConfigurationException {
+		properties = DefaultPropertiesHelper.loadDefaultProperties();
+		properties.setProperty("environment", "production");
+		properties.setProperty("api.id", "someid");
+		properties.setProperty("api.key", "somekey");
+		Preset preset = new Preset("test", properties);
+		subject = preset.getApi();
 	}
 
 	@Test
@@ -40,14 +44,15 @@ public class ApiServiceTest {
 
 	@Test
 	public void apiAuth_itReturnsTheRightCredentials() throws MnoException {
+		Properties properties = DefaultPropertiesHelper.loadDefaultProperties();
 		String apiId = "someApiId";
 		String apiKey = "someApiKey";
-		props.setProperty("api.id", apiId);
-		props.setProperty("api.key", apiKey);
-		Maestrano maestrano = Maestrano.reloadConfiguration(props);
-		ApiService apiService = maestrano.apiService();
-		assertEquals(apiId, apiService.getId());
-		assertEquals(apiKey, apiService.getKey());
+		properties.setProperty("api.id", apiId);
+		properties.setProperty("api.key", apiKey);
+		Preset preset = new Preset("test", properties);
+		Api api = preset.getApi();
+		assertEquals(apiId, api.getId());
+		assertEquals(apiKey, api.getKey());
 	}
 
 	@Test
@@ -62,17 +67,18 @@ public class ApiServiceTest {
 
 	@Test
 	public void getHost_itReturnsTheRightValue() throws MnoException {
+		Properties properties = DefaultPropertiesHelper.loadDefaultProperties();
 		String host = "https://mysuperapp.com";
-		props.setProperty("api.host", host);
-		Maestrano maestrano = Maestrano.reloadConfiguration(props);
-		ApiService apiService = maestrano.apiService();
-		assertEquals(host, apiService.getHost());
+		properties.setProperty("api.host", host);
+		Preset preset = new Preset("test", properties);
+		Api api = preset.getApi();
+		assertEquals(host, api.getHost());
 	}
 
 	@Test
 	public void toMetadataHash_itReturnsTheRightValue() {
 		Map<String, String> hash = subject.toMetadataHash();
-		assertEquals(props.getProperty("api.id"), hash.get("id"));
+		assertEquals(properties.getProperty("api.id"), hash.get("id"));
 		assertEquals(subject.getLang(), hash.get("lang"));
 		assertEquals(subject.getVersion(), hash.get("version"));
 		assertEquals(subject.getLangVersion(), hash.get("lang_version"));

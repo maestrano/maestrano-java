@@ -18,7 +18,7 @@ import org.apache.commons.io.IOUtils;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.maestrano.ApiService;
+import com.maestrano.configuration.Api;
 import com.maestrano.exception.ApiException;
 import com.maestrano.exception.AuthenticationException;
 import com.maestrano.json.DateSerializer;
@@ -46,11 +46,11 @@ public class MnoHttpClient {
 	/**
 	 * Return a client with HTTP Basic Authentication setup
 	 */
-	public static MnoHttpClient getAuthenticatedClient(ApiService apiService) {
+	public static MnoHttpClient getAuthenticatedClient(Api apiService) {
 		return getAuthenticatedClient(apiService.getId(), apiService.getKey(), "application/vnd.api+json");
 	}
 
-	public static MnoHttpClient getAuthenticatedClient(ApiService apiService, String contentType) {
+	public static MnoHttpClient getAuthenticatedClient(Api apiService, String contentType) {
 		return getAuthenticatedClient(apiService.getId(), apiService.getKey(), contentType);
 	}
 

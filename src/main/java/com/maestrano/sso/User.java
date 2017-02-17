@@ -4,9 +4,10 @@ import java.text.ParseException;
 import java.util.Date;
 import java.util.Map;
 
+import com.maestrano.exception.MnoException;
 import com.maestrano.helpers.MnoDateHelper;
 
-public class MnoUser {
+public class User {
 
 	public final String ssoSession;
 	public final Date ssoSessionRecheck;
@@ -26,13 +27,18 @@ public class MnoUser {
 	 * 
 	 * @param samlResponse
 	 *            a SAML Response from Maestrano IDP
-	 * @throws ParseException
+	 * @throws MnoException
 	 */
-	public MnoUser(com.maestrano.saml.Response samlResponse) throws ParseException {
+	public User(com.maestrano.saml.Response samlResponse) throws MnoException {
 		Map<String, String> att = samlResponse.getAttributes();
 
 		this.ssoSession = att.get("mno_session");
-		this.ssoSessionRecheck = MnoDateHelper.fromIso8601(att.get("mno_session_recheck"));
+		String mnoSessionRecheck = att.get("mno_session_recheck");
+		try {
+			this.ssoSessionRecheck = MnoDateHelper.fromIso8601(mnoSessionRecheck);
+		} catch (ParseException e) {
+			throw new MnoException("Could not parse mno_session_recheck: " + mnoSessionRecheck, e);
+		}
 		this.groupUid = att.get("group_uid");
 		this.groupRole = att.get("group_role");
 		this.uid = att.get("uid");
@@ -44,7 +50,6 @@ public class MnoUser {
 		this.country = att.get("country");
 		this.companyName = att.get("company_name");
 	}
-
 
 	/**
 	 * Return the current user session token

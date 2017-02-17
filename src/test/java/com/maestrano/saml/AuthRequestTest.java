@@ -17,22 +17,26 @@ import org.junit.Test;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 
-import com.maestrano.Maestrano;
+import com.maestrano.configuration.Preset;
+import com.maestrano.exception.MnoConfigurationException;
 import com.maestrano.helpers.MnoZipHelper;
+import com.maestrano.testhelpers.DefaultPropertiesHelper;
 
 public class AuthRequestTest {
-	private Properties props = new Properties();
+	private Properties properties;
 	private AuthRequest subject;
-	private Maestrano maestrano;
+	private Preset preset;
 
 	@Before
-	public void beforeEach() {
-		props.setProperty("environment", "production");
-		props.setProperty("app.host", "https://mysuperapp.com");
-		props.setProperty("api.id", "someid");
-		props.setProperty("api.key", "somekey");
-		this.maestrano = Maestrano.reloadConfiguration(props);
-		subject = new AuthRequest(maestrano, new HashMap<String, String>());
+	public void beforeEach() throws MnoConfigurationException {
+		properties = DefaultPropertiesHelper.loadDefaultProperties();
+		properties.setProperty("environment", "production");
+		properties.setProperty("app.host", "https://mysuperapp.com");
+		properties.setProperty("api.id", "someid");
+		properties.setProperty("api.key", "somekey");
+		properties.setProperty("connec.host", "https://api-connec.maestrano.com");
+		this.preset = new Preset("test", properties);
+		subject = new AuthRequest(preset, new HashMap<String, String>());
 	}
 
 	@Test
@@ -52,10 +56,10 @@ public class AuthRequestTest {
 		Document dom = db.parse(new InputSource(new StringReader(xmlReq)));
 
 		actual = dom.getElementsByTagName("saml:Issuer").item(0).getFirstChild().getTextContent();
-		assertEquals(props.getProperty("api.id"), actual);
+		assertEquals(properties.getProperty("api.id"), actual);
 
 		actual = dom.getElementsByTagName("samlp:AuthnRequest").item(0).getAttributes().getNamedItem("AssertionConsumerServiceURL").getNodeValue();
-		assertEquals(props.getProperty("app.host") + "/maestrano/auth/saml/consume", actual);
+		assertEquals(properties.getProperty("sso.idm") + "/maestrano/auth/saml/consume", actual);
 	}
 
 	@Test
@@ -71,7 +75,7 @@ public class AuthRequestTest {
 		Map<String, String> params = new HashMap<String, String>();
 		params.put("group_id", "cld-9");
 		params.put("other", "value with spaces");
-		subject = new AuthRequest(maestrano, params);
+		subject = new AuthRequest(preset, params);
 
 		String expected = "https://api-hub.maestrano.com/api/v1/auth/saml?SAMLRequest=";
 		expected += URLEncoder.encode(subject.getXmlBase64Request(), "UTF-8");

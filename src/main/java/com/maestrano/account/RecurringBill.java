@@ -2,13 +2,12 @@ package com.maestrano.account;
 
 import java.util.Date;
 
-import com.maestrano.Maestrano;
+import com.maestrano.configuration.Preset;
 import com.maestrano.exception.ApiException;
 import com.maestrano.exception.AuthenticationException;
-import com.maestrano.exception.MnoConfigurationException;
-import com.maestrano.net.MnoAccountClient;
+import com.maestrano.net.AccountClient;
 
-public class MnoRecurringBill extends MnoObject {
+public class RecurringBill extends MnoObject {
 	public String id;
 	public Date createdAt;
 	public Date updatedAt;
@@ -26,32 +25,13 @@ public class MnoRecurringBill extends MnoObject {
 	public String currency;
 	public String description;
 
-	/**
-	 * @deprecated use {@link #client(Maestrano)} instead
-	 */
-	public static MnoRecurringBillClient client() {
-		return new MnoRecurringBillClient();
+	public static RecurringBillClient client(Preset preset) {
+		return new RecurringBillClient(preset);
 	}
 
-	public static MnoRecurringBillClient client(String marketplace) throws MnoConfigurationException {
-		return new MnoRecurringBillClient(marketplace);
-	}
-
-	public static MnoRecurringBillClient client(Maestrano maestrano) {
-		return new MnoRecurringBillClient(maestrano);
-	}
-
-	public static class MnoRecurringBillClient extends MnoAccountClient<MnoRecurringBill> {
-		public MnoRecurringBillClient(Maestrano maestrano) {
-			super(MnoRecurringBill.class, maestrano);
-		}
-
-		public MnoRecurringBillClient(String marketplace) throws MnoConfigurationException {
-			super(MnoRecurringBill.class, Maestrano.get(marketplace));
-		}
-
-		public MnoRecurringBillClient() {
-			super(MnoRecurringBill.class);
+	public static class RecurringBillClient extends AccountClient<RecurringBill> {
+		public RecurringBillClient(Preset preset) {
+			super(RecurringBill.class, preset);
 		}
 
 		/**
@@ -61,11 +41,10 @@ public class MnoRecurringBill extends MnoObject {
 		 * @throws ApiException
 		 * @throws AuthenticationException
 		 */
-		public Boolean cancel(MnoRecurringBill bill) throws AuthenticationException, ApiException {
+		public Boolean cancel(RecurringBill bill) throws AuthenticationException, ApiException {
 			if (bill.id != null && !bill.id.isEmpty()) {
-				MnoRecurringBill newBill = delete(bill.id);
-				bill.merge(newBill);
-				return bill.status.equals("cancelled");
+				RecurringBill newBill = delete(bill.id);
+				return newBill.status.equals("cancelled");
 			}
 			return false;
 		}

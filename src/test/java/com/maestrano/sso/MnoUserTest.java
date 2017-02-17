@@ -5,39 +5,29 @@ import static org.junit.Assert.assertEquals;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Map;
-import java.util.Properties;
 
 import org.junit.Before;
 import org.junit.Test;
 
-import com.maestrano.Maestrano;
 import com.maestrano.saml.Response;
 import com.maestrano.testhelpers.SamlMnoRespStub;
 
 public class MnoUserTest {
-	private Properties props = new Properties();
 	private Response samlResp;
-	private MnoUser subject;
+	private User subject;
 
 	@Before
 	public void beforeEach() throws Exception {
-		props.setProperty("environment", "production");
-		props.setProperty("app.host", "https://mysuperapp.com");
-		props.setProperty("api.id", "someid");
-		props.setProperty("api.key", "somekey");
-		
-		Maestrano.reloadConfiguration(props);
 
 		samlResp = new SamlMnoRespStub();
-		subject = new MnoUser(samlResp);
+		subject = new User(samlResp);
 	}
 
 	@Test
-	public void constructor_itExtractsTheRightAttributesFromTheSamlResponse() throws ParseException
-	{
+	public void constructor_itExtractsTheRightAttributesFromTheSamlResponse() throws ParseException {
 		SimpleDateFormat simpleDf = new SimpleDateFormat("yyyy-MM-dd'T'H:mm:ssZ");
 
-		Map<String,String> att = samlResp.getAttributes();
+		Map<String, String> att = samlResp.getAttributes();
 
 		assertEquals(att.get("mno_session"), subject.getSsoSession());
 		assertEquals(simpleDf.parse(att.get("mno_session_recheck")), subject.getSsoSessionRecheck());

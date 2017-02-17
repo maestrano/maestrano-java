@@ -1,60 +1,41 @@
 package com.maestrano.account;
 
-import java.lang.reflect.Field;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Date;
 
-import com.maestrano.net.MnoAccountClient;
+import com.maestrano.net.AccountClient;
 
-class MnoObject {
+public class MnoObject {
 
-	/**
-	 * This value has to be lazy loaded, because it is possible to use the application without a default marketplace
-	 */
-	public Map<String, Object> changedAttributes;
-	public Map<String, Object> orginalAttributes;
-
-	public MnoObject() {
-		changedAttributes = new HashMap<String, Object>();
-		orginalAttributes = new HashMap<String, Object>();
-	}
+	private String id;
+	private Date createdAt;
+	private Date updatedAt;
 
 	public String toString() {
-		return MnoAccountClient.GSON.toJson(this);
+		return AccountClient.GSON.toJson(this);
 	}
 
-	protected void changeAttribute(String attrName, Object value) {
-		try {
-
-			Field f = this.getClass().getDeclaredField(attrName);
-			Object currentVal = f.get(this);
-			f.set(this, value);
-
-			if (this.orginalAttributes.get(attrName) == null) {
-				this.orginalAttributes.put(attrName, currentVal);
-			}
-
-			if (this.orginalAttributes.get(attrName) != null && this.orginalAttributes.get(attrName).equals(value)) {
-				this.changedAttributes.remove(attrName);
-				this.orginalAttributes.remove(attrName);
-			} else {
-				this.changedAttributes.put(attrName, value);
-			}
-
-		} catch (Exception wontHappen) {
-			// TODO: we should log this
-		}
+	public String getId() {
+		return id;
 	}
 
-	protected void merge(Object obj) {
-		Field[] fs = this.getClass().getDeclaredFields();
-
-		for (Field f : fs) {
-			try {
-				f.set(this, f.get(obj));
-			} catch (Exception wontHappen) {
-				// TODO: we should log this
-			}
-		}
+	public void setId(String id) {
+		this.id = id;
 	}
+
+	public Date getCreatedAt() {
+		return createdAt;
+	}
+
+	public void setCreatedAt(Date createdAt) {
+		this.createdAt = createdAt;
+	}
+
+	public Date getUpdatedAt() {
+		return updatedAt;
+	}
+
+	public void setUpdatedAt(Date updatedAt) {
+		this.updatedAt = updatedAt;
+	}
+
 }

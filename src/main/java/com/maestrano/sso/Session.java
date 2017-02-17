@@ -11,7 +11,8 @@ import javax.xml.bind.DatatypeConverter;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.maestrano.Maestrano;
-import com.maestrano.SsoService;
+import com.maestrano.configuration.Preset;
+import com.maestrano.configuration.Sso;
 import com.maestrano.exception.ApiException;
 import com.maestrano.exception.AuthenticationException;
 import com.maestrano.exception.MnoConfigurationException;
@@ -19,9 +20,9 @@ import com.maestrano.exception.MnoException;
 import com.maestrano.helpers.MnoDateHelper;
 import com.maestrano.net.MnoHttpClient;
 
-public class MnoSession {
+public class Session {
 
-	private final SsoService ssoService;
+	private final Sso sso;
 	private final HttpSession httpSession;
 
 	private String uid;
@@ -38,8 +39,8 @@ public class MnoSession {
 	 *            httpSession
 	 */
 
-	public MnoSession(Maestrano maestrano, HttpSession httpSession) {
-		this(maestrano.ssoService(), httpSession);
+	public Session(Preset preset, HttpSession httpSession) {
+		this(preset.getSso(), httpSession);
 	}
 
 	/**
@@ -51,23 +52,12 @@ public class MnoSession {
 	 *            httpSession
 	 */
 
-	public MnoSession(String marketplace, HttpSession httpSession) throws MnoConfigurationException {
+	public Session(String marketplace, HttpSession httpSession) throws MnoConfigurationException {
 		this(Maestrano.get(marketplace), httpSession);
 	}
 
-	/**
-	 * Constructor retrieving Maestrano session from httpSession
-	 * 
-	 * @deprecated use {@link #MnoSession(Maestrano, HttpSession)} instead
-	 * @param HttpSession
-	 *            httpSession
-	 */
-	public MnoSession(HttpSession httpSession) {
-		this(Maestrano.getDefault().ssoService(), httpSession);
-	}
-
-	public MnoSession(SsoService ssoService, HttpSession httpSession) {
-		this.ssoService = ssoService;
+	public Session(Sso sso, HttpSession httpSession) {
+		this.sso = sso;
 		this.httpSession = httpSession;
 
 		String mnoSessEntry = (String) httpSession.getAttribute("maestrano");
@@ -107,12 +97,12 @@ public class MnoSession {
 	 *            Maestrano configuration for a given marketplace
 	 * @param HttpSession
 	 *            httpSession
-	 * @param MnoUser
+	 * @param User
 	 *            user
 	 * @throws MnoConfigurationException
 	 */
-	public MnoSession(Maestrano maestrano, HttpSession httpSession, MnoUser user) {
-		this(maestrano.ssoService(), httpSession, user);
+	public Session(Preset preset, HttpSession httpSession, User user) {
+		this(preset.getSso(), httpSession, user);
 	}
 
 	/**
@@ -122,36 +112,23 @@ public class MnoSession {
 	 *            configuration marketplace
 	 * @param HttpSession
 	 *            httpSession
-	 * @param MnoUser
+	 * @param User
 	 *            user
 	 * @throws MnoConfigurationException
 	 */
-	public MnoSession(String marketplace, HttpSession httpSession, MnoUser user) throws MnoConfigurationException {
+	public Session(String marketplace, HttpSession httpSession, User user) throws MnoConfigurationException {
 		this(Maestrano.get(marketplace), httpSession, user);
-	}
-
-	/**
-	 * Constructor retrieving Maestrano session from user
-	 * 
-	 * @deprecated use {@link #MnoSession(Maestrano, HttpSession, MnoUser)} instead
-	 * @param HttpSession
-	 *            httpSession
-	 * @param MnoUser
-	 *            user
-	 */
-	public MnoSession(HttpSession httpSession, MnoUser user) {
-		this(Maestrano.getDefault().ssoService(), httpSession, user);
 	}
 
 	/**
 	 * Constructor retrieving Maestrano session from user for a given ssoService
 	 * 
-	 * @param ssoService
+	 * @param sso
 	 * @param httpSession
 	 * @param user
 	 */
-	public MnoSession(SsoService ssoService, HttpSession httpSession, MnoUser user) {
-		this.ssoService = ssoService;
+	public Session(Sso sso, HttpSession httpSession, User user) {
+		this.sso = sso;
 		this.httpSession = httpSession;
 
 		if (user != null) {
@@ -200,7 +177,7 @@ public class MnoSession {
 	public boolean performRemoteCheck(MnoHttpClient httpClient) {
 		if (uid != null && sessionToken != null && !uid.isEmpty() && !sessionToken.isEmpty()) {
 			// Prepare request
-			String url = ssoService.getSessionCheckUrl(this.uid, this.sessionToken);
+			String url = sso.getSessionCheckUrl(this.uid, this.sessionToken);
 			String respStr;
 			try {
 				respStr = httpClient.get(url);
@@ -267,10 +244,6 @@ public class MnoSession {
 	 * @throws MnoException
 	 */
 	public boolean isValid(boolean ifSession, MnoHttpClient httpClient) {
-		// Return true automatically if SLO is disabled
-		if (!ssoService.getSloEnabled()) {
-			return true;
-		}
 
 		// Return true if maestrano session not set
 		// and ifSession option enabled
@@ -317,7 +290,7 @@ public class MnoSession {
 	 * @return the Idp logout url where users should be redirected to upon logging out
 	 */
 	public String getLogoutUrl() {
-		return ssoService.getLogoutUrl(this.uid);
+		return sso.getLogoutUrl(this.uid);
 	}
 
 	public String getUid() {
