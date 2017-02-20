@@ -30,6 +30,10 @@ import com.google.common.base.Suppliers;
 import com.maestrano.SsoService;
 import com.maestrano.exception.MnoException;
 
+/**
+ * Wrapper of the SAML Response coming from Maestrano.
+ *
+ */
 public class Response {
 
 	private final Certificate certificate;
