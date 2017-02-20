@@ -4,7 +4,9 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Properties;
 
+import com.maestrano.exception.MnoException;
 import com.maestrano.helpers.MnoPropertiesHelper;
+import com.maestrano.saml.Response;
 import com.maestrano.sso.MnoUser;
 
 /**
@@ -255,7 +257,20 @@ public class SsoService {
 	public com.maestrano.saml.Settings getSamlSettings() {
 		return new com.maestrano.saml.Settings(this.getConsumeUrl(), this.getIssuer(), this.getIdpUrl(), this.getX509Certificate(), this.getNameIdFormat());
 	}
-
+	/**
+	 * Build a {@linkplain Response} with the provided base64 encoded XML string
+	 * @param samlResponse
+	 * @return
+	 * @throws MnoException
+	 */
+	public Response buildResponse(String samlResponse) throws MnoException {
+		try {
+			return Response.loadFromBase64XML(this, samlResponse);
+		} catch (Exception e) {
+			throw new MnoException("Could not build Response from samlResponse: " + samlResponse , e);
+		}
+	}
+	
 	public Map<String, String> toMetadataHash() {
 		Map<String, String> hash = new LinkedHashMap<String, String>();
 		hash.put("enabled", Boolean.toString(getEnabled()));
