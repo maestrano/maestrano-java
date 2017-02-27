@@ -12,13 +12,26 @@ public class Group {
 	private String uid;
 	private String name;
 	private String email;
-	private Boolean hasCreditCard;
+	private boolean hasCreditCard;
 	private Date freeTrialEndAt;
 	private String companyName;
 	private String currency;
 	private TimeZone timezone;
 	private String country;
 	private String city;
+
+	public Group(String uid, String name, String email, boolean hasCreditCard, Date freeTrialEndAt, String companyName, String currency, TimeZone timezone, String country, String city) {
+		this.uid = uid;
+		this.name = name;
+		this.email = email;
+		this.hasCreditCard = hasCreditCard;
+		this.freeTrialEndAt = freeTrialEndAt;
+		this.companyName = companyName;
+		this.currency = currency;
+		this.timezone = timezone;
+		this.country = country;
+		this.city = city;
+	}
 
 	/**
 	 * Constructor
@@ -83,7 +96,7 @@ public class Group {
 	 * 
 	 * @return
 	 */
-	public Boolean hasCreditCard() {
+	public boolean hasCreditCard() {
 		return hasCreditCard;
 	}
 

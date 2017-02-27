@@ -37,11 +37,11 @@ public class Bill extends MnoObject {
 		 * @throws ApiException
 		 * @throws AuthenticationException
 		 */
-		public Boolean cancel(Bill bill) throws AuthenticationException, ApiException {
+		public boolean cancel(Bill bill) throws AuthenticationException, ApiException {
 			return cancel(bill.getId());
 		}
 
-		public Boolean cancel(String id) throws AuthenticationException, ApiException {
+		public boolean cancel(String id) throws AuthenticationException, ApiException {
 			if (id != null && !id.isEmpty()) {
 				Bill newBill = delete(id);
 				return "cancelled".equals(newBill.status);

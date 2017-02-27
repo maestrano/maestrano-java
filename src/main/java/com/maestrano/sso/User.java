@@ -22,6 +22,24 @@ public class User {
 	public final String country;
 	public final String companyName;
 
+	
+	public User(String ssoSession, Date ssoSessionRecheck, String groupUid, String groupRole, String uid, String virtualUid, String email, String virtualEmail, String firstName, String lastName,
+			String country, String companyName) {
+		super();
+		this.ssoSession = ssoSession;
+		this.ssoSessionRecheck = ssoSessionRecheck;
+		this.groupUid = groupUid;
+		this.groupRole = groupRole;
+		this.uid = uid;
+		this.virtualUid = virtualUid;
+		this.email = email;
+		this.virtualEmail = virtualEmail;
+		this.firstName = firstName;
+		this.lastName = lastName;
+		this.country = country;
+		this.companyName = companyName;
+	}
+
 	/**
 	 * Constructor
 	 * 

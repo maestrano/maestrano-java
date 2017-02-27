@@ -8,117 +8,28 @@ import java.util.Map;
 import javax.servlet.http.HttpSession;
 import javax.xml.bind.DatatypeConverter;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.maestrano.Maestrano;
 import com.maestrano.configuration.Preset;
 import com.maestrano.configuration.Sso;
 import com.maestrano.exception.ApiException;
 import com.maestrano.exception.AuthenticationException;
-import com.maestrano.exception.MnoConfigurationException;
 import com.maestrano.exception.MnoException;
 import com.maestrano.helpers.MnoDateHelper;
 import com.maestrano.net.MnoHttpClient;
 
 public class Session {
 
-	private final Sso sso;
-	private final HttpSession httpSession;
+	private static final Logger logger = LoggerFactory.getLogger(Session.class);
+	private Sso sso;
 
-	private String uid;
-	private String groupUid;
+	private final String uid;
+	private final String groupUid;
 	private Date recheck;
-	private String sessionToken;
-
-	/**
-	 * Constructor retrieving Maestrano session from httpSession for a given maestrano configuration
-	 * 
-	 * @param maestrano
-	 *            Maestrano configuration for a given marketplace
-	 * @param HttpSession
-	 *            httpSession
-	 */
-
-	public Session(Preset preset, HttpSession httpSession) {
-		this(preset.getSso(), httpSession);
-	}
-
-	/**
-	 * Constructor retrieving Maestrano session from httpSession for a given marketplace
-	 * 
-	 * @param marketplace
-	 *            marketplace previously configured
-	 * @param HttpSession
-	 *            httpSession
-	 */
-
-	public Session(String marketplace, HttpSession httpSession) throws MnoConfigurationException {
-		this(Maestrano.get(marketplace), httpSession);
-	}
-
-	public Session(Sso sso, HttpSession httpSession) {
-		this.sso = sso;
-		this.httpSession = httpSession;
-
-		String mnoSessEntry = (String) httpSession.getAttribute("maestrano");
-
-		if (httpSession != null && mnoSessEntry != null) {
-			Map<String, String> sessionObj;
-
-			try {
-				Gson gson = new Gson();
-				String decryptedSession = new String(DatatypeConverter.parseBase64Binary(mnoSessEntry), "UTF-8");
-
-				Type type = new TypeToken<Map<String, String>>() {
-				}.getType();
-				sessionObj = gson.fromJson(decryptedSession, type);
-			} catch (Exception e) {
-				sessionObj = new HashMap<String, String>();
-			}
-
-			// Assign attributes
-			uid = sessionObj.get("uid");
-			groupUid = sessionObj.get("group_uid");
-			sessionToken = sessionObj.get("session");
-
-			// Session Recheck
-			try {
-				recheck = MnoDateHelper.fromIso8601(sessionObj.get("session_recheck"));
-			} catch (Exception e) {
-				recheck = new Date((new Date()).getTime() - 1 * 60 * 1000);
-			}
-		}
-	}
-
-	/**
-	 * Constructor retrieving Maestrano session from user for a given maestrano configuration
-	 * 
-	 * @param maestrano
-	 *            Maestrano configuration for a given marketplace
-	 * @param HttpSession
-	 *            httpSession
-	 * @param User
-	 *            user
-	 * @throws MnoConfigurationException
-	 */
-	public Session(Preset preset, HttpSession httpSession, User user) {
-		this(preset.getSso(), httpSession, user);
-	}
-
-	/**
-	 * Constructor retrieving Maestrano session from user for a given maestrano configuration
-	 * 
-	 * @param marketplace
-	 *            configuration marketplace
-	 * @param HttpSession
-	 *            httpSession
-	 * @param User
-	 *            user
-	 * @throws MnoConfigurationException
-	 */
-	public Session(String marketplace, HttpSession httpSession, User user) throws MnoConfigurationException {
-		this(Maestrano.get(marketplace), httpSession, user);
-	}
+	private final String sessionToken;
 
 	/**
 	 * Constructor retrieving Maestrano session from user for a given ssoService
@@ -127,110 +38,145 @@ public class Session {
 	 * @param httpSession
 	 * @param user
 	 */
-	public Session(Sso sso, HttpSession httpSession, User user) {
-		this.sso = sso;
-		this.httpSession = httpSession;
-
-		if (user != null) {
-			uid = user.getUid();
-			groupUid = user.getGroupUid();
-			sessionToken = user.getSsoSession();
-			recheck = user.getSsoSessionRecheck();
-		}
+	public Session(Preset preset, User user) {
+		this.sso = preset.getSso();
+		uid = user.getUid();
+		groupUid = user.getGroupUid();
+		sessionToken = user.getSsoSession();
+		recheck = user.getSsoSessionRecheck();
 	}
+	/**
+	 * Invalid Session
+	 */
+	private Session(Preset preset) {
+		super();
+		this.sso = preset.getSso();
+		this.uid = null;
+		this.groupUid = null;
+		this.recheck = null;
+		this.sessionToken = null;
+	}
+	
+	Session(Preset preset, String uid, String groupUid, Date recheck, String sessionToken) {
+		super();
+		this.sso = preset.getSso();
+		this.uid = uid;
+		this.groupUid = groupUid;
+		this.recheck = recheck;
+		this.sessionToken = sessionToken;
+	}
+
+	public static boolean hasSession(HttpSession httpSession) {
+		return httpSession.getAttribute("maestrano") != null;
+	}
+
+	
+	
+	/**
+	 * Retrieving Maestrano session from httpSession, return Optional.empty() if there is no session
+	 * 
+	 * @param marketplace
+	 *            marketplace previously configured
+	 * @param HttpSession
+	 *            httpSession
+	 */
+	public static Session loadFromHttpSession(Preset preset, HttpSession httpSession) {
+		String mnoSessEntry = (String) httpSession.getAttribute("maestrano");
+		if (mnoSessEntry == null) {
+			return new Session(preset);
+		}
+		Map<String, String> sessionObj;
+
+		try {
+			Gson gson = new Gson();
+			String decryptedSession = new String(DatatypeConverter.parseBase64Binary(mnoSessEntry), "UTF-8");
+
+			Type type = new TypeToken<Map<String, String>>() {}.getType();
+			sessionObj = gson.fromJson(decryptedSession, type);
+		} catch (Exception e) {
+			logger.error("could not deserialized maestrano session: " + mnoSessEntry, e);
+			throw new RuntimeException("could not deserialized maestrano session: " + mnoSessEntry, e);
+		}
+
+		// Assign attributes
+		String uid = sessionObj.get("uid");
+		String groupUid = sessionObj.get("group_uid");
+		String sessionToken = sessionObj.get("session");
+		Date recheck;
+		// Session Recheck
+		try {
+			recheck = MnoDateHelper.fromIso8601(sessionObj.get("session_recheck"));
+		} catch (Exception e) {
+			recheck = new Date((new Date()).getTime() - 1 * 60 * 1000);
+		}
+		return new Session(preset, uid, groupUid, recheck, sessionToken);
+	}
+
+
 
 	/**
 	 * Check whether the session should be checked remotely
 	 * 
-	 * @return Boolean remote check required
+	 * @return boolean remote check required
 	 */
 	public boolean isRemoteCheckRequired() {
-		if (uid != null && sessionToken != null && recheck != null) {
-			return recheck.before(new Date());
-		} else {
-			return true;
-		}
+		return recheck.before(new Date());
 	}
+
 
 	/**
 	 * Check whether the remote maestrano session is still valid
 	 * 
 	 * @param httpClient
 	 *            Maestrano http client
-	 * @return Boolean session valid
-	 * @throws MnoException
-	 */
-	public boolean performRemoteCheck() throws MnoException {
-		return performRemoteCheck(new MnoHttpClient());
-	}
-
-	/**
-	 * Check whether the remote maestrano session is still valid
-	 * 
-	 * @param httpClient
-	 *            Maestrano http client
-	 * @return Boolean session valid
+	 * @return boolean session valid
 	 * @throws ApiException
 	 * @throws AuthenticationException
 	 * @throws MnoException
 	 */
 	public boolean performRemoteCheck(MnoHttpClient httpClient) {
-		if (uid != null && sessionToken != null && !uid.isEmpty() && !sessionToken.isEmpty()) {
-			// Prepare request
-			String url = sso.getSessionCheckUrl(this.uid, this.sessionToken);
-			String respStr;
+		// Prepare request
+		String url = sso.getSessionCheckUrl(this.uid, this.sessionToken);
+		String respStr;
+		try {
+			respStr = httpClient.get(url);
+		} catch (AuthenticationException e1) {
+			// TODO log error
+			e1.printStackTrace();
+			return false;
+		} catch (ApiException e1) {
+			// TODO log error
+			e1.printStackTrace();
+			return false;
+		}
+
+		// Parse response
+		Gson gson = new Gson();
+		Type type = new TypeToken<Map<String, String>>() {
+		}.getType();
+		Map<String, String> respObj = gson.fromJson(respStr, type);
+		Boolean isValid = (respObj.get("valid") != null && respObj.get("valid").equals("true"));
+
+		if (isValid) {
 			try {
-				respStr = httpClient.get(url);
-			} catch (AuthenticationException e1) {
-				// TODO log error
-				e1.printStackTrace();
-				return false;
-			} catch (ApiException e1) {
-				// TODO log error
-				e1.printStackTrace();
+				this.recheck = MnoDateHelper.fromIso8601(respObj.get("recheck"));
+			} catch (Exception e) {
 				return false;
 			}
 
-			// Parse response
-			Gson gson = new Gson();
-			Type type = new TypeToken<Map<String, String>>() {
-			}.getType();
-			Map<String, String> respObj = gson.fromJson(respStr, type);
-			Boolean isValid = (respObj.get("valid") != null && respObj.get("valid").equals("true"));
-
-			if (isValid) {
-				try {
-					this.recheck = MnoDateHelper.fromIso8601(respObj.get("recheck"));
-				} catch (Exception e) {
-					return false;
-				}
-
-				return true;
-			}
+			return true;
 		}
 		return false;
 	}
 
 	/**
-	 * Return whether the session is valid or not. Perform remote check to maestrano if recheck is overdue.
+	 * Return wether the session is valid or not. Perform remote check to maestrano if recheck is overdue.
 	 * 
-	 * @return Boolean session valid
+	 * @return boolean session valid
 	 * @throws MnoException
 	 */
 	public boolean isValid() {
-		return this.isValid(false);
-	}
-
-	/**
-	 * Return wether the session is valid or not. Perform remote check to maestrano if recheck is overdue.
-	 * 
-	 * @param ifSession
-	 *            If set to true then session return false ONLY if maestrano session exists and is invalid
-	 * @return Boolean session valid
-	 * @throws MnoException
-	 */
-	public boolean isValid(boolean ifSession) {
-		return isValid(ifSession, new MnoHttpClient());
+		return isValid(new MnoHttpClient());
 	}
 
 	/**
@@ -240,25 +186,15 @@ public class Session {
 	 *            If set to true then session return false ONLY if maestrano session exists and is invalid
 	 * @param Maestrano
 	 *            http client
-	 * @return Boolean session valid
+	 * @return boolean session valid
 	 * @throws MnoException
 	 */
-	public boolean isValid(boolean ifSession, MnoHttpClient httpClient) {
-
-		// Return true if maestrano session not set
-		// and ifSession option enabled
-		if (ifSession && (httpSession == null || httpSession.getAttribute("maestrano") == null)) {
-			return true;
-		}
-
-		// Return false if HttpSession is nil
-		if (httpSession == null) {
+	public boolean isValid(MnoHttpClient httpClient) {
+		if(uid == null){
 			return false;
 		}
-
 		if (isRemoteCheckRequired()) {
 			if (this.performRemoteCheck(httpClient)) {
-				save();
 				return true;
 			} else {
 				return false;
@@ -270,7 +206,13 @@ public class Session {
 	/**
 	 * Save the Maestrano session in HTTP Session
 	 */
-	public void save() {
+	public void save(HttpSession httpSession) {
+		String sessionSerialized = serializeSession();
+		// Finally store the maestrano session
+		httpSession.setAttribute("maestrano", sessionSerialized);
+	}
+
+	private String serializeSession() {
 		Map<String, String> sessObj = new HashMap<String, String>();
 		sessObj.put("uid", this.uid);
 		sessObj.put("session", this.sessionToken);
@@ -279,11 +221,9 @@ public class Session {
 
 		// Encode session
 		Gson gson = new Gson();
-		String sessStr = gson.toJson(sessObj);
-		sessStr = DatatypeConverter.printBase64Binary(sessStr.getBytes());
-
-		// Finally store the maestrano session
-		httpSession.setAttribute("maestrano", sessStr);
+		String sessionSerialized = gson.toJson(sessObj);
+		sessionSerialized = DatatypeConverter.printBase64Binary(sessionSerialized.getBytes());
+		return sessionSerialized;
 	}
 
 	/**
@@ -309,23 +249,4 @@ public class Session {
 		return sessionToken;
 	}
 
-	public HttpSession getHttpSession() {
-		return httpSession;
-	}
-
-	public void setUid(String uid) {
-		this.uid = uid;
-	}
-
-	public void setGroupUid(String groupUid) {
-		this.groupUid = groupUid;
-	}
-
-	public void setRecheck(Date recheck) {
-		this.recheck = recheck;
-	}
-
-	public void setSessionToken(String sessionToken) {
-		this.sessionToken = sessionToken;
-	}
 }

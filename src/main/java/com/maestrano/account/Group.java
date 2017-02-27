@@ -9,7 +9,7 @@ public class Group extends MnoObject {
 	private String id;
 	private Date createdAt;
 	private Date updatedAt;
-	private Boolean hasCreditCard;
+	private boolean hasCreditCard;
 	private String status;
 
 
@@ -35,7 +35,7 @@ public class Group extends MnoObject {
 		return updatedAt;
 	}
 
-	public Boolean getHasCreditCard() {
+	public boolean getHasCreditCard() {
 		return hasCreditCard;
 	}
 

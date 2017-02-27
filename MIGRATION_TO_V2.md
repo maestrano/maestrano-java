@@ -13,7 +13,7 @@ Maestrano 2.0 only accept configuration retrieved from the Developer platform. S
 - Before you were retrieving a `Maestrano` instance, you will now retrieve a `Preset` instance.
 - In order to be consistent accross the library, all Maestrano Object and Services are now expecting to be called with a preset given as an argument.
 - `ApiService` has been renamed to `Api`, `SsoService` to `Sso`, `ConnecService` to `Connec`, `AppService` to `App` and `WebhookService` to `Webhook`
-- `MnoSession` has been renamed `Session`
+
 
 For example:
 ```java
@@ -26,6 +26,18 @@ should be replaced by
 Preset preset = Maestrano.get(marketplace);
 Sso sso = preset.getSso();
 ```
+
+## SSO
+
+### Session
+
+- `MnoSession` has been renamed `Session`
+- Setters have been removed.
+- `HttpSession httpSession` property has been removed from the class. 
+- `Session(Preset preset, HttpSession httpSession)` constructor has been removed and is replaced by static call: `loadFromHttpSession(Preset preset, HttpSession httpSession)`
+- `Session(Preset preset, HttpSession httpSession, User user)` constructor has been removed and is replaced by constructor: `Session(Preset preset, HttpSession, User user)`
+- `isValid(boolean ifSession)` method has been removed only `isValid()` should be used
+- `session.save()` should be replaced by `session.save(httpSession)`
 
 
 

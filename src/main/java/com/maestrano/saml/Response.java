@@ -112,7 +112,7 @@ public class Response {
 	/**
 	 * Check if the XML response provided by the IDP is valid or not
 	 * 
-	 * @return Boolean whether the response is valid or not
+	 * @return boolean whether the response is valid or not
 	 * @throws Exception
 	 */
 	public boolean isValid() {

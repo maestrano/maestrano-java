@@ -13,7 +13,7 @@ import org.junit.Test;
 import com.maestrano.saml.Response;
 import com.maestrano.testhelpers.SamlMnoRespStub;
 
-public class MnoGroupTest {
+public class GroupTest {
 	private Response samlResp;
 	private Group subject;
 

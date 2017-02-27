@@ -41,7 +41,7 @@ public class RecurringBill extends MnoObject {
 		 * @throws ApiException
 		 * @throws AuthenticationException
 		 */
-		public Boolean cancel(RecurringBill bill) throws AuthenticationException, ApiException {
+		public boolean cancel(RecurringBill bill) throws AuthenticationException, ApiException {
 			if (bill.id != null && !bill.id.isEmpty()) {
 				RecurringBill newBill = delete(bill.id);
 				return newBill.status.equals("cancelled");

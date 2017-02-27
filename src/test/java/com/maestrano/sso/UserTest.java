@@ -12,7 +12,7 @@ import org.junit.Test;
 import com.maestrano.saml.Response;
 import com.maestrano.testhelpers.SamlMnoRespStub;
 
-public class MnoUserTest {
+public class UserTest {
 	private Response samlResp;
 	private User subject;
 
