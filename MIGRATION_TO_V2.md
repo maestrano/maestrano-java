@@ -35,7 +35,7 @@ Sso sso = preset.getSso();
 - Setters have been removed.
 - `HttpSession httpSession` property has been removed from the class. 
 - `Session(Preset preset, HttpSession httpSession)` constructor has been removed and is replaced by static call: `loadFromHttpSession(Preset preset, HttpSession httpSession)`
-- `Session(Preset preset, HttpSession httpSession, User user)` constructor has been removed and is replaced by constructor: `Session(Preset preset, HttpSession, User user)`
+- `Session(Preset preset, HttpSession httpSession, User user)` constructor has been removed and is replaced by constructor: `Session(Preset preset, User user)`
 - `isValid(boolean ifSession)` method has been removed only `isValid()` should be used
 - `session.save()` should be replaced by `session.save(httpSession)`
 
