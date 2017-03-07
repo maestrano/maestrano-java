@@ -16,8 +16,8 @@ Maestrano.ssoService().getLogoutUrl("myPreset")
 ```
 After 0.9.0:
 ```java
-Maetrano defaultInstance = Maestrano.configure();
-Maetrano presetInstance = Maestrano.configure("myPreset", myPresetProperties);
+Maestrano defaultInstance = Maestrano.configure();
+Maestrano presetInstance = Maestrano.configure("myPreset", myPresetProperties);
 
 defaultInstance.toMetadata();
 presetInstance.toMetadata();
