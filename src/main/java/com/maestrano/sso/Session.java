@@ -17,12 +17,12 @@ import com.maestrano.configuration.Preset;
 import com.maestrano.configuration.Sso;
 import com.maestrano.exception.ApiException;
 import com.maestrano.exception.AuthenticationException;
-import com.maestrano.exception.MnoException;
 import com.maestrano.helpers.MnoDateHelper;
 import com.maestrano.net.MnoHttpClient;
 
 public class Session {
 
+	private static final String MAESTRANO_SESSION_ID = "maestrano";
 	private static final Logger logger = LoggerFactory.getLogger(Session.class);
 	private Sso sso;
 
@@ -45,8 +45,9 @@ public class Session {
 		sessionToken = user.getSsoSession();
 		recheck = user.getSsoSessionRecheck();
 	}
+
 	/**
-	 * Invalid Session
+	 * Empty Session
 	 */
 	private Session(Preset preset) {
 		super();
@@ -56,7 +57,7 @@ public class Session {
 		this.recheck = null;
 		this.sessionToken = null;
 	}
-	
+
 	Session(Preset preset, String uid, String groupUid, Date recheck, String sessionToken) {
 		super();
 		this.sso = preset.getSso();
@@ -67,13 +68,11 @@ public class Session {
 	}
 
 	public static boolean hasSession(HttpSession httpSession) {
-		return httpSession.getAttribute("maestrano") != null;
+		return httpSession.getAttribute(MAESTRANO_SESSION_ID) != null;
 	}
 
-	
-	
 	/**
-	 * Retrieving Maestrano session from httpSession, return Optional.empty() if there is no session
+	 * Retrieving Maestrano session from httpSession, returns an empty Session if there is no Session
 	 * 
 	 * @param marketplace
 	 *            marketplace previously configured
@@ -81,7 +80,7 @@ public class Session {
 	 *            httpSession
 	 */
 	public static Session loadFromHttpSession(Preset preset, HttpSession httpSession) {
-		String mnoSessEntry = (String) httpSession.getAttribute("maestrano");
+		String mnoSessEntry = (String) httpSession.getAttribute(MAESTRANO_SESSION_ID);
 		if (mnoSessEntry == null) {
 			return new Session(preset);
 		}
@@ -91,7 +90,8 @@ public class Session {
 			Gson gson = new Gson();
 			String decryptedSession = new String(DatatypeConverter.parseBase64Binary(mnoSessEntry), "UTF-8");
 
-			Type type = new TypeToken<Map<String, String>>() {}.getType();
+			Type type = new TypeToken<Map<String, String>>() {
+			}.getType();
 			sessionObj = gson.fromJson(decryptedSession, type);
 		} catch (Exception e) {
 			logger.error("could not deserialized maestrano session: " + mnoSessEntry, e);
@@ -112,29 +112,62 @@ public class Session {
 		return new Session(preset, uid, groupUid, recheck, sessionToken);
 	}
 
+	/**
+	 * Return whether the session is valid or not. Perform remote check to maestrano if recheck is overdue.
+	 * 
+	 * @return boolean session valid
+	 */
+	public boolean isValid() {
+		return isValid(new MnoHttpClient());
+	}
 
+	/**
+	 * Return whether the session is valid or not. Perform remote check to maestrano if recheck is overdue.
+	 * 
+	 * @param MnoHttpClient
+	 *            http client
+	 * @return boolean session valid
+	 */
+	public boolean isValid(MnoHttpClient httpClient) {
+		if (uid == null) {
+			return false;
+		}
+		if (isRemoteCheckRequired()) {
+			if (this.performRemoteCheck(httpClient)) {
+				return true;
+			} else {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	/**
+	 * Save the Maestrano session in HTTP Session
+	 */
+	public void save(HttpSession httpSession) {
+		String sessionSerialized = serializeSession();
+		// Finally store the maestrano session
+		httpSession.setAttribute(MAESTRANO_SESSION_ID, sessionSerialized);
+	}
 
 	/**
 	 * Check whether the session should be checked remotely
 	 * 
+	 * package private for testing
+	 * 
 	 * @return boolean remote check required
 	 */
-	public boolean isRemoteCheckRequired() {
+	boolean isRemoteCheckRequired() {
 		return recheck.before(new Date());
 	}
-
 
 	/**
 	 * Check whether the remote maestrano session is still valid
 	 * 
-	 * @param httpClient
-	 *            Maestrano http client
-	 * @return boolean session valid
-	 * @throws ApiException
-	 * @throws AuthenticationException
-	 * @throws MnoException
+	 * package private for testing
 	 */
-	public boolean performRemoteCheck(MnoHttpClient httpClient) {
+	boolean performRemoteCheck(MnoHttpClient httpClient) {
 		// Prepare request
 		String url = sso.getSessionCheckUrl(this.uid, this.sessionToken);
 		String respStr;
@@ -167,49 +200,6 @@ public class Session {
 			return true;
 		}
 		return false;
-	}
-
-	/**
-	 * Return wether the session is valid or not. Perform remote check to maestrano if recheck is overdue.
-	 * 
-	 * @return boolean session valid
-	 * @throws MnoException
-	 */
-	public boolean isValid() {
-		return isValid(new MnoHttpClient());
-	}
-
-	/**
-	 * Return wether the session is valid or not. Perform remote check to maestrano if recheck is overdue.
-	 * 
-	 * @param ifSession
-	 *            If set to true then session return false ONLY if maestrano session exists and is invalid
-	 * @param Maestrano
-	 *            http client
-	 * @return boolean session valid
-	 * @throws MnoException
-	 */
-	public boolean isValid(MnoHttpClient httpClient) {
-		if(uid == null){
-			return false;
-		}
-		if (isRemoteCheckRequired()) {
-			if (this.performRemoteCheck(httpClient)) {
-				return true;
-			} else {
-				return false;
-			}
-		}
-		return true;
-	}
-
-	/**
-	 * Save the Maestrano session in HTTP Session
-	 */
-	public void save(HttpSession httpSession) {
-		String sessionSerialized = serializeSession();
-		// Finally store the maestrano session
-		httpSession.setAttribute("maestrano", sessionSerialized);
 	}
 
 	private String serializeSession() {

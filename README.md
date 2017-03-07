@@ -175,8 +175,8 @@ Based on your application requirements the consume action might look like this:
 		  localGroup.addMember(localUser);
 		}
 		// Set Maestrano session (for Single Logout)
-		Session mnoSession = new Session(marketplace, request.getSession(), mnoUser);
-		mnoSession.save();
+		Session mnoSession = new Session(marketplace, mnoUser);
+		mnoSession.save(request.getSession());
 		// Redirect to you application home page
 		response.sendRedirect("/");
 	} else {
@@ -195,7 +195,7 @@ If you want your users to benefit from single logout then you should define the 
 
 ```java
 Preset preset = Maestrano.get(marketplace);
-Session mnoSession = new Session(preset, request.getSession());
+Session mnoSession = Session.loadFromHttpSession(preset, request.getSession());
 if (!mnoSession.isValid()) {
   response.sendRedirect(preset.getSso().getInitUrl());
 }
@@ -213,9 +213,9 @@ When Maestrano users sign out of your application you can redirect them to the M
   String userUid = getUserUid();
   Maestrano.get(marketplace).getSso().getLogoutUrl(userUid);
 ```
-or if you have the `MnoSession`
+or if you have the `Session`
 ```java
-Session mnoSession = new Session(Maestrano.get(marketplace), request.getSession());
+Session mnoSession = Session.loadFromHttpSession(Maestrano.get(marketplace), request.getSession());
 mnoSession.getLogoutUrl();
 ```
 
