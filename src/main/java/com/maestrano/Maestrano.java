@@ -158,7 +158,7 @@ public final class Maestrano {
 	public static Preset get(String marketplace) throws MnoConfigurationException {
 		Preset maestrano = configurations.get(marketplace);
 		if (maestrano == null) {
-			throw new MnoConfigurationException("Mastrano was not configured for marketplace: " + marketplace + ". Maetrano.configure(" + marketplace + ") needs to have been called once.");
+			throw new MnoConfigurationException("Maestrano was not configured for marketplace: " + marketplace + ". Maestrano.configure(" + marketplace + ") needs to have been called once.");
 		}
 		return maestrano;
 	}
