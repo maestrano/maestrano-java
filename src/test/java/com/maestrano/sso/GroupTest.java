@@ -5,38 +5,29 @@ import static org.junit.Assert.assertEquals;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Map;
-import java.util.Properties;
 import java.util.TimeZone;
 
 import org.junit.Before;
 import org.junit.Test;
 
-import com.maestrano.Maestrano;
 import com.maestrano.saml.Response;
 import com.maestrano.testhelpers.SamlMnoRespStub;
 
-public class MnoGroupTest {
-	private Properties props = new Properties();
+public class GroupTest {
 	private Response samlResp;
-	private MnoGroup subject;
+	private Group subject;
 
 	@Before
 	public void beforeEach() throws Exception {
-		props.setProperty("environment", "production");
-		props.setProperty("app.host", "https://mysuperapp.com");
-		props.setProperty("api.id", "someid");
-		props.setProperty("api.key", "somekey");
-		Maestrano.reloadConfiguration(props);
 
-		samlResp =  new SamlMnoRespStub();
-		subject = new MnoGroup(samlResp);
+		samlResp = new SamlMnoRespStub();
+		subject = new Group(samlResp);
 	}
 
 	@Test
-	public void ItShouldExtractTheRightAttributesFromTheSamlResponse() throws ParseException
-	{
+	public void ItShouldExtractTheRightAttributesFromTheSamlResponse() throws ParseException {
 		SimpleDateFormat simpleDf = new SimpleDateFormat("yyyy-MM-dd'T'H:mm:ssZ");
-		Map<String,String> att = samlResp.getAttributes();
+		Map<String, String> att = samlResp.getAttributes();
 
 		assertEquals(att.get("group_uid"), subject.getUid());
 		assertEquals(att.get("group_name"), subject.getName());

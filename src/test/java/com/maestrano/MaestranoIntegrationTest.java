@@ -6,6 +6,7 @@ import java.util.Properties;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import com.maestrano.configuration.Preset;
 import com.maestrano.exception.MnoConfigurationException;
 
 /**
@@ -23,7 +24,7 @@ public class MaestranoIntegrationTest {
 		properties.setProperty("environment.apiKey", "a349e248-b264-4a76-897d-8b6b1bee6458");
 		properties.setProperty("environment.apiSecret", "iTErlebKaIA6TY6mOuG2Tw");
 
-		Map<String, Maestrano> autoConfigure = Maestrano.autoConfigure(properties);
+		Map<String, Preset> autoConfigure = Maestrano.autoConfigure(properties);
 		System.out.println(autoConfigure);
 	}
 }

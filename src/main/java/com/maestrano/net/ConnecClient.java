@@ -9,9 +9,10 @@ import java.util.TimeZone;
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.maestrano.ApiService;
-import com.maestrano.ConnecService;
 import com.maestrano.Maestrano;
+import com.maestrano.configuration.Api;
+import com.maestrano.configuration.Connec;
+import com.maestrano.configuration.Preset;
 import com.maestrano.exception.ApiException;
 import com.maestrano.exception.AuthenticationException;
 import com.maestrano.exception.InvalidRequestException;
@@ -28,8 +29,8 @@ public class ConnecClient {
 	public final Gson GSON = new GsonBuilder().setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES).registerTypeAdapter(Date.class, new DateSerializer())
 			.registerTypeAdapter(Date.class, new DateDeserializer()).registerTypeAdapter(TimeZone.class, new TimeZoneSerializer()).registerTypeAdapter(TimeZone.class, new TimeZoneDeserializer())
 			.create();
-	private final ApiService apiService;
-	private final ConnecService connecService;
+	private final Api api;
+	private final Connec connec;
 
 	/**
 	 * Instantiate a ConnecClient for the given marketplace
@@ -47,34 +48,11 @@ public class ConnecClient {
 	 * @param marketplace
 	 * @throws MnoConfigurationException
 	 */
-	public ConnecClient(Maestrano maestrano) {
-		this.connecService = maestrano.connecService();
-		this.apiService = maestrano.apiService();
+	public ConnecClient(Preset preset) {
+		this.connec = preset.getConnec();
+		this.api = preset.getApi();
 	}
-
-	/**
-	 * Instantiate a ConnecClient with the given Preset
-	 * 
-	 * @deprecated use {@link #ConnecClient(String)} constructor directly
-	 * @param marketplace
-	 * @return
-	 * @throws MnoException
-	 */
-	public static ConnecClient withPreset(String marketplace) throws MnoConfigurationException {
-		return new ConnecClient(marketplace);
-	}
-
-	/**
-	 * Instantiate a ConnecClient with the default preset
-	 * 
-	 * @deprecated use {@link #ConnecClient(Maestrano)} constructor directly
-	 * @deprecated use
-	 * @throws MnoException
-	 */
-	public static ConnecClient defaultClient() {
-		return new ConnecClient(Maestrano.getDefault());
-	}
-
+	
 	/**
 	 * Return the path to the entity collection endpoint
 	 * 
@@ -85,7 +63,7 @@ public class ConnecClient {
 	 * @return collection endpoint
 	 */
 	public String getCollectionEndpoint(String entityName, String groupId) {
-		return connecService.getBasePath() + "/" + groupId + "/" + entityName;
+		return connec.getBasePath() + "/" + groupId + "/" + entityName;
 	}
 
 	/**
@@ -98,7 +76,7 @@ public class ConnecClient {
 	 * @return collection url
 	 */
 	public String getCollectionUrl(String entityName, String groupId) {
-		return connecService.getHost() + getCollectionEndpoint(entityName, groupId);
+		return connec.getHost() + getCollectionEndpoint(entityName, groupId);
 	}
 
 	/**
@@ -134,7 +112,7 @@ public class ConnecClient {
 	 * @return instance url
 	 */
 	public String getInstanceUrl(String entityName, String groupId, String id) {
-		return connecService.getHost() + getInstanceEndpoint(entityName, groupId, id);
+		return connec.getHost() + getInstanceEndpoint(entityName, groupId, id);
 	}
 
 	/**
@@ -449,6 +427,6 @@ public class ConnecClient {
 	}
 
 	private MnoHttpClient getAuthenticatedClient() {
-		return MnoHttpClient.getAuthenticatedClient(apiService);
+		return MnoHttpClient.getAuthenticatedClient(api);
 	}
 }

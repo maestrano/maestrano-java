@@ -1,21 +1,22 @@
 package com.maestrano.net;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 import org.apache.commons.io.IOUtils;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.maestrano.DevPlatformService;
-import com.maestrano.MarketplaceConfiguration;
+import com.maestrano.configuration.DevPlatform;
+import com.maestrano.configuration.MarketplaceConfiguration;
+import com.maestrano.configuration.Preset;
 import com.maestrano.exception.ApiException;
 import com.maestrano.exception.MnoConfigurationException;
 import com.maestrano.testhelpers.MnoHttpClientStub;
-
-import junit.framework.Assert;
 
 public class DevPlatformClientTest {
 
@@ -29,7 +30,7 @@ public class DevPlatformClientTest {
 		properties.setProperty("environment.apiKey", "apiKey");
 		properties.setProperty("environment.apiSecret", "apiSecret");
 
-		DevPlatformService devPlatformService = new DevPlatformService(properties);
+		DevPlatform devPlatformService = new DevPlatform(properties);
 		this.subject = new DevPlatformClient(devPlatformService);
 	}
 
@@ -48,24 +49,24 @@ public class DevPlatformClientTest {
 		httpClient.setResponseStub(json, "https://developer.maestrano.com/api/config/v1/marketplaces");
 
 		List<MarketplaceConfiguration> marketplaceConfigurations = subject.getMarketplaceConfigurations(httpClient);
-
-		Properties p1 = new Properties();
-		p1.put("marketplace", "first_market_place");
-		p1.put("environment", "uat");
-		p1.put("app.host", "host");
-		p1.put("sso.consumePath", "anotherValue");
-
-		MarketplaceConfiguration first = new MarketplaceConfiguration("first_market_place", p1);
-		Assert.assertEquals(first, marketplaceConfigurations.get(0));
-
-		Properties p2 = new Properties();
-		p2.put("marketplace", "second_market_place");
-		p2.put("environment", "prod");
-		p2.put("app.host", "host2");
-
-		MarketplaceConfiguration second = new MarketplaceConfiguration("second_market_place", p2);
-		Assert.assertEquals(second, marketplaceConfigurations.get(1));
-
+		Map<String, Preset> presets = new LinkedHashMap<String, Preset>();
+		for (MarketplaceConfiguration marketplaceConfiguration : marketplaceConfigurations) {
+			String marketplace = marketplaceConfiguration.getName();
+			Preset preset = new Preset(marketplace, marketplaceConfiguration.getProperties());
+			presets.put(marketplace, preset);
+		}
+		assertFalse(presets.isEmpty());
+		Preset preset = presets.get("maestrano-test");
+		assertEquals("test", preset.getEnvironment());
+		assertEquals("http://localhost:63705", preset.getApp().getHost());
+		assertEquals("app-fasdfasd", preset.getApi().getId());
+		assertEquals("/maestrano/consume/?marketplace=maestrano-test", preset.getSso().getConsumePath());
+		assertEquals("8b:1e:2e:76:c4:67:80:68:6c:81:18:f7:d3:29:5d:77:f8:79:54:2f", preset.getSso().getX509Fingerprint());
+		
+		assertEquals("https://api-connec-uat.maestrano.io", preset.getConnec().getHost());
+		
+		assertEquals("/maestrano/account/groups/:group_id/users/:id/maestrano-uat", preset.getWebhook().getAccountGroupUserPath());
+		
 	}
 
 	@Test(expected = MnoConfigurationException.class)

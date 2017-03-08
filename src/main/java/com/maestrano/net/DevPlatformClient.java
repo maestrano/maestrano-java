@@ -12,8 +12,8 @@ import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
-import com.maestrano.DevPlatformService;
-import com.maestrano.MarketplaceConfiguration;
+import com.maestrano.configuration.DevPlatform;
+import com.maestrano.configuration.MarketplaceConfiguration;
 import com.maestrano.exception.MnoConfigurationException;
 import com.maestrano.exception.MnoException;
 import com.maestrano.helpers.MnoPropertiesHelper;
@@ -27,9 +27,9 @@ public class DevPlatformClient {
 	public final Gson GSON = new GsonBuilder().setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES).registerTypeAdapter(Date.class, new DateSerializer())
 			.registerTypeAdapter(Date.class, new DateDeserializer()).registerTypeAdapter(TimeZone.class, new TimeZoneSerializer()).registerTypeAdapter(TimeZone.class, new TimeZoneDeserializer())
 			.create();
-	private final DevPlatformService devPlatformService;
+	private final DevPlatform devPlatformService;
 
-	public DevPlatformClient(DevPlatformService devPlatformService) {
+	public DevPlatformClient(DevPlatform devPlatformService) {
 		this.devPlatformService = devPlatformService;
 	}
 

@@ -1,128 +1,46 @@
 package com.maestrano;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertNotNull;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
-import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Properties;
 
-import javax.xml.bind.DatatypeConverter;
-
-import org.apache.commons.io.IOUtils;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.maestrano.exception.MnoConfigurationException;
 import com.maestrano.exception.MnoException;
-import com.maestrano.testhelpers.HttpRequestStub;
 
 public class MaestranoTest {
-	private Properties defaultProps = new Properties();
-	private Properties otherProps = new Properties();
-	private Maestrano maestrano;
-	private Maestrano other;
-
 	@Before
-	public void beforeEach() {
-		defaultProps.setProperty("environment", "production");
-		defaultProps.setProperty("app.host", "https://mysuperapp.com");
-		defaultProps.setProperty("api.id", "someid");
-		defaultProps.setProperty("api.key", "somekey");
-		maestrano = Maestrano.reloadConfiguration(defaultProps);
+	public void loadDefaultConfiguration() throws Exception {
+		Properties properties = new Properties();
+		properties.setProperty("app.host", "http://localhost");
+		properties.setProperty("api.id", "api_id");
+		properties.setProperty("api.key", "api_key");
+		properties.setProperty("api.base", "/api/v1");
+		properties.setProperty("api.host", "http://localhost");
+		properties.setProperty("sso.initPath", "/api/saml/init");
+		properties.setProperty("sso.consumePath", "/api/saml/consume");
+		properties.setProperty("sso.idp", "http://localhost");
+		properties.setProperty("sso.x509Fingerprint", "31 96 DC BA");
+		properties.setProperty("sso.x509Certificate", "-----BEGIN RSA Mnxdd== -----END RSA");
+		properties.setProperty("connec.basePath", "/api/v2");
+		properties.setProperty("connec.host", "http://localhost");
+		properties.setProperty("webhooks.account.groupPath", "/api/v2/app_instances");
+		properties.setProperty("webhooks.account.groupUserPath", "/api/v2/users");
+		properties.setProperty("webhooks.connec.externalIds", "true");
+		properties.setProperty("webhooks.connec.notificationPath", "/api/connec/notifications");
 
-		otherProps.setProperty("environment", "production");
-		otherProps.setProperty("app.host", "https://myotherapp.com");
-		otherProps.setProperty("api.id", "otherid");
-		otherProps.setProperty("api.key", "otherkey");
-		other = Maestrano.reloadConfiguration("other", otherProps);
+		Maestrano.reloadConfiguration("my-marketplace", properties);
 	}
 
 	@Test
-	public void authenticate_withCredentials_itReturnsTrueWithRightCredentials() throws MnoException {
-		assertTrue(maestrano.authenticate(defaultProps.getProperty("api.id"), defaultProps.getProperty("api.key")));
+	public void get_withValidPreset() throws MnoException {
+		assertNotNull(Maestrano.get("my-marketplace"));
 	}
 
-	@Test
-	public void authenticate_withCredentials_itReturnsFalseWithWrongCredentials() throws MnoException {
-		assertFalse(maestrano.authenticate(defaultProps.getProperty("api.id"), defaultProps.getProperty("api.key") + "aa"));
-		assertFalse(maestrano.authenticate(defaultProps.getProperty("api.id") + "aa", defaultProps.getProperty("api.key")));
+	@Test(expected = MnoConfigurationException.class)
+	public void get_withInvalidPreset() throws MnoException {
+		Maestrano.get("invalid");
 	}
-
-	@Test
-	public void authenticate_withRequest_itReturnsTrueWithRightBasicAuth() throws UnsupportedEncodingException, MnoException {
-		HttpRequestStub request = new HttpRequestStub();
-		String authStr = defaultProps.getProperty("api.id") + ":" + defaultProps.getProperty("api.key");
-		authStr = "Basic " + DatatypeConverter.printBase64Binary(authStr.getBytes());
-		request.setHeader("Authorization", authStr);
-
-		assertTrue(maestrano.authenticate(request));
-	}
-
-	@Test
-	public void authenticate_withRequest_itReturnsFalseWithWrongBasicAuth() throws UnsupportedEncodingException, MnoException {
-		HttpRequestStub request = new HttpRequestStub();
-		String authStr = defaultProps.getProperty("api.id") + ":" + defaultProps.getProperty("api.key") + "aaa";
-		authStr = "Basic " + DatatypeConverter.printBase64Binary(authStr.getBytes());
-		request.setHeader("Authorization", authStr);
-
-		assertFalse(maestrano.authenticate(request));
-	}
-
-	@Test
-	public void authenticate_withRequestPreset_itReturnsTrueWithRightBasicAuth() throws UnsupportedEncodingException, MnoException {
-		HttpRequestStub request = new HttpRequestStub();
-		String authStr = otherProps.getProperty("api.id") + ":" + otherProps.getProperty("api.key");
-		authStr = "Basic " + DatatypeConverter.printBase64Binary(authStr.getBytes());
-		request.setHeader("Authorization", authStr);
-
-		assertTrue(other.authenticate(request));
-	}
-
-	@Test
-	public void authenticate_withRequestPreset_itReturnsFalseWithWrongBasicAuth() throws UnsupportedEncodingException, MnoException {
-		HttpRequestStub request = new HttpRequestStub();
-		String authStr = otherProps.getProperty("api.id") + ":" + otherProps.getProperty("api.key") + "aaa";
-		authStr = "Basic " + DatatypeConverter.printBase64Binary(authStr.getBytes());
-		request.setHeader("Authorization", authStr);
-
-		assertFalse(other.authenticate(request));
-	}
-
-	@Test
-	public void toMetadataHash_itReturnTheRightValue() {
-		Map<String, Object> hash = new HashMap<String, Object>();
-		hash.put("environment", maestrano.appService().getEnvironment());
-		hash.put("app", maestrano.appService().toMetadataHash());
-		hash.put("api", maestrano.apiService().toMetadataHash());
-		hash.put("sso", maestrano.ssoService().toMetadataHash());
-		hash.put("connec", maestrano.connecService().toMetadataHash());
-		hash.put("webhook", maestrano.webhookService().toMetadataHash());
-
-		assertEquals(hash, maestrano.toMetadataHash());
-	}
-
-	@Test
-	public void toMetadata_itReturnTheRightValue() throws IOException {
-		InputStream inputStream = this.getClass().getResourceAsStream("/expected-metadata.json");
-		String expected = IOUtils.toString(inputStream , StandardCharsets.UTF_8);
-		expected = expected.replace("[JAVA_VERSION]", System.getProperty("java.version"));
-		expected = expected.replace("[MAESTRANO_VERSION]", Maestrano.getVersion());
-		assertEquals(expected, maestrano.toMetadata());
-	}
-
-	@Test
-	public void configure_itConfiguresFromFileAndPreset() throws MnoException {
-		Properties properties = Maestrano.loadProperties("myconfig.properties");
-
-		Maestrano myConfigMaestrano = Maestrano.reloadConfiguration("myconfig", properties);
-
-		assertEquals("blabla", myConfigMaestrano.apiService().getId());
-		assertEquals("secret", myConfigMaestrano.apiService().getKey());
-	}
-	
 }

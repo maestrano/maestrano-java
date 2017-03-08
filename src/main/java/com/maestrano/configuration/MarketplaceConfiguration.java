@@ -1,4 +1,4 @@
-package com.maestrano;
+package com.maestrano.configuration;
 
 import java.util.Properties;
 

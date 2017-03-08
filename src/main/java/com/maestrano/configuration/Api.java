@@ -1,30 +1,30 @@
-package com.maestrano;
+package com.maestrano.configuration;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Properties;
 
+import com.maestrano.Maestrano;
+import com.maestrano.exception.MnoConfigurationException;
 import com.maestrano.helpers.MnoPropertiesHelper;
 
 /**
- * Maestrano API Service, related to all Maestrano API
+ * Maestrano API Configuration, related to all Maestrano API
  */
-public class ApiService {
+public class Api {
 
 	private final String id;
 	private final String key;
-	private final boolean verifySslCerts;
 	private final String base;
 	private final String host;
 	private final String langVersion;
 
 	// package private Constructor
-	ApiService(Properties props) {
-		this.id = MnoPropertiesHelper.getPropertyOrDefault(props, "api.id");
-		this.key = MnoPropertiesHelper.getPropertyOrDefault(props, "api.key");
-		this.base = MnoPropertiesHelper.getPropertyOrDefault(props, "api.base", "api.accountBase");
-		this.host = MnoPropertiesHelper.getPropertyOrDefault(props, "api.host");
-		this.verifySslCerts = MnoPropertiesHelper.getBooleanProperty(props, "api.verifySslCerts");
+	Api(Properties props) throws MnoConfigurationException {
+		this.id = MnoPropertiesHelper.getProperty(props, "api.id");
+		this.key = MnoPropertiesHelper.getProperty(props, "api.key");
+		this.base = MnoPropertiesHelper.getProperty(props, "api.base");
+		this.host = MnoPropertiesHelper.getProperty(props, "api.host");
 		this.langVersion = System.getProperty("java.version");
 	}
 
@@ -55,7 +55,6 @@ public class ApiService {
 		return host;
 	}
 
-
 	/**
 	 * Return the base of the API endpoint
 	 * 
@@ -63,15 +62,6 @@ public class ApiService {
 	 */
 	public String getBase() {
 		return base;
-	}
-
-	/**
-	 * Check whether to verify the SSL certificate or not during API calls. False by default.
-	 * 
-	 * @return boolean whether to verify the certificate or not
-	 */
-	public boolean getVerifySslCerts() {
-		return verifySslCerts;
 	}
 
 	public String getLang() {
@@ -90,7 +80,6 @@ public class ApiService {
 		Map<String, String> hash = new LinkedHashMap<String, String>();
 		hash.put("id", getId());
 		hash.put("version", getVersion());
-		hash.put("verify_ssl_certs", Boolean.toString(getVerifySslCerts()));
 		hash.put("lang", getLang());
 		hash.put("lang_version", getLangVersion());
 		hash.put("host", getHost());

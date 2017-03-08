@@ -1,23 +1,24 @@
-package com.maestrano;
+package com.maestrano.configuration;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Properties;
 
+import com.maestrano.exception.MnoConfigurationException;
 import com.maestrano.helpers.MnoPropertiesHelper;
 
 /**
- * Maestrano Connec Service, related to all Connec API
+ * Maestrano Connec Configuration, related to all Connec API
  */
-public class ConnecService {
+public class Connec {
 
 	private final String host;
 	private final String basePath;
 
 	// package private Constructor
-	ConnecService(AppService appService, Properties props) {
-		this.basePath = MnoPropertiesHelper.getPropertyOrDefault(props, "connec.basePath", "connec.base", "api.connecBase");
-		this.host = MnoPropertiesHelper.getPropertyOrDefault(props, "connec.host");
+	Connec(App appService, Properties props) throws MnoConfigurationException {
+		this.basePath = MnoPropertiesHelper.getProperty(props, "connec.basePath");
+		this.host = MnoPropertiesHelper.getProperty(props, "connec.host");
 	}
 
 	/**
@@ -29,7 +30,6 @@ public class ConnecService {
 		return host;
 	}
 
-
 	/**
 	 * Return the base of the API endpoint
 	 * 
@@ -38,8 +38,6 @@ public class ConnecService {
 	public String getBasePath() {
 		return basePath;
 	}
-
-
 
 	public Map<String, String> toMetadataHash() {
 		Map<String, String> hash = new LinkedHashMap<String, String>();

@@ -12,30 +12,32 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.google.gson.Gson;
-import com.maestrano.Maestrano;
-import com.maestrano.account.MnoBill;
-import com.maestrano.account.MnoBill.MnoBillClient;
+import com.maestrano.account.Bill;
+import com.maestrano.account.Bill.BillClient;
+import com.maestrano.account.MnoObject;
+import com.maestrano.configuration.Preset;
+import com.maestrano.testhelpers.DefaultPropertiesHelper;
 import com.maestrano.testhelpers.MnoHttpClientStub;
 
 public class MnoAccountClientTest {
-	private Properties props = new Properties();
 	private MnoHttpClientStub httpClient;
-	private MnoAccountClient<MnoSomeModel> mnoAccountClient;
-	private MnoBillClient mnoBillClient;
-	public class MnoSomeModel {}
+	private AccountClient<MnoSomeModel> mnoAccountClient;
+	private BillClient mnoBillClient;
+	public class MnoSomeModel extends MnoObject{}
 
 	@Before
 	public void beforeEach() throws Exception {
-		props.setProperty("environment", "production");
-		props.setProperty("app.host", "https://mysuperapp.com");
-		props.setProperty("api.id", "someid");
-		props.setProperty("api.key", "somekey");
-		props.setProperty("sso.sloEnabled", "true");
-		Maestrano.reloadConfiguration(props);
+		Properties properties = DefaultPropertiesHelper.loadDefaultProperties();
+		properties.setProperty("environment", "production");
+		properties.setProperty("app.host", "https://mysuperapp.com");
+		properties.setProperty("api.id", "someid");
+		properties.setProperty("api.key", "somekey");
+		properties.setProperty("connec.host", "https://api-connec.maestrano.com");
+		Preset preset = new Preset("test", properties);
 
 		httpClient = new MnoHttpClientStub();
-		mnoAccountClient = new MnoAccountClient<MnoSomeModel>(MnoSomeModel.class);
-		mnoBillClient = new MnoBillClient();
+		mnoAccountClient = new AccountClient<MnoSomeModel>(MnoSomeModel.class, preset);
+		mnoBillClient = new BillClient(preset);
 	}
 
 	@Test
@@ -86,7 +88,7 @@ public class MnoAccountClientTest {
 		httpClient.setResponseStub(gson.toJson(hash), mnoBillClient.getCollectionUrl());
 
 		// Test
-		List<MnoBill> respList = mnoBillClient.all(null, httpClient);
+		List<Bill> respList = mnoBillClient.all(null, httpClient);
 		assertEquals("bill-1234",respList.get(0).getId());
 	}
 
@@ -110,7 +112,7 @@ public class MnoAccountClientTest {
 		httpClient.setResponseStub(gson.toJson(hash), mnoBillClient.getCollectionUrl(),params);
 
 		// Test
-		List<MnoBill> respList = mnoBillClient.all( params, httpClient);
+		List<Bill> respList = mnoBillClient.all( params, httpClient);
 		assertEquals("bill-1234",respList.get(0).getId());
 	}
 
@@ -128,7 +130,7 @@ public class MnoAccountClientTest {
 		httpClient.setResponseStub(gson.toJson(hash), mnoBillClient.getInstanceUrl("bill-1234"));
 
 		// Test
-		MnoBill resp = mnoBillClient.retrieve( "bill-1234", httpClient);
+		Bill resp = mnoBillClient.retrieve( "bill-1234", httpClient);
 		assertEquals("bill-1234",resp.getId());
 
 	}
@@ -152,7 +154,7 @@ public class MnoAccountClientTest {
 				mnoBillClient.getCollectionUrl(),null,gson.toJson(updHash));
 		
 		// Test
-		MnoBill resp = mnoBillClient.create( updHash, httpClient);
+		Bill resp = mnoBillClient.create( updHash, httpClient);
 		assertEquals("bill-1234",resp.getId());
 	}
 	
@@ -174,7 +176,7 @@ public class MnoAccountClientTest {
 		httpClient.setResponseStub(gson.toJson(hash), mnoBillClient.getInstanceUrl("bill-1234"),null,gson.toJson(updHash));
 		
 		// Test
-		MnoBill resp = mnoBillClient.update( "bill-1234", updHash, httpClient);
+		Bill resp = mnoBillClient.update( "bill-1234", updHash, httpClient);
 		assertEquals("bill-1234",resp.getId());
 	}
 	
@@ -192,7 +194,7 @@ public class MnoAccountClientTest {
 		httpClient.setResponseStub(gson.toJson(hash), mnoBillClient.getInstanceUrl("bill-1234"));
 		
 		// Test
-		MnoBill resp = mnoBillClient.delete( "bill-1234", httpClient);
+		Bill resp = mnoBillClient.delete( "bill-1234", httpClient);
 		assertEquals("bill-1234",resp.getId());
 	}
 }

@@ -8,7 +8,8 @@ import java.util.Map;
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.maestrano.Maestrano;
+import com.maestrano.account.MnoObject;
+import com.maestrano.configuration.Preset;
 import com.maestrano.exception.ApiException;
 import com.maestrano.exception.AuthenticationException;
 import com.maestrano.exception.InvalidRequestException;
@@ -22,27 +23,18 @@ import com.maestrano.reflect.MnoAccountResponseParameterizedType;
 /**
  * service to retrieve Maestrano Business Objects using maestrano API
  */
-public class MnoAccountClient<T> {
+public class AccountClient<T extends MnoObject> {
 
 	public static final Gson GSON = new GsonBuilder().setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES).registerTypeAdapter(Date.class, new DateSerializer())
 			.registerTypeAdapter(Date.class, new DateDeserializer()).create();
 
 	public final static String CTYPE = "application/json";
-	private final Maestrano maestrano;
+	private final Preset preset;
 	private final Class<T> entitityClass;
 
-	/**
-	 * @deprecated
-	 * @param entitityClass
-	 */
-	protected MnoAccountClient(Class<T> entitityClass) {
+	protected AccountClient(Class<T> entitityClass, Preset preset) {
 		this.entitityClass = entitityClass;
-		this.maestrano = Maestrano.getDefault();
-	}
-
-	protected MnoAccountClient(Class<T> entitityClass, Maestrano maestrano){
-		this.entitityClass = entitityClass;
-		this.maestrano = maestrano;
+		this.preset = preset;
 	}
 
 	/**
@@ -74,7 +66,7 @@ public class MnoAccountClient<T> {
 	 * @return collection endpoint
 	 */
 	public String getCollectionEndpoint() {
-		return maestrano.apiService().getBase() + "account/" + getEntitiesName();
+		return preset.getApi().getBase() + "account/" + getEntitiesName();
 	}
 
 	/**
@@ -85,7 +77,7 @@ public class MnoAccountClient<T> {
 	 * @return collection url
 	 */
 	public String getCollectionUrl() {
-		return maestrano.apiService().getHost() + getCollectionEndpoint();
+		return preset.getApi().getHost() + getCollectionEndpoint();
 	}
 
 	/**
@@ -111,7 +103,7 @@ public class MnoAccountClient<T> {
 	 * @return instance url
 	 */
 	public String getInstanceUrl(String id) {
-		return maestrano.apiService().getHost() + getInstanceEndpoint(id);
+		return preset.getApi().getHost() + getInstanceEndpoint(id);
 	}
 
 	/**
@@ -328,6 +320,6 @@ public class MnoAccountClient<T> {
 	}
 
 	private MnoHttpClient getAuthenticatedClient() {
-		return MnoHttpClient.getAuthenticatedClient(maestrano.apiService(), CTYPE);
+		return MnoHttpClient.getAuthenticatedClient(preset.getApi(), CTYPE);
 	}
 }

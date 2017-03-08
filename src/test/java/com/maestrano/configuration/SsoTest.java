@@ -1,4 +1,4 @@
-package com.maestrano;
+package com.maestrano.configuration;
 
 import static org.junit.Assert.assertEquals;
 
@@ -9,27 +9,28 @@ import java.util.Properties;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.maestrano.exception.MnoConfigurationException;
 import com.maestrano.exception.MnoException;
-import com.maestrano.sso.MnoUser;
+import com.maestrano.sso.User;
+import com.maestrano.testhelpers.DefaultPropertiesHelper;
 import com.maestrano.testhelpers.SamlMnoRespStub;
 
-public class SsoServiceTest {
-	private Properties props = new Properties();
-	private SsoService subject;
-	private Maestrano maestrano;
+public class SsoTest {
+	private Preset preset;
+	private Sso subject;
+	private Properties properties;
 
 	@Before
-	public void beforeEach() {
-		props.setProperty("environment", "production");
-		props.setProperty("api.id", "someid");
-		props.setProperty("api.key", "somekey");
-		maestrano = Maestrano.reloadConfiguration(props);
-		subject = maestrano.ssoService();
+	public void beforeEach() throws MnoConfigurationException {
+
+		properties = DefaultPropertiesHelper.loadDefaultProperties();
+		preset = new Preset("test", properties);
+		subject = preset.getSso();
 	}
 
 	@Test
 	public void getIssuer_itReturnsTheRightValue() {
-		assertEquals(props.getProperty("api.id"), subject.getIssuer());
+		assertEquals(properties.getProperty("api.id"), subject.getIssuer());
 	}
 
 	@Test
@@ -51,37 +52,31 @@ public class SsoServiceTest {
 	public void getinitUrl_itReturnsTheRightUrl() throws MnoException {
 		String host = "https://mysuperapp.com";
 		String path = "/mno/start-sso";
-		props.setProperty("app.host", host);
-		props.setProperty("sso.initPath", path);
-		Maestrano maestrano = Maestrano.reloadConfiguration(props);
+		properties.setProperty("sso.idm", host);
+		properties.setProperty("sso.initPath", path);
+		Preset preset = new Preset("test", properties);
 
-		assertEquals(host + path, maestrano.ssoService().getInitUrl());
+		assertEquals(host + path, preset.getSso().getInitUrl());
 	}
 
 	@Test
 	public void getConsumeUrl_itReturnsTheRightUrl() throws MnoException {
 		String host = "https://mysuperapp.com";
 		String path = "/mno/consume-sso";
-		props.setProperty("app.host", host);
-		props.setProperty("sso.consumePath", path);
-		Maestrano maestrano = Maestrano.reloadConfiguration(props);
+		properties.setProperty("sso.idm", host);
+		properties.setProperty("sso.consumePath", path);
+		Preset preset = new Preset("test", properties);
 
 		String expected = host + path;
-		assertEquals(expected, maestrano.ssoService().getConsumeUrl());
+		assertEquals(expected, preset.getSso().getConsumeUrl());
 	}
 
 	@Test
-	public void getLogoutUrl_itReturnsTheRightUrl() {
-		String expected = "https://api-hub.maestrano.com/app_logout";
-		assertEquals(expected, subject.getLogoutUrl());
-	}
-
-	@Test
-	public void getLogoutUrlWithUser_itReturnsTheRightUrl() throws ParseException {
+	public void getLogoutUrlWithUser_itReturnsTheRightUrl() throws MnoException {
 		String expected = "https://api-hub.maestrano.com/app_logout?user_uid=usr-458";
 		SamlMnoRespStub samlResponse = new SamlMnoRespStub();
 		samlResponse.getAttributes().put("uid", "usr-458");
-		MnoUser user = new MnoUser(samlResponse);
+		User user = new User(samlResponse);
 		assertEquals(expected, subject.getLogoutUrl(user));
 	}
 
@@ -116,19 +111,16 @@ public class SsoServiceTest {
 		assertEquals(subject.getConsumeUrl(), settings.getAssertionConsumerServiceUrl());
 		assertEquals(subject.getIdpUrl(), settings.getIdpSsoTargetUrl());
 		assertEquals(subject.getX509Certificate(), settings.getIdpCertificate());
-		assertEquals(maestrano.apiService().getId(), settings.getIssuer());
-		assertEquals(subject.getNameIdFormat(), settings.getNameIdentifierFormat());
+		assertEquals(preset.getApi().getId(), settings.getIssuer());
 	}
 
 	@Test
 	public void toMetadataHash_itReturnsTheRightValue() {
 		Map<String, String> hash = subject.toMetadataHash();
-		assertEquals(Boolean.toString(subject.getEnabled()), hash.get("enabled"));
 		assertEquals(subject.getInitPath(), hash.get("init_path"));
 		assertEquals(subject.getConsumePath(), hash.get("consume_path"));
 		assertEquals(subject.getIdm(), hash.get("idm"));
 		assertEquals(subject.getIdp(), hash.get("idp"));
-		assertEquals(subject.getNameIdFormat(), hash.get("name_id_format"));
 		assertEquals(subject.getX509Fingerprint(), hash.get("x509_fingerprint"));
 		assertEquals(subject.getX509Certificate(), hash.get("x509_certificate"));
 	}

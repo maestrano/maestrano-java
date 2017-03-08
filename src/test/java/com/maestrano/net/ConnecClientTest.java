@@ -12,14 +12,13 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.google.gson.Gson;
-import com.maestrano.Maestrano;
+import com.maestrano.configuration.Preset;
 import com.maestrano.exception.MnoConfigurationException;
 import com.maestrano.helpers.MnoMapHelper;
+import com.maestrano.testhelpers.DefaultPropertiesHelper;
 import com.maestrano.testhelpers.MnoHttpClientStub;
 
 public class ConnecClientTest {
-	private Properties defaultProps = new Properties();
-	private Properties otherProps = new Properties();
 
 	private String groupId = "654321";
 	private MnoHttpClientStub httpClient = new MnoHttpClientStub();
@@ -39,22 +38,16 @@ public class ConnecClientTest {
 	}
 
 	@Before
-	public void beforeEach() {
-		defaultProps.setProperty("environment", "production");
-		defaultProps.setProperty("app.host", "https://mysuperapp.com");
-		defaultProps.setProperty("api.id", "someid");
-		defaultProps.setProperty("api.key", "somekey");
-		defaultProps.setProperty("connec.host", "https://api-connec.maestrano.com");
-		Maestrano.reloadConfiguration(defaultProps);
+	public void beforeEach() throws MnoConfigurationException {
 
-		otherProps.setProperty("environment", "production");
-		otherProps.setProperty("app.host", "https://myotherapp.com");
-		otherProps.setProperty("api.id", "otherid");
-		otherProps.setProperty("api.key", "otherkey");
-		otherProps.setProperty("connec.host", "https://api-connec.other.com");
-		Maestrano.reloadConfiguration("other", otherProps);
-
-		this.connecClient = ConnecClient.defaultClient();
+		Properties properties = DefaultPropertiesHelper.loadDefaultProperties();
+		properties.setProperty("environment", "production");
+		properties.setProperty("app.host", "https://mysuperapp.com");
+		properties.setProperty("api.id", "someid");
+		properties.setProperty("api.key", "somekey");
+		properties.setProperty("connec.host", "https://api-connec.maestrano.com");
+		Preset preset = new Preset("test", properties);
+		connecClient = new ConnecClient(preset);
 	}
 
 	@Test
@@ -74,12 +67,20 @@ public class ConnecClientTest {
 
 	@Test
 	public void getInstanceUrl_itReturnsTheRightEntityInstanceApiUrl() throws MnoConfigurationException {
-		assertEquals("https://api-connec.maestrano.com/api/v2/cld-1/some_models/1", ConnecClient.withPreset("default").getInstanceUrl("some_models", "cld-1", "1"));
+		assertEquals("https://api-connec.maestrano.com/api/v2/cld-1/some_models/1", connecClient.getInstanceUrl("some_models", "cld-1", "1"));
 	}
 
 	@Test
 	public void class_getCollectionUrl_itReturnsTheRightEntityApiUrlWithPreset() throws MnoConfigurationException {
-		assertEquals("https://api-connec.other.com/api/v2/cld-1/some_models", ConnecClient.withPreset("other").getCollectionUrl("some_models", "cld-1"));
+		Properties otherProps = DefaultPropertiesHelper.loadDefaultProperties();
+		otherProps.setProperty("environment", "production");
+		otherProps.setProperty("app.host", "https://myotherapp.com");
+		otherProps.setProperty("api.id", "otherid");
+		otherProps.setProperty("api.key", "otherkey");
+		otherProps.setProperty("connec.host", "https://api-connec.other.com");
+		Preset preset = new Preset("test", otherProps);
+		connecClient = new ConnecClient(preset);
+		assertEquals("https://api-connec.other.com/api/v2/cld-1/some_models", connecClient.getCollectionUrl("some_models", "cld-1"));
 	}
 
 	@Test
@@ -182,24 +183,4 @@ public class ConnecClientTest {
 		assertEquals(this.groupId, personHash.get("group_id"));
 	}
 
-	@Test
-	public void delete_itDeletesTheRightEntity() throws Exception {
-		// Prepare Response data
-		Map<String, Object> hash = new HashMap<String, Object>();
-		hash.put("people", this.preparePersonObj());
-		hash.put("resource", "people");
-
-		// Prepare response
-		Gson gson = new Gson();
-		httpClient = new MnoHttpClientStub();
-		httpClient.setResponseStub(gson.toJson(hash), connecClient.getInstanceUrl("people", this.groupId, "123456"));
-
-		// Test
-		@SuppressWarnings("unchecked")
-		Map<String, Object> personHash = (Map<String, Object>) connecClient.delete("people", this.groupId, "123456", httpClient).get("people");
-		assertEquals("123456", personHash.get("id"));
-		assertEquals("John", personHash.get("first_name"));
-		assertEquals("Doe", personHash.get("last_name"));
-		assertEquals(this.groupId, personHash.get("group_id"));
-	}
 }
