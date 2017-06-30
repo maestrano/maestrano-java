@@ -1,0 +1,23 @@
+{
+  "success": true,
+  "errors": {},
+  "data": {
+    "object": "account_recurring_bill",
+    "id": "rbill-g8ur",
+    "group_id": "cld-9axx",
+    "created_at": "2016-08-01T15:30:20.000Z",
+    "updated_at": "2017-03-27T16:11:22.000Z",
+    "price_cents": 1000,
+    "status": "active",
+    "currency": "AUD",
+    "description": "[Test Bill] XDE",
+    "start_date": "2016-08-01T15:30:20.000Z",
+    "period": "day",
+    "frequency": 1,
+    "cycles": null,
+    "initial_cents": 10000,
+    "last_execution_at": "2017-03-27T15:30:20.000Z",
+    "next_execution_at": "2017-03-28T15:30:20.000Z",
+    "remaining_cycles": null
+  }
+}
