@@ -162,7 +162,7 @@ public class User {
 	/**
 	 * ALPHA2 code of user country
 	 * 
-	 * @return
+	 * @return String country
 	 */
 	public String getCountry() {
 		return country;

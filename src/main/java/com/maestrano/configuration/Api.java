@@ -12,7 +12,7 @@ import com.maestrano.helpers.MnoPropertiesHelper;
  * Maestrano API Configuration, related to all Maestrano API
  */
 public class Api {
-
+	
 	private final String id;
 	private final String key;
 	private final String base;

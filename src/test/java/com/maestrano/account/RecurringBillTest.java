@@ -1,37 +1,28 @@
 package com.maestrano.account;
 
-import static net.jadler.Jadler.closeJadler;
-import static net.jadler.Jadler.initJadlerUsing;
-import static net.jadler.Jadler.onRequest;
-import static net.jadler.Jadler.port;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-
-import java.io.IOException;
-import java.nio.charset.Charset;
-import java.text.ParseException;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-
-import com.google.common.base.Charsets;
-import com.google.common.io.Resources;
 import com.maestrano.account.RecurringBill.RecurringBillClient;
 import com.maestrano.configuration.Preset;
 import com.maestrano.exception.ApiException;
 import com.maestrano.exception.AuthenticationException;
 import com.maestrano.exception.InvalidRequestException;
 import com.maestrano.exception.MnoConfigurationException;
-import com.maestrano.helpers.MnoDateHelper;
+import com.maestrano.helpers.ResourcesHelper;
 import com.maestrano.testhelpers.DefaultPropertiesHelper;
-
 import net.jadler.stubbing.server.jdk.JdkStubHttpServer;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+
+import static net.jadler.Jadler.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 public class RecurringBillTest {
 
@@ -49,8 +40,8 @@ public class RecurringBillTest {
 		subject = RecurringBill.client(preset);
 	}
 
-	private static final String RECURRING_BILLS_JSON = getResource("recurring-bills.json");
-	private static final String RECURRING_BILL_JSON = getResource("recurring-bill.json");
+	private static final String RECURRING_BILLS_JSON = ResourcesHelper.getResource("recurring-bills.json");
+	private static final String RECURRING_BILL_JSON = ResourcesHelper.getResource("recurring-bill.json");
 
 	@Test
 	public void test_all() throws MnoConfigurationException, AuthenticationException, ApiException, InvalidRequestException, IOException {
@@ -103,31 +94,15 @@ public class RecurringBillTest {
 		subject.delete("rbill-g8ur");
 	}
 
-	private static Date parseDate(String string) { // TODO Auto-generated method stub
-		try {
-			return MnoDateHelper.fromIso8601(string);
-		} catch (ParseException e) {
-			throw new RuntimeException("Could not parse " + string, e);
-		}
-	}
-
-	private static String getResource(String path) {
-		try {
-			return Resources.toString(RecurringBillTest.class.getResource(path), Charsets.UTF_8);
-		} catch (IOException e) {
-			throw new RuntimeException("Could not get resource " + path, e);
-		}
-	}
-
 	private static void assertBill(RecurringBill bill) {
 		assertEquals("rbill-g8ur", bill.getId());
 		assertEquals("cld-9axx", bill.getGroupId());
-		assertEquals(parseDate("2016-08-01T15:30:20.000Z"), bill.getCreatedAt());
-		assertEquals(parseDate("2017-03-27T16:11:22.000Z"), bill.getUpdatedAt());
+		assertEquals(ResourcesHelper.parseDate("2016-08-01T15:30:20.000Z"), bill.getCreatedAt());
+		assertEquals(ResourcesHelper.parseDate("2017-03-27T16:11:22.000Z"), bill.getUpdatedAt());
 		assertEquals("active", bill.getStatus());
 		assertEquals("AUD", bill.getCurrency());
 		assertEquals("[Test Bill] XDE", bill.getDescription());
-		assertEquals(parseDate("2016-08-01T15:30:20.000Z"), bill.getStartDate());
+		assertEquals(ResourcesHelper.parseDate("2016-08-01T15:30:20.000Z"), bill.getStartDate());
 		assertEquals("day", bill.getPeriod());
 		assertEquals(Integer.valueOf(1), bill.getFrequency());
 		assertNull(bill.getCycles());
