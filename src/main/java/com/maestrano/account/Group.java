@@ -1,14 +1,9 @@
 package com.maestrano.account;
 
-import java.util.Date;
-
 import com.maestrano.configuration.Preset;
 import com.maestrano.net.AccountClient;
 
 public class Group extends MnoObject {
-	private String id;
-	private Date createdAt;
-	private Date updatedAt;
 	private boolean hasCreditCard;
 	private String status;
 
@@ -21,18 +16,6 @@ public class Group extends MnoObject {
 		public GroupClient(Preset preset) {
 			super(Group.class, preset);
 		}
-	}
-
-	public String getId() {
-		return id;
-	}
-
-	public Date getCreatedAt() {
-		return createdAt;
-	}
-
-	public Date getUpdatedAt() {
-		return updatedAt;
 	}
 
 	public boolean getHasCreditCard() {

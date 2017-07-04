@@ -8,9 +8,6 @@ import com.maestrano.exception.AuthenticationException;
 import com.maestrano.net.AccountClient;
 
 public class RecurringBill extends MnoObject {
-	public String id;
-	public Date createdAt;
-	public Date updatedAt;
 	public String status;
 	public Float units;
 	public String period;
@@ -42,25 +39,12 @@ public class RecurringBill extends MnoObject {
 		 * @throws AuthenticationException
 		 */
 		public boolean cancel(RecurringBill bill) throws AuthenticationException, ApiException {
-			if (bill.id != null && !bill.id.isEmpty()) {
-				RecurringBill newBill = delete(bill.id);
+			if (bill.getId() != null && !bill.getId().isEmpty()) {
+				RecurringBill newBill = delete(bill.getId());
 				return newBill.status.equals("cancelled");
 			}
 			return false;
 		}
-
-	}
-
-	public String getId() {
-		return id;
-	}
-
-	public Date getCreatedAt() {
-		return createdAt;
-	}
-
-	public Date getUpdatedAt() {
-		return updatedAt;
 	}
 
 	public String getStatus() {
