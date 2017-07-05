@@ -1,17 +1,11 @@
 package com.maestrano.account;
 
-import com.maestrano.account.RecurringBill.RecurringBillClient;
-import com.maestrano.configuration.Preset;
-import com.maestrano.exception.ApiException;
-import com.maestrano.exception.AuthenticationException;
-import com.maestrano.exception.InvalidRequestException;
-import com.maestrano.exception.MnoConfigurationException;
-import com.maestrano.helpers.ResourcesHelper;
-import com.maestrano.testhelpers.DefaultPropertiesHelper;
-import net.jadler.stubbing.server.jdk.JdkStubHttpServer;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import static net.jadler.Jadler.closeJadler;
+import static net.jadler.Jadler.initJadlerUsing;
+import static net.jadler.Jadler.onRequest;
+import static net.jadler.Jadler.port;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -20,9 +14,20 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import static net.jadler.Jadler.*;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
+import com.maestrano.account.RecurringBill.RecurringBillClient;
+import com.maestrano.configuration.Preset;
+import com.maestrano.exception.ApiException;
+import com.maestrano.exception.AuthenticationException;
+import com.maestrano.exception.InvalidRequestException;
+import com.maestrano.exception.MnoConfigurationException;
+import com.maestrano.helpers.ResourcesHelper;
+import com.maestrano.testhelpers.DefaultPropertiesHelper;
+
+import net.jadler.stubbing.server.jdk.JdkStubHttpServer;
 
 public class RecurringBillTest {
 
@@ -91,7 +96,9 @@ public class RecurringBillTest {
 		onRequest().havingMethodEqualTo("DELETE").havingPathEqualTo("/api/v1/account/recurring_bills/rbill-g8ur").respond().withBody(RECURRING_BILL_JSON).withStatus(200)
 				.withEncoding(Charset.forName("UTF-8")).withContentType("application/json; charset=UTF-8");
 
-		subject.delete("rbill-g8ur");
+		RecurringBill bill = subject.delete("rbill-g8ur");
+
+		assertBill(bill);
 	}
 
 	private static void assertBill(RecurringBill bill) {
