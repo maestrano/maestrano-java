@@ -1,0 +1,18 @@
+{
+  "success":true,
+  "errors":{},
+  "data":{
+    "object":"account_bill",
+    "id":"bill-001",
+    "group_id":"cld-001",
+    "created_at":"2015-06-03T05:00:33Z",
+    "updated_at":"2015-06-03T05:00:33Z",
+    "price_cents":2000,
+    "status":"submitted",
+    "currency":"AUD",
+    "units":null,
+    "description":"A bill",
+    "period_started_at":null,
+    "period_ended_at":null
+  }
+}
