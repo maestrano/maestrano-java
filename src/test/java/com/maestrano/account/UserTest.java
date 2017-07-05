@@ -34,7 +34,7 @@ public class UserTest {
 		subject = User.client(preset);
 	}
 
-	private static final String USER_JSON = ResourcesHelper.getResource("user.json");
+	private static final String USER_JSON = ResourcesHelper.getResource("/com/maestrano/account/user.json");
 
 	@Test
 	public void test_retrieve() throws AuthenticationException, ApiException, InvalidRequestException {

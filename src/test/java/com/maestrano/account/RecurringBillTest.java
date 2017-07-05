@@ -40,8 +40,8 @@ public class RecurringBillTest {
 		subject = RecurringBill.client(preset);
 	}
 
-	private static final String RECURRING_BILLS_JSON = ResourcesHelper.getResource("recurring-bills.json");
-	private static final String RECURRING_BILL_JSON = ResourcesHelper.getResource("recurring-bill.json");
+	private static final String RECURRING_BILLS_JSON = ResourcesHelper.getResource("/com/maestrano/account/recurring-bills.json");
+	private static final String RECURRING_BILL_JSON = ResourcesHelper.getResource("/com/maestrano/account/recurring-bill.json");
 
 	@Test
 	public void test_all() throws MnoConfigurationException, AuthenticationException, ApiException, InvalidRequestException, IOException {

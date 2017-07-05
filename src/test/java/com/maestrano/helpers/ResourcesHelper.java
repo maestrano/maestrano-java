@@ -5,6 +5,7 @@ import com.google.common.io.Resources;
 import com.maestrano.account.RecurringBillTest;
 
 import java.io.IOException;
+import java.net.URL;
 import java.text.ParseException;
 import java.util.Date;
 
@@ -12,7 +13,7 @@ public class ResourcesHelper {
 
 	public static String getResource(String path) {
 		try {
-			return Resources.toString(RecurringBillTest.class.getResource(path), Charsets.UTF_8);
+			return Resources.toString(Object.class.getResource(path), Charsets.UTF_8);
 		} catch (IOException e) {
 			throw new RuntimeException("Could not get resource " + path, e);
 		}
