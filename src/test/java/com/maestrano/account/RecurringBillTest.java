@@ -9,8 +9,6 @@ import static org.junit.Assert.assertNull;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.text.ParseException;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -20,15 +18,13 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.google.common.base.Charsets;
-import com.google.common.io.Resources;
 import com.maestrano.account.RecurringBill.RecurringBillClient;
 import com.maestrano.configuration.Preset;
 import com.maestrano.exception.ApiException;
 import com.maestrano.exception.AuthenticationException;
 import com.maestrano.exception.InvalidRequestException;
 import com.maestrano.exception.MnoConfigurationException;
-import com.maestrano.helpers.MnoDateHelper;
+import com.maestrano.helpers.ResourcesHelper;
 import com.maestrano.testhelpers.DefaultPropertiesHelper;
 
 import net.jadler.stubbing.server.jdk.JdkStubHttpServer;
@@ -49,8 +45,8 @@ public class RecurringBillTest {
 		subject = RecurringBill.client(preset);
 	}
 
-	private static final String RECURRING_BILLS_JSON = getResource("recurring-bills.json");
-	private static final String RECURRING_BILL_JSON = getResource("recurring-bill.json");
+	private static final String RECURRING_BILLS_JSON = ResourcesHelper.getResource("/com/maestrano/account/recurring-bills.json");
+	private static final String RECURRING_BILL_JSON = ResourcesHelper.getResource("/com/maestrano/account/recurring-bill.json");
 
 	@Test
 	public void test_all() throws MnoConfigurationException, AuthenticationException, ApiException, InvalidRequestException, IOException {
@@ -100,34 +96,20 @@ public class RecurringBillTest {
 		onRequest().havingMethodEqualTo("DELETE").havingPathEqualTo("/api/v1/account/recurring_bills/rbill-g8ur").respond().withBody(RECURRING_BILL_JSON).withStatus(200)
 				.withEncoding(Charset.forName("UTF-8")).withContentType("application/json; charset=UTF-8");
 
-		subject.delete("rbill-g8ur");
-	}
+		RecurringBill bill = subject.delete("rbill-g8ur");
 
-	private static Date parseDate(String string) { // TODO Auto-generated method stub
-		try {
-			return MnoDateHelper.fromIso8601(string);
-		} catch (ParseException e) {
-			throw new RuntimeException("Could not parse " + string, e);
-		}
-	}
-
-	private static String getResource(String path) {
-		try {
-			return Resources.toString(RecurringBillTest.class.getResource(path), Charsets.UTF_8);
-		} catch (IOException e) {
-			throw new RuntimeException("Could not get resource " + path, e);
-		}
+		assertBill(bill);
 	}
 
 	private static void assertBill(RecurringBill bill) {
 		assertEquals("rbill-g8ur", bill.getId());
 		assertEquals("cld-9axx", bill.getGroupId());
-		assertEquals(parseDate("2016-08-01T15:30:20.000Z"), bill.getCreatedAt());
-		assertEquals(parseDate("2017-03-27T16:11:22.000Z"), bill.getUpdatedAt());
+		assertEquals(ResourcesHelper.parseDate("2016-08-01T15:30:20.000Z"), bill.getCreatedAt());
+		assertEquals(ResourcesHelper.parseDate("2017-03-27T16:11:22.000Z"), bill.getUpdatedAt());
 		assertEquals("active", bill.getStatus());
 		assertEquals("AUD", bill.getCurrency());
 		assertEquals("[Test Bill] XDE", bill.getDescription());
-		assertEquals(parseDate("2016-08-01T15:30:20.000Z"), bill.getStartDate());
+		assertEquals(ResourcesHelper.parseDate("2016-08-01T15:30:20.000Z"), bill.getStartDate());
 		assertEquals("day", bill.getPeriod());
 		assertEquals(Integer.valueOf(1), bill.getFrequency());
 		assertNull(bill.getCycles());
