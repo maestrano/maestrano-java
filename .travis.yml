@@ -1,5 +1,5 @@
 language: java
-install: mvn install -DskipTests -Dgpg.skip
+install: mvn install -Dmaven.javadoc.skip=true -Dgpg.skip
 jdk:
   - openjdk7
   - openjdk6
