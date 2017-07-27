@@ -1,3 +1,5 @@
+sudo: required
+dist: trusty
 language: java
 install: mvn install -Dmaven.javadoc.skip=true -Dgpg.skip
 jdk:
